@@ -111,44 +111,59 @@ const HINTS_KEY = 'kaogong_unlocked_hints_v1';
 function resolveFirstAttempt(
   r: Partial<QuestionRecord>,
   history: AttemptHistoryItem[],
-  recVersion: number
+  recVersion: number,
+  hasRawHistory: boolean
 ): { firstAttemptCorrect: boolean | null; firstAttemptHints: number | null } {
-  // If firstAttemptCorrect is explicitly boolean, retain it
+  // Only search history matching recVersion when genuine raw history exists
+  const versionHistory = hasRawHistory
+    ? history.filter((h) => h && typeof h === 'object' && h.version === recVersion)
+    : [];
+
+  // 1. Resolve firstAttemptCorrect
+  let firstAttemptCorrect: boolean | null;
   if (typeof r.firstAttemptCorrect === 'boolean') {
-    const hints = typeof r.firstAttemptHints === 'number' && Number.isInteger(r.firstAttemptHints) && r.firstAttemptHints >= 0 && r.firstAttemptHints <= 3
-      ? r.firstAttemptHints
-      : (typeof r.hintsUsed === 'number' && r.hintsUsed >= 0 && r.hintsUsed <= 3 ? r.hintsUsed : 0);
-    return { firstAttemptCorrect: r.firstAttemptCorrect, firstAttemptHints: hints };
-  }
-  // If explicitly null, it is an established unrecoverable record
-  if (r.firstAttemptCorrect === null) {
-    return { firstAttemptCorrect: null, firstAttemptHints: null };
-  }
-
-  // Strictly recover for the current recVersion from history items matching recVersion
-  const versionHistory = history.filter((h) => h && typeof h === 'object' && h.version === recVersion);
-  if (versionHistory.length > 0) {
-    return {
-      firstAttemptCorrect: versionHistory[0].isCorrect,
-      firstAttemptHints: typeof versionHistory[0].hintsUsed === 'number' ? versionHistory[0].hintsUsed : 0,
-    };
-  }
-
-  // No explicit history for current version:
-  // If there are multiple attempts or foreign version history, do NOT assume foreign history belongs to current version
-  if ((typeof r.attempts === 'number' && r.attempts > 1) || history.length > 0) {
-    return { firstAttemptCorrect: null, firstAttemptHints: null };
+    firstAttemptCorrect = r.firstAttemptCorrect;
+  } else if (r.firstAttemptCorrect === null) {
+    firstAttemptCorrect = null;
+  } else {
+    // Missing firstAttemptCorrect:
+    if (versionHistory.length > 0) {
+      firstAttemptCorrect = versionHistory[0].isCorrect;
+    } else if ((typeof r.attempts === 'number' && r.attempts > 1) || (hasRawHistory && history.length > 0)) {
+      // Multiple attempts with missing history, or history only for other versions -> unknown
+      firstAttemptCorrect = null;
+    } else if (!hasRawHistory && r.selectedAnswer) {
+      // Single attempt legacy record with no history -> can safely use isCorrect
+      firstAttemptCorrect = typeof r.isCorrect === 'boolean' ? r.isCorrect : false;
+    } else {
+      firstAttemptCorrect = null;
+    }
   }
 
-  // Single attempt legacy record without history: only recover if answer is present
-  if (r.selectedAnswer) {
-    return {
-      firstAttemptCorrect: typeof r.isCorrect === 'boolean' ? r.isCorrect : false,
-      firstAttemptHints: typeof r.hintsUsed === 'number' ? r.hintsUsed : 0,
-    };
+  // 2. Resolve firstAttemptHints independently
+  let firstAttemptHints: number | null;
+  if (typeof r.firstAttemptHints === 'number' && Number.isInteger(r.firstAttemptHints) && r.firstAttemptHints >= 0 && r.firstAttemptHints <= 3) {
+    firstAttemptHints = r.firstAttemptHints;
+  } else if (r.firstAttemptHints === null || firstAttemptCorrect === null) {
+    firstAttemptHints = null;
+  } else {
+    // Missing firstAttemptHints, but firstAttemptCorrect is known:
+    // Prioritize reliable first attempt from current version's history
+    if (versionHistory.length > 0) {
+      const hUsed = versionHistory[0].hintsUsed;
+      firstAttemptHints = typeof hUsed === 'number' && Number.isInteger(hUsed) && hUsed >= 0 && hUsed <= 3 ? hUsed : 0;
+    } else if ((typeof r.attempts === 'number' && r.attempts > 1) || (hasRawHistory && history.length > 0)) {
+      // Multiple attempts with lost history, or history only for other versions -> unknown (null)
+      firstAttemptHints = null;
+    } else if (!hasRawHistory && r.selectedAnswer) {
+      // Single attempt legacy record -> can reliably take from hintsUsed
+      firstAttemptHints = typeof r.hintsUsed === 'number' && Number.isInteger(r.hintsUsed) && r.hintsUsed >= 0 && r.hintsUsed <= 3 ? r.hintsUsed : 0;
+    } else {
+      firstAttemptHints = null;
+    }
   }
 
-  return { firstAttemptCorrect: null, firstAttemptHints: null };
+  return { firstAttemptCorrect, firstAttemptHints };
 }
 
 // Migration helper to ensure legacy records are converted safely
@@ -164,25 +179,14 @@ function migrateRawRecords(raw: Record<string, any>): { records: Record<string, 
       ? r.questionVersion
       : 1;
 
-    // 1. Normalize history array and versions first
-    if (!Array.isArray(r.history)) {
-      r.history = r.selectedAnswer
-        ? [
-            {
-              answer: r.selectedAnswer,
-              isCorrect: Boolean(r.isCorrect),
-              hintsUsed: typeof r.hintsUsed === 'number' ? r.hintsUsed : 0,
-              timestamp: r.timestamp || Date.now(),
-              version: recVersion,
-            },
-          ]
-        : [];
-      modified = true;
-    } else {
-      // Distinguish pure single-version history from mixed history across versions
+    const rawHistory = Array.isArray(r.history) ? r.history : null;
+    const hasRawHistory = rawHistory !== null;
+
+    // 1. Normalize existing raw history versions if present
+    if (rawHistory) {
       const explicitVersions = new Set<number>();
       let hasUnversioned = false;
-      for (const h of r.history) {
+      for (const h of rawHistory) {
         if (h && typeof h === 'object') {
           if (typeof h.version === 'number' && Number.isInteger(h.version) && h.version >= 1) {
             explicitVersions.add(h.version);
@@ -195,7 +199,7 @@ function migrateRawRecords(raw: Record<string, any>): { records: Record<string, 
       if (hasUnversioned) {
         if (explicitVersions.size === 0 && recVersion === 1) {
           // Entire legacy history belongs to v1
-          for (const h of r.history) {
+          for (const h of rawHistory) {
             if (h && typeof h === 'object' && typeof h.version !== 'number') {
               h.version = 1;
               modified = true;
@@ -204,8 +208,7 @@ function migrateRawRecords(raw: Record<string, any>): { records: Record<string, 
         } else {
           // Mixed history across versions or ambiguous origin:
           // Do NOT assign recVersion to unversioned items! Leave them undefined (unknown)
-          // to avoid polluting version stats.
-          for (const h of r.history) {
+          for (const h of rawHistory) {
             if (h && typeof h === 'object' && (typeof h.version !== 'number' || h.version < 1) && h.version !== undefined) {
               delete h.version;
               modified = true;
@@ -215,15 +218,34 @@ function migrateRawRecords(raw: Record<string, any>): { records: Record<string, 
       }
     }
 
-    // 2. Recover missing firstAttempt fields strictly isolated by recVersion
-    const { firstAttemptCorrect, firstAttemptHints } = resolveFirstAttempt(r, r.history, recVersion);
+    // 2. Recover missing firstAttempt fields strictly isolated by recVersion BEFORE synthesizing missing history
+    const { firstAttemptCorrect, firstAttemptHints } = resolveFirstAttempt(r, rawHistory || [], recVersion, hasRawHistory);
     if (r.firstAttemptCorrect !== firstAttemptCorrect || r.firstAttemptHints !== firstAttemptHints) {
       r.firstAttemptCorrect = firstAttemptCorrect;
       r.firstAttemptHints = firstAttemptHints;
       modified = true;
     }
-    if (typeof r.attempts !== 'number' || r.attempts < 1) {
-      r.attempts = r.history.length || (r.selectedAnswer ? 1 : 0);
+
+    // 3. Synthesize missing history array for storage completeness
+    const finalHistory: AttemptHistoryItem[] = rawHistory ?? (r.selectedAnswer
+      ? [
+          {
+            answer: r.selectedAnswer,
+            isCorrect: Boolean(r.isCorrect),
+            hintsUsed: typeof r.hintsUsed === 'number' ? r.hintsUsed : 0,
+            timestamp: r.timestamp || Date.now(),
+            version: recVersion,
+          },
+        ]
+      : []);
+    if (!hasRawHistory) {
+      modified = true;
+    }
+
+    const attemptsCount = typeof r.attempts === 'number' && r.attempts >= 1
+      ? r.attempts
+      : (finalHistory.length || (r.selectedAnswer ? 1 : 0));
+    if (r.attempts !== attemptsCount) {
       modified = true;
     }
 
@@ -238,8 +260,8 @@ function migrateRawRecords(raw: Record<string, any>): { records: Record<string, 
       isMastered: Boolean(r.isMastered),
       errorReason: r.errorReason,
       timestamp: typeof r.timestamp === 'number' ? r.timestamp : Date.now(),
-      attempts: r.attempts,
-      history: r.history,
+      attempts: attemptsCount,
+      history: finalHistory,
     };
   }
 
@@ -702,7 +724,7 @@ export const learningStorage = {
         }
 
         // Recover or validate firstAttempt fields using shared version-aware logic
-        const { firstAttemptCorrect, firstAttemptHints } = resolveFirstAttempt(r, validatedHistory, recVersion);
+        const { firstAttemptCorrect, firstAttemptHints } = resolveFirstAttempt(r, validatedHistory, recVersion, Array.isArray(r.history));
 
         validatedRecords[qid] = {
           questionId: qid,
