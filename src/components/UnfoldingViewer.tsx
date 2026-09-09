@@ -402,50 +402,41 @@ export const UnfoldingViewer: React.FC<UnfoldingViewerProps> = ({
     rightPivot.add(rightFace);
     rightPivot.rotation.z = -u * (Math.PI / 2);
 
-    // Top Face (hinged to the right face!)
+    // Top Face (hinged to top edge of Right Face: 100% closed at u=0, unfolds flat at u=1)
     const topPivot = new THREE.Group();
     topPivot.position.set(0, a, 0);
+    topPivot.rotation.z = (1 - u) * (Math.PI / 2);
     const topFace = createFace();
     topFace.position.set(0, a / 2, 0);
+    topFace.rotation.y = -Math.PI / 2;
     topPivot.add(topFace);
-    topPivot.rotation.z = -u * (Math.PI / 2); // folds another 90 deg relative to right face
-    rightPivot.add(topPivot);
 
+    // Marker for Point B on Top Face corner
+    const markerB = new THREE.Object3D();
+    markerB.position.set(-a / 2, -a / 2, 0);
+    topFace.add(markerB);
+
+    rightPivot.add(topPivot);
     group.add(rightPivot);
 
-    // Shortest path: Corner A (bottom-left-front) to Corner B (top-right-back)
-    // Points depending on unfold
+    // Shortest path: Corner A (bottom-left-front) to Corner B (opposite on top face)
     const pStart = new THREE.Vector3(-a / 2, -a / 2, a / 2); // Point A
 
-    // Point B moves as top face unfolds!
+    // Point B dynamically tracks the moving top face in world coordinates!
+    group.updateMatrixWorld(true);
     const pEnd = new THREE.Vector3();
-    if (u === 0) {
-      pEnd.set(a / 2, a / 2, -a / 2);
-    } else {
-      // In unfolded flat plane: Right face unfolds to x in [a/2, 3a/2], Top face unfolds to [3a/2, 5a/2]
-      // Or 2-face adjacent unfold: Bottom face + Right face
-      pEnd.set(
-        a / 2 + a * Math.cos(-u * (Math.PI / 2)) * 1.5,
-        -a / 2 + (1 - u) * a,
-        -a / 2
-      );
-    }
+    markerB.getWorldPosition(pEnd);
 
     if (pathMode === 'surface') {
-      // Draw 2-face crossing shortest path
-      // Midpoint on the shared right edge
-      const midPoint = new THREE.Vector3(
-        a / 2,
-        -a / 2 + (u === 0 ? a / 3 : 0),
-        a / 2 - (2 * a) / 3
-      );
+      // Point on the shared right hinge edge (a/2, -a/2, 0)
+      const midPoint = new THREE.Vector3(a / 2, -a / 2, 0);
       const lineGeom = new THREE.BufferGeometry().setFromPoints([pStart, midPoint, pEnd]);
       const lineMat = new THREE.LineBasicMaterial({ color: 0xef4444, linewidth: 4 });
       group.add(new THREE.Line(lineGeom, lineMat));
     } else if (pathMode === 'edges') {
       // Edges route: A -> corner -> corner -> B (length 3a)
       const c1 = new THREE.Vector3(a / 2, -a / 2, a / 2);
-      const c2 = new THREE.Vector3(a / 2, a / 2, a / 2);
+      const c2 = new THREE.Vector3(a / 2, -a / 2 + (1 - u) * a, a / 2);
       const lineGeom = new THREE.BufferGeometry().setFromPoints([pStart, c1, c2, pEnd]);
       const lineMat = new THREE.LineBasicMaterial({ color: 0xeab308, linewidth: 3 });
       group.add(new THREE.Line(lineGeom, lineMat));

@@ -154,7 +154,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
   const [netType, setNetType] = useState<NetType>('1-4-1');
 
   // Folding progress: 0 (completely flat 2D net) -> 1 (fully folded 3D cube)
-  const [foldProgress, setFoldProgress] = useState<number>(0.2);
+  const [foldProgress, setFoldProgress] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   // Helper toggles
@@ -673,9 +673,9 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
             </button>
 
             <button
-              onClick={() => { setIsPlaying(false); setFoldProgress(0.2); }}
+              onClick={() => { setIsPlaying(false); setFoldProgress(0); }}
               className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors flex-shrink-0"
-              title="复位视角"
+              title="复位平铺"
             >
               <RotateCcw className="w-3.5 h-3.5" />
             </button>
