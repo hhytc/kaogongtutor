@@ -412,7 +412,9 @@ export const learningStorage = {
     const existing = records[questionId];
     if (existing) {
       existing.selectedAnswer = '';
-      existing.hintsUsed = 0; // Reset hintsUsed for fresh attempt
+      // Retain previous attempt's hintsUsed until a new attempt is submitted,
+      // so the question retains its review queue eligibility during reattempt preparation.
+      // Current round unlocked hints are tracked independently in unlockedHints.
       existing.isMastered = false;
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
@@ -505,8 +507,20 @@ export const learningStorage = {
         if (!r.isCorrect) return true;
         if (r.firstAttemptCorrect === false) return true;
         if (typeof r.firstAttemptHints === 'number' && r.firstAttemptHints > 0) return true;
-        if (r.firstAttemptHints === null && r.hintsUsed > 0) return true;
-        if (r.firstAttemptCorrect === null && r.hintsUsed > 0) return true;
+        // For records where firstAttemptHints or firstAttemptCorrect is unknown (null):
+        // If the last completed attempt used hints (or during reattempt before a new answer is submitted),
+        // it must remain in the review queue.
+        const lastVersionAttempt = Array.isArray(r.history)
+          ? [...r.history].reverse().find((h) => (h.version || 1) === (r.questionVersion || 1))
+          : null;
+        const hintsUsed = typeof r.hintsUsed === 'number' && r.hintsUsed > 0
+          ? r.hintsUsed
+          : (r.selectedAnswer === '' && lastVersionAttempt && typeof lastVersionAttempt.hintsUsed === 'number'
+              ? lastVersionAttempt.hintsUsed
+              : (r.hintsUsed || 0));
+
+        if (r.firstAttemptHints === null && hintsUsed > 0) return true;
+        if (r.firstAttemptCorrect === null && hintsUsed > 0) return true;
         return false;
       })
       .map((r) => r.questionId);
