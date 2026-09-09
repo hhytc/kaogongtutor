@@ -10,6 +10,7 @@ interface RatioBarProps {
   labelB?: string;
   unitLabel?: string;
   showSolution?: boolean;
+  onInteract?: () => void;
 }
 
 export const RatioBarVisualizer: React.FC<RatioBarProps> = ({
@@ -21,6 +22,7 @@ export const RatioBarVisualizer: React.FC<RatioBarProps> = ({
   labelB = '乙部门人数',
   unitLabel = '人',
   showSolution = false,
+  onInteract,
 }) => {
   const diffParts = Math.abs(partB - partA) || 1;
   const unitFromDiff = difference ? difference / diffParts : 12;
@@ -32,6 +34,11 @@ export const RatioBarVisualizer: React.FC<RatioBarProps> = ({
   const valueA = partA * unitValue;
   const valueB = partB * unitValue;
   const currentDiff = (partB - partA) * unitValue;
+
+  const handleSliderChange = (newVal: number) => {
+    setTotal(newVal);
+    onInteract?.();
+  };
 
   return (
     <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 lg:p-5 space-y-4">
@@ -56,26 +63,28 @@ export const RatioBarVisualizer: React.FC<RatioBarProps> = ({
         <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80">
           <span className="text-slate-400 text-[11px] block">份数差值 (B - A)</span>
           <span className="font-mono text-base font-bold text-amber-400">
-            {partB - partA} 份 = {currentDiff.toFixed(0)} {unitLabel}
+            {partB - partA} 份 = {difference} {unitLabel}
           </span>
-          <span className="text-[10px] text-amber-400/80 block">已知差值条件</span>
+          <span className="text-[10px] text-amber-400/80 block">题干已知差值</span>
         </div>
 
         <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80">
           <span className="text-slate-400 text-[11px] block">核心基准：每 1 份代表</span>
-          <span className="font-mono text-base font-bold text-emerald-400">{unitValue.toFixed(1)} {unitLabel}</span>
+          <span className="font-mono text-base font-bold text-emerald-400">
+            {showSolution ? `${unitValue.toFixed(1)} ${unitLabel}` : `? ${unitLabel} (待推导)`}
+          </span>
           <span className="text-[10px] text-emerald-400/80 block">
-            {currentDiff.toFixed(0)} ÷ {partB - partA} = {unitValue.toFixed(1)}
+            {showSolution ? `${currentDiff.toFixed(0)} ÷ ${partB - partA} = ${unitValue.toFixed(1)}` : '差值 ÷ 份数差 = 每份'}
           </span>
         </div>
 
         <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80">
           <span className="text-slate-400 text-[11px] block">所求总量</span>
           <span className="font-mono text-base font-bold text-white">
-            {showSolution ? `${total.toFixed(0)} ${unitLabel}` : `${totalParts} 份 × 每份`}
+            {showSolution ? `${total.toFixed(0)} ${unitLabel}` : `? ${unitLabel}`}
           </span>
           <span className="text-[10px] text-slate-400 block">
-            {showSolution ? '8 份 × 12 = 96' : '待求总量'}
+            {showSolution ? `${totalParts} 份 × ${unitValue.toFixed(0)} = ${total.toFixed(0)}` : `${totalParts} 份 × 每份基准`}
           </span>
         </div>
       </div>
@@ -85,7 +94,15 @@ export const RatioBarVisualizer: React.FC<RatioBarProps> = ({
         <div className="flex items-center justify-between text-[11px] text-slate-400">
           <span>份数条形图划分：</span>
           <span className="font-mono text-slate-300">
-            {labelA}: <strong className="text-sky-400">{valueA.toFixed(0)}{unitLabel}</strong> ({partA}份) vs {labelB}: <strong className="text-emerald-400">{valueB.toFixed(0)}{unitLabel}</strong> ({partB}份)
+            {showSolution ? (
+              <>
+                {labelA}: <strong className="text-sky-400">{valueA.toFixed(0)}{unitLabel}</strong> ({partA}份) vs {labelB}: <strong className="text-emerald-400">{valueB.toFixed(0)}{unitLabel}</strong> ({partB}份)
+              </>
+            ) : (
+              <>
+                {labelA} ({partA}份) vs {labelB} ({partB}份) · 每份基准待推导
+              </>
+            )}
           </span>
         </div>
 
@@ -96,10 +113,12 @@ export const RatioBarVisualizer: React.FC<RatioBarProps> = ({
             <div
               key={`a-${i}`}
               className="flex-1 bg-sky-500/80 border border-sky-400 rounded-lg flex flex-col items-center justify-center text-[10px] font-mono text-white"
-              title={`甲 1 份 = ${unitValue.toFixed(1)}`}
+              title={`甲 1 份`}
             >
               <span>1份</span>
-              <span className="text-[8px] text-sky-200">({unitValue.toFixed(0)})</span>
+              <span className="text-[8px] text-sky-200">
+                ({showSolution ? unitValue.toFixed(0) : '基准'})
+              </span>
             </div>
           ))}
 
@@ -108,10 +127,12 @@ export const RatioBarVisualizer: React.FC<RatioBarProps> = ({
             <div
               key={`b-${i}`}
               className="flex-1 bg-emerald-500/80 border border-emerald-400 rounded-lg flex flex-col items-center justify-center text-[10px] font-mono text-white"
-              title={`乙 1 份 = ${unitValue.toFixed(1)}`}
+              title={`乙 1 份`}
             >
               <span>1份</span>
-              <span className="text-[8px] text-emerald-200">({unitValue.toFixed(0)})</span>
+              <span className="text-[8px] text-emerald-200">
+                ({showSolution ? unitValue.toFixed(0) : '基准'})
+              </span>
             </div>
           ))}
         </div>
@@ -119,17 +140,19 @@ export const RatioBarVisualizer: React.FC<RatioBarProps> = ({
 
       {/* Interactive slider */}
       <div className="flex items-center gap-3 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-xs">
-        <span className="text-slate-400 whitespace-nowrap">调整每份实际量推演：</span>
+        <span className="text-slate-400 whitespace-nowrap">调整份数基准推演：</span>
         <input
           type="range"
           min="16"
           max="160"
           step={totalParts}
           value={total}
-          onChange={(e) => setTotal(parseInt(e.target.value))}
+          onChange={(e) => handleSliderChange(parseInt(e.target.value))}
           className="flex-1 accent-emerald-500 h-2 bg-slate-800 rounded-lg cursor-pointer"
         />
-        <span className="font-mono font-bold text-emerald-400 w-16 text-right">总计 {total}</span>
+        <span className="font-mono font-bold text-emerald-400 w-28 text-right">
+          {showSolution ? `总计 ${total.toFixed(0)} ${unitLabel}` : '推演份数基准'}
+        </span>
       </div>
     </div>
   );

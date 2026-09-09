@@ -189,7 +189,9 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
   const isExplVisible = currentQ ? (showExplanation[currentQ.id] ?? isAnswered) : false;
 
   // Hints used: if already answered, take recorded hints; otherwise take persistent unlocked level (defaults to 0)
-  const hintsUsedCount = currentRecord?.hintsUsed ?? (currentQ ? (unlockedHints[currentQ.id] ?? 0) : 0);
+  const hintsUsedCount = isAnswered
+    ? (currentRecord?.hintsUsed ?? 0)
+    : (currentQ ? (unlockedHints[currentQ.id] ?? 0) : 0);
   const currentHintsLevel = currentQ ? (unlockedHints[currentQ.id] ?? (isAnswered ? 3 : 0)) : 0;
 
   // Handle track filter change
@@ -326,8 +328,10 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
       return (
         <div className="my-3">
           <WorkGridVisualizer
+            key={`${currentQ.id}-${currentQ.diagramProps?.initialScenario || ''}`}
             {...currentQ.diagramProps}
             showSolution={isAnswered || currentHintsLevel >= 3}
+            onInteract={() => !isAnswered && handleUnlockHint(2)}
           />
         </div>
       );
@@ -337,8 +341,10 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
       return (
         <div className="my-3">
           <RatioBarVisualizer
+            key={currentQ.id}
             {...currentQ.diagramProps}
             showSolution={isAnswered || currentHintsLevel >= 3}
+            onInteract={() => !isAnswered && handleUnlockHint(2)}
           />
         </div>
       );
@@ -768,9 +774,12 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                 <div className="flex items-center gap-2">
                   {currentQ.simulatorConfig && (
                     <button
-                      onClick={() =>
-                        onLoadIntoSimulator(currentQ.simulatorConfig, currentQ.id, currentQ.title)
-                      }
+                      onClick={() => {
+                        if (!isAnswered) {
+                          handleUnlockHint(2);
+                        }
+                        onLoadIntoSimulator(currentQ.simulatorConfig, currentQ.id, currentQ.title);
+                      }}
                       className="w-full sm:w-auto flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-xs font-semibold shadow-md shadow-sky-500/20 transition-all cursor-pointer"
                     >
                       <Eye className="w-4 h-4" />
@@ -988,17 +997,42 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                     }
                   )}
                 </div>
+              </div>
+            )}
 
-                {activeTrack === 'review' && (
-                  <div className="pt-2 flex justify-end">
+            {/* Review Queue Mastery Management Card (Independent of isCorrect: accessible whenever question needs review) */}
+            {isAnswered && (activeTrack === 'review' || reviewIdSet.has(currentQ.id)) && (
+              <div className="bg-slate-900/90 border border-emerald-800/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in duration-300">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                    <span>错题回练 · 掌握状态管理</span>
+                  </div>
+                  <p className="text-xs text-slate-300">
+                    {currentRecord?.isMastered
+                      ? '✓ 本题已被标记为掌握，已移出错题回练队列。'
+                      : isCorrect
+                      ? '🎉 本次重做作答正确！如已完全吃透考点和解题思路，可点击移出错题本：'
+                      : '若已对照上方详细解析弄清错因并完全搞懂，可点击移出错题本：'}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {currentRecord?.isMastered ? (
+                    <span className="text-xs px-3.5 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold flex items-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4" />
+                      已掌握 · 不在错题本
+                    </span>
+                  ) : (
                     <button
                       onClick={() => handleMarkMastered(currentQ.id)}
-                      className="text-xs px-3 py-1.5 rounded-lg bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/30 font-semibold transition-colors cursor-pointer"
+                      className="text-xs px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold shadow-md shadow-emerald-950 transition-all cursor-pointer flex items-center gap-1.5"
                     >
-                      ✓ 本题已彻底搞懂，移出错题本
+                      <CheckCircle2 className="w-4 h-4" />
+                      确认已掌握 · 移出错题本
                     </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             )}
 

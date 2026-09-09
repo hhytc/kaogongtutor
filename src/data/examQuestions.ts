@@ -2,6 +2,7 @@ export type QuestionTrack = 'geometry' | 'engineering' | 'tools';
 
 export interface ExamQuestion {
   id: string;
+  version?: number;
   source: string;
   title: string;
   track: QuestionTrack;
@@ -392,7 +393,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     unitId: 'work_efficiency',
     unitName: '效率理解与特值法',
     questionRole: 'example',
-    variantIds: ['eng_q1_var1', 'eng_q1_var2'],
+    variantIds: ['eng_q1_var_collab', 'eng_q1_var_phase'],
     category: 'engineering',
     subType: '合作完工',
     diagramType: 'work-grid',
@@ -417,7 +418,8 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     mathFormula: 'W = 60 \\implies e_A = 3, e_B = 2 \\implies t = \\frac{60}{3 + 2} = 12\\text{ 天}'
   },
   {
-    id: 'eng_q1_var1',
+    id: 'eng_q1_var_collab',
+    version: 2,
     source: '同类变式题 · 独立训练',
     title: '变式 1：双人不同效率合作完工',
     track: 'engineering',
@@ -446,7 +448,8 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     mathFormula: 't = \\frac{12 \\times 18}{12 + 18} = 7.2\\text{ 小时}'
   },
   {
-    id: 'eng_q1_var2',
+    id: 'eng_q1_var_phase',
+    version: 2,
     source: '同类变式题 · 独立训练',
     title: '变式 2：工作效率变化的分段工程问题',
     track: 'engineering',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { RotateCcw, Users } from 'lucide-react';
 
 interface WorkGridProps {
@@ -7,6 +7,7 @@ interface WorkGridProps {
   workerBEff?: number;
   initialScenario?: 'cooperate' | 'phase' | 'alternate';
   showSolution?: boolean;
+  onInteract?: () => void;
 }
 
 export const WorkGridVisualizer: React.FC<WorkGridProps> = ({
@@ -15,9 +16,27 @@ export const WorkGridVisualizer: React.FC<WorkGridProps> = ({
   workerBEff = 2,
   initialScenario = 'cooperate',
   showSolution = false,
+  onInteract,
 }) => {
   const [scenario, setScenario] = useState<'cooperate' | 'phase' | 'alternate'>(initialScenario);
   const [currentDay, setCurrentDay] = useState<number>(0);
+
+  // Sync scenario and reset stepper whenever props change (e.g. switching between variant questions)
+  useEffect(() => {
+    setScenario(initialScenario);
+    setCurrentDay(0);
+  }, [initialScenario, totalWork, workerAEff, workerBEff]);
+
+  const handleScenarioChange = (newScenario: 'cooperate' | 'phase' | 'alternate') => {
+    setScenario(newScenario);
+    setCurrentDay(0);
+    onInteract?.();
+  };
+
+  const handleStepChange = (newDay: number) => {
+    setCurrentDay(newDay);
+    onInteract?.();
+  };
 
   // Determine daily contributions based on scenario
   // Scenario 1: Cooperate: every day A does 3, B does 2 (total 5)
@@ -101,7 +120,7 @@ export const WorkGridVisualizer: React.FC<WorkGridProps> = ({
 
         <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
           <button
-            onClick={() => { setScenario('cooperate'); setCurrentDay(0); }}
+            onClick={() => handleScenarioChange('cooperate')}
             className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
               scenario === 'cooperate' ? 'bg-sky-500 text-white' : 'text-slate-400 hover:text-slate-200'
             }`}
@@ -109,7 +128,7 @@ export const WorkGridVisualizer: React.FC<WorkGridProps> = ({
             两人合作
           </button>
           <button
-            onClick={() => { setScenario('phase'); setCurrentDay(0); }}
+            onClick={() => handleScenarioChange('phase')}
             className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
               scenario === 'phase' ? 'bg-sky-500 text-white' : 'text-slate-400 hover:text-slate-200'
             }`}
@@ -117,7 +136,7 @@ export const WorkGridVisualizer: React.FC<WorkGridProps> = ({
             甲先做5天后合作
           </button>
           <button
-            onClick={() => { setScenario('alternate'); setCurrentDay(0); }}
+            onClick={() => handleScenarioChange('alternate')}
             className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
               scenario === 'alternate' ? 'bg-sky-500 text-white' : 'text-slate-400 hover:text-slate-200'
             }`}
@@ -130,13 +149,13 @@ export const WorkGridVisualizer: React.FC<WorkGridProps> = ({
       {/* Progress & Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
         <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80">
-          <span className="text-slate-400 text-[11px] block">当前进行天数</span>
+          <span className="text-slate-400 text-[11px] block">推演进行天数</span>
           <span className="font-mono text-base font-bold text-white">第 {currentDay} 天</span>
           <span className="text-[10px] text-slate-500 block">
             {showSolution
               ? `共需 ${totalDaysNeeded} 天完工`
               : isFinished
-              ? `推演完成！共耗时 ${currentDay} 天`
+              ? '工作格已全部填满！请在上方选项作答'
               : '拖动下方滑块推演进度'}
           </span>
         </div>
@@ -204,41 +223,46 @@ export const WorkGridVisualizer: React.FC<WorkGridProps> = ({
       </div>
 
       {/* Day Slider & Stepper */}
-      <div className="flex items-center gap-3 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
-        <button
-          onClick={() => setCurrentDay((d) => Math.max(0, d - 1))}
-          disabled={currentDay <= 0}
-          className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold disabled:opacity-40"
-        >
-          上一天
-        </button>
+      {(() => {
+        const maxSliderDays = showSolution ? totalDaysNeeded : Math.max(totalDaysNeeded + 6, 25);
+        return (
+          <div className="flex items-center gap-3 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
+            <button
+              onClick={() => handleStepChange(Math.max(0, currentDay - 1))}
+              disabled={currentDay <= 0}
+              className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold disabled:opacity-40 cursor-pointer"
+            >
+              上一天
+            </button>
 
-        <input
-          type="range"
-          min="0"
-          max={totalDaysNeeded}
-          step="1"
-          value={currentDay}
-          onChange={(e) => setCurrentDay(parseInt(e.target.value))}
-          className="flex-1 accent-sky-500 h-2 bg-slate-800 rounded-lg cursor-pointer"
-        />
+            <input
+              type="range"
+              min="0"
+              max={maxSliderDays}
+              step="1"
+              value={currentDay}
+              onChange={(e) => handleStepChange(parseInt(e.target.value))}
+              className="flex-1 accent-sky-500 h-2 bg-slate-800 rounded-lg cursor-pointer"
+            />
 
-        <button
-          onClick={() => setCurrentDay((d) => Math.min(totalDaysNeeded, d + 1))}
-          disabled={currentDay >= totalDaysNeeded}
-          className="px-2.5 py-1 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold disabled:opacity-40"
-        >
-          下一天
-        </button>
+            <button
+              onClick={() => handleStepChange(Math.min(maxSliderDays, currentDay + 1))}
+              disabled={currentDay >= maxSliderDays}
+              className="px-2.5 py-1 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold disabled:opacity-40 cursor-pointer"
+            >
+              下一天
+            </button>
 
-        <button
-          onClick={() => setCurrentDay(0)}
-          className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200"
-          title="重置进度"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-        </button>
-      </div>
+            <button
+              onClick={() => handleStepChange(0)}
+              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 cursor-pointer"
+              title="重置进度"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        );
+      })()}
     </div>
   );
 };
