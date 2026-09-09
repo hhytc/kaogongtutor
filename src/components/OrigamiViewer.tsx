@@ -20,6 +20,7 @@ import {
   Check,
   HelpCircle,
 } from 'lucide-react';
+import { learningStorage, type SavedSpatialIntuitionProgress } from '../utils/learningStorage';
 
 export type NetType = '1-4-1' | '2-3-1' | '2-2-2' | '3-3';
 
@@ -281,50 +282,40 @@ const NET_DEFINITIONS: Record<NetType, NetDefinition> = {
   },
 };
 
-const SPATIAL_INTUITION_STORAGE_KEY = 'kaogong_spatial_intuition_progress';
-
-interface SavedSpatialIntuitionProgress {
-  guidedStep: 1 | 2 | 3 | 4 | 5;
-  guidedStep1Found: boolean;
-  guidedStep2Answer: string | null;
-  guidedStep3Answer: string | null;
-  guidedStep4Answer: string | null;
-  step5SubQuestion: 1 | 2;
-  guidedStep5Q1Answer: string | null;
-  step5Q1FirstTryCorrect: boolean | null;
-  guidedStep5Q2Answer: string | null;
-  step5Q2FirstTryCorrect: boolean | null;
-  guidedCompletedSteps: number[];
-}
-
-const getSavedIntuitionProgress = (): SavedSpatialIntuitionProgress | null => {
-  try {
-    const data = localStorage.getItem(SPATIAL_INTUITION_STORAGE_KEY);
-    if (!data) return null;
-    const parsed = JSON.parse(data);
-    if (parsed && typeof parsed === 'object') {
-      return parsed;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-};
-
 export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
   initialParams = {},
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
 
-  // Load saved intuition progress
-  const savedProgress = useMemo(() => getSavedIntuitionProgress(), []);
+  // Load saved intuition progress from learningStorage
+  const savedProgress = useMemo(() => learningStorage.getSpatialIntuitionProgress(), []);
+
+  // Determine if caller specifically requested free mode or a specific archetype
+  const isFreeRequested = Boolean(
+    initialParams.mode === 'free' ||
+    (initialParams.mode && ['1-4-1', '2-3-1', '2-2-2', '3-3'].includes(initialParams.mode))
+  );
+
+  const initialViewMode: 'guided' | 'free' = isFreeRequested ? 'free' : 'guided';
+  const initialGuidedStep: 1 | 2 | 3 | 4 | 5 = savedProgress?.guidedStep || 1;
+  const initialStep5SubQ: 1 | 2 = savedProgress?.step5SubQuestion || 1;
+
+  const deriveGuidedNetType = (step: number, subQ: number): NetType => {
+    if (step === 5) {
+      return subQ === 2 ? '2-2-2' : '2-3-1';
+    }
+    return '1-4-1';
+  };
 
   // Active net archetype: 1-4-1, 2-3-1, 2-2-2, 3-3
   const [netType, setNetType] = useState<NetType>(() => {
     if (initialParams.mode && ['1-4-1', '2-3-1', '2-2-2', '3-3'].includes(initialParams.mode)) {
       return initialParams.mode as NetType;
     }
-    return '1-4-1';
+    if (initialViewMode === 'guided') {
+      return deriveGuidedNetType(initialGuidedStep, initialStep5SubQ);
+    }
+    return savedProgress?.netType || '1-4-1';
   });
 
   // Folding progress: 0 (completely flat 2D net) -> 1 (fully folded 3D cube)
@@ -348,13 +339,10 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
   const [showCatalog, setShowCatalog] = useState<boolean>(false);
 
   // Mode: 'guided' (空间直觉阶梯引导) vs 'free' (自由探索与11种构型)
-  const [viewMode, setViewMode] = useState<'guided' | 'free'>(() => {
-    if (initialParams.mode === 'free') return 'free';
-    return 'guided';
-  });
+  const [viewMode, setViewMode] = useState<'guided' | 'free'>(initialViewMode);
 
   // Guided Ladder states (5 steps) with persistence
-  const [guidedStep, setGuidedStep] = useState<1 | 2 | 3 | 4 | 5>(() => savedProgress?.guidedStep || 1);
+  const [guidedStep, setGuidedStep] = useState<1 | 2 | 3 | 4 | 5>(initialGuidedStep);
   const [guidedStep1Found, setGuidedStep1Found] = useState<boolean>(() => Boolean(savedProgress?.guidedStep1Found));
   const [guidedStep1Feedback, setGuidedStep1Feedback] = useState<{
     type: 'success' | 'hint' | 'error';
@@ -363,7 +351,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
   const [guidedStep2Answer, setGuidedStep2Answer] = useState<string | null>(() => savedProgress?.guidedStep2Answer ?? null);
   const [guidedStep3Answer, setGuidedStep3Answer] = useState<string | null>(() => savedProgress?.guidedStep3Answer ?? null);
   const [guidedStep4Answer, setGuidedStep4Answer] = useState<string | null>(() => savedProgress?.guidedStep4Answer ?? null);
-  const [step5SubQuestion, setStep5SubQuestion] = useState<1 | 2>(() => savedProgress?.step5SubQuestion || 1);
+  const [step5SubQuestion, setStep5SubQuestion] = useState<1 | 2>(initialStep5SubQ);
   const [guidedStep5Q1Answer, setGuidedStep5Q1Answer] = useState<string | null>(() => savedProgress?.guidedStep5Q1Answer ?? null);
   const [step5Q1FirstTryCorrect, setStep5Q1FirstTryCorrect] = useState<boolean | null>(() => savedProgress?.step5Q1FirstTryCorrect ?? null);
   const [guidedStep5Q2Answer, setGuidedStep5Q2Answer] = useState<string | null>(() => savedProgress?.guidedStep5Q2Answer ?? null);
@@ -374,24 +362,23 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
   const step5Q1FoldedRef = useRef<boolean>(false);
   const step5Q2FoldedRef = useRef<boolean>(false);
 
-  // Sync intuition progress to localStorage
+  // Sync intuition progress to learningStorage
   useEffect(() => {
-    try {
-      const progressData: SavedSpatialIntuitionProgress = {
-        guidedStep,
-        guidedStep1Found,
-        guidedStep2Answer,
-        guidedStep3Answer,
-        guidedStep4Answer,
-        step5SubQuestion,
-        guidedStep5Q1Answer,
-        step5Q1FirstTryCorrect,
-        guidedStep5Q2Answer,
-        step5Q2FirstTryCorrect,
-        guidedCompletedSteps,
-      };
-      localStorage.setItem(SPATIAL_INTUITION_STORAGE_KEY, JSON.stringify(progressData));
-    } catch {}
+    const progressData: SavedSpatialIntuitionProgress = {
+      guidedStep,
+      guidedStep1Found,
+      guidedStep2Answer,
+      guidedStep3Answer,
+      guidedStep4Answer,
+      step5SubQuestion,
+      guidedStep5Q1Answer,
+      step5Q1FirstTryCorrect,
+      guidedStep5Q2Answer,
+      step5Q2FirstTryCorrect,
+      guidedCompletedSteps,
+      netType,
+    };
+    learningStorage.saveSpatialIntuitionProgress(progressData);
   }, [
     guidedStep,
     guidedStep1Found,
@@ -404,6 +391,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     guidedStep5Q2Answer,
     step5Q2FirstTryCorrect,
     guidedCompletedSteps,
+    netType,
   ]);
 
   // Three.js refs
@@ -513,29 +501,14 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     stopAnimation();
     setGuidedStep(step);
     setGuidedStep1Feedback(null);
-    if (step === 1) {
-      setNetType('1-4-1');
-      setAnchorFaceId(0);
-      setFoldProgress(0);
-    } else if (step === 2) {
-      setNetType('1-4-1');
-      setAnchorFaceId(0);
-      setFoldProgress(0);
-    } else if (step === 3) {
-      setNetType('1-4-1');
-      setAnchorFaceId(0);
-      setFoldProgress(0);
-    } else if (step === 4) {
-      setNetType('1-4-1');
-      setAnchorFaceId(0);
-      setFoldProgress(0);
-    } else if (step === 5) {
+    setAnchorFaceId(0);
+    setFoldProgress(0);
+    if (step === 5) {
       step5Q1FoldedRef.current = false;
       step5Q2FoldedRef.current = false;
-      setNetType('2-3-1');
-      setAnchorFaceId(0);
-      setFoldProgress(0);
-      setStep5SubQuestion(1);
+      setNetType(step5SubQuestion === 2 ? '2-2-2' : '2-3-1');
+    } else {
+      setNetType('1-4-1');
     }
   };
 
@@ -1095,6 +1068,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
           <div className="flex items-center bg-slate-900/90 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg">
             <button
               onClick={() => {
+                stopAnimation();
                 setViewMode('guided');
                 handleSelectGuidedStep(guidedStep);
               }}
@@ -1109,6 +1083,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
             </button>
             <button
               onClick={() => {
+                stopAnimation();
                 setViewMode('free');
                 setFoldProgress(0);
               }}
@@ -1870,7 +1845,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                             onClick={() => {
                               setGuidedStep5Q1Answer(opt.key);
                               if (step5Q1FirstTryCorrect === null) {
-                                const isIndep = opt.correct && !step5Q1FoldedBeforeAnswer;
+                                const isIndep = opt.correct && !step5Q1FoldedRef.current;
                                 setStep5Q1FirstTryCorrect(isIndep);
                               }
                             }}
@@ -1988,7 +1963,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                             onClick={() => {
                               setGuidedStep5Q2Answer(opt.key);
                               if (step5Q2FirstTryCorrect === null) {
-                                const isIndep = opt.correct && !step5Q2FoldedBeforeAnswer;
+                                const isIndep = opt.correct && !step5Q2FoldedRef.current;
                                 setStep5Q2FirstTryCorrect(isIndep);
                               }
                               if (opt.correct) {
@@ -2022,23 +1997,43 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                           <>
                             <div className="flex items-center gap-1.5 font-bold text-emerald-400">
                               <CheckCircle2 className="w-4 h-4" />
-                              <span>🏆 完美通关！荣获【空间直觉大师】勋章！</span>
+                              <span>🎉 完成两道相对面变式挑战！</span>
                             </div>
                             <p className="text-emerald-200/90 text-[11px] leading-relaxed">
-                              <strong>空间解析</strong>：在 2-2-2 阶梯图中，从 A 面(0) 出发向右经由 F 面(5)、向上经由 B 面(1) 拐弯到达 C 面(2)（即 A ➔ F ➔ B ➔ C 跨越 4 面的经典 Z 字形阶梯两端），折起后二者严格平行相对！
+                              <strong>空间解析</strong>：在 2-2-2 阶梯图中，从 A 面(0) 出发向右经由 F 面(5)、向上经由 B 面(1) 拐弯到达 C 面(2)（形成跨越 4 面的经典 Z 字形阶梯两端），折起后二者严格平行相对！
                             </p>
-                            <div className="bg-slate-900/80 rounded-xl p-2.5 border border-emerald-500/30 text-[11px] text-emerald-300 space-y-1">
-                              <div className="font-semibold flex items-center gap-1">
-                                <span>🎯 空间直觉梯队评估：</span>
+                            <div className="bg-slate-900/80 rounded-xl p-2.5 border border-emerald-500/30 text-[11px] text-emerald-300 space-y-1.5">
+                              <div className="font-semibold flex items-center justify-between">
+                                <span>🎯 相对面变式检验：</span>
                                 {step5Q1FirstTryCorrect && step5Q2FirstTryCorrect ? (
-                                  <span className="text-amber-300 font-bold">🌟 全独立满分通关</span>
+                                  <span className="text-amber-300 font-bold">🌟 变式全独立攻克</span>
                                 ) : (
-                                  <span className="text-emerald-200">✅ 引导辅助通关</span>
+                                  <span className="text-emerald-200">💡 引导辅助完成</span>
                                 )}
                               </div>
-                              <p className="text-slate-300 text-[10px] leading-normal">
-                                已全面掌握：①基准面空间参照锚定、②相对面隔一格与Z字两端排除、③公共边空间旋转贴合、④公共顶点三面汇聚时针法。
-                              </p>
+                              <div className="text-slate-300 text-[10px] space-y-0.5 border-t border-slate-800/80 pt-1.5">
+                                <div className="font-medium text-slate-400 mb-1">已检验掌握能力：</div>
+                                <div className="flex items-center gap-1.5">
+                                  <span className={guidedCompletedSteps.includes(1) ? 'text-emerald-400' : 'text-slate-500'}>
+                                    {guidedCompletedSteps.includes(1) ? '✓' : '○'} ① 基准面空间参照锚定
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-emerald-400">
+                                    ✓ ② 相对面隔一格与Z字两端（含 2-3-1 与 2-2-2 变式）
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                  <span className={guidedCompletedSteps.includes(3) ? 'text-emerald-400' : 'text-slate-500'}>
+                                    {guidedCompletedSteps.includes(3) ? '✓' : '○'} ③ 公共边空间旋转贴合
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                  <span className={guidedCompletedSteps.includes(4) ? 'text-emerald-400' : 'text-slate-500'}>
+                                    {guidedCompletedSteps.includes(4) ? '✓' : '○'} ④ 公共顶点三面汇聚时针法则
+                                  </span>
+                                </div>
+                              </div>
                             </div>
                             <div className="flex gap-2 pt-1">
                               <button

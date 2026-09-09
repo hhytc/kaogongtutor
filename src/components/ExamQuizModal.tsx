@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import confetti from 'canvas-confetti';
 import {
   CheckCircle2,
@@ -154,8 +154,11 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
   }, [activeQuestionId]);
 
   // Compute stats
+  const currentQuestionVersions = useMemo(() => {
+    return Object.fromEntries(EXAM_QUESTIONS.map((q) => [q.id, q.version || 1]));
+  }, []);
   const stats: LearningStats = learningStorage.getStats();
-  const reviewIds = learningStorage.getQuestionsNeedingReview();
+  const reviewIds = learningStorage.getQuestionsNeedingReview(currentQuestionVersions);
   const reviewIdSet = new Set(reviewIds);
 
   // Filter questions based on active track
@@ -190,19 +193,11 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
   const isMastered = Boolean(isVersionMatch && currentRecord?.isMastered);
   const isExplVisible = currentQ ? (showExplanation[currentQ.id] ?? isAnswered) : false;
 
-  // Retrieve hints level isolated by question version
+  // Retrieve hints level strictly isolated by question version
   const getHintLevelForQuestion = (q: ExamQuestion | null): number => {
     if (!q) return 0;
     const versionedKey = `${q.id}_v${q.version || 1}`;
-    if (unlockedHints[versionedKey] !== undefined) {
-      return unlockedHints[versionedKey];
-    }
-    // If record exists and version does NOT match, do not inherit legacy unversioned hints
-    const rec = records[q.id];
-    if (rec && rec.questionVersion && rec.questionVersion !== (q.version || 1)) {
-      return 0;
-    }
-    return unlockedHints[q.id] ?? 0;
+    return unlockedHints[versionedKey] ?? 0;
   };
 
   const unlockedHintLevel = getHintLevelForQuestion(currentQ);
@@ -255,16 +250,14 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
     }
   };
 
-  // Unlock progressive hint (persisted in learningStorage)
+  // Unlock progressive hint (persisted in learningStorage with version isolation)
   const handleUnlockHint = (level: number) => {
     if (!currentQ) return;
     const versionedKey = `${currentQ.id}_v${currentQ.version || 1}`;
     learningStorage.saveUnlockedHint(versionedKey, level);
-    learningStorage.saveUnlockedHint(currentQ.id, level);
     setUnlockedHints((prev) => ({
       ...prev,
       [versionedKey]: Math.max(prev[versionedKey] || 0, level),
-      [currentQ.id]: Math.max(prev[currentQ.id] || 0, level),
     }));
   };
 
@@ -1029,8 +1022,8 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
               </div>
             )}
 
-            {/* Review Queue Mastery Management Card (Independent of isCorrect: accessible whenever question needs review) */}
-            {(activeTrack === 'review' || reviewIdSet.has(currentQ.id) || isMastered) && (
+            {/* Review Queue Mastery Management Card (Only accessible if answered for current version or already mastered) */}
+            {(isAnswered || isMastered) && (activeTrack === 'review' || reviewIdSet.has(currentQ.id) || isMastered) && (
               <div className="bg-slate-900/90 border border-emerald-800/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in duration-300">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">

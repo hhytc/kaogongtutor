@@ -8,8 +8,10 @@ import { RevolutionViewer } from './components/RevolutionViewer';
 import { CrossSectionViewer } from './components/CrossSectionViewer';
 import { ExamQuizModal } from './components/ExamQuizModal';
 import { ExamCheatsheet } from './components/ExamCheatsheet';
-import type { ExamQuestion } from './data/examQuestions';
+import { EXAM_QUESTIONS, type ExamQuestion } from './data/examQuestions';
 import { learningStorage } from './utils/learningStorage';
+
+const QUESTION_VERSIONS = Object.fromEntries(EXAM_QUESTIONS.map((q) => [q.id, q.version || 1]));
 
 export function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
@@ -41,7 +43,7 @@ export function App() {
 
   useEffect(() => {
     const updateReviewBadge = () => {
-      const needed = learningStorage.getQuestionsNeedingReview();
+      const needed = learningStorage.getQuestionsNeedingReview(QUESTION_VERSIONS);
       setReviewCount(needed.length);
     };
     updateReviewBadge();
