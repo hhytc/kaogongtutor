@@ -511,7 +511,7 @@ export const learningStorage = {
         // If the last completed attempt used hints (or during reattempt before a new answer is submitted),
         // it must remain in the review queue.
         const lastVersionAttempt = Array.isArray(r.history)
-          ? [...r.history].reverse().find((h) => (h.version || 1) === (r.questionVersion || 1))
+          ? [...r.history].reverse().find((h) => h && typeof h === 'object' && h.version === (r.questionVersion || 1))
           : null;
         const hintsUsed = typeof r.hintsUsed === 'number' && r.hintsUsed > 0
           ? r.hintsUsed
