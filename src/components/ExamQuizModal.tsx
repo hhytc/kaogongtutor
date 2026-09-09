@@ -183,9 +183,10 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
 
   // Current record
   const currentRecord = currentQ ? records[currentQ.id] : null;
-  const isAnswered = Boolean(currentRecord && currentRecord.selectedAnswer);
-  const selectedAnswer = currentRecord?.selectedAnswer || '';
-  const isCorrect = currentRecord?.isCorrect ?? false;
+  const isVersionMatch = Boolean(currentRecord && (!currentQ?.version || (currentRecord.questionVersion || 1) === (currentQ.version || 1)));
+  const isAnswered = Boolean(isVersionMatch && currentRecord?.selectedAnswer);
+  const selectedAnswer = isVersionMatch ? (currentRecord?.selectedAnswer || '') : '';
+  const isCorrect = isVersionMatch ? (currentRecord?.isCorrect ?? false) : false;
   const isExplVisible = currentQ ? (showExplanation[currentQ.id] ?? isAnswered) : false;
 
   // Hints used: if already answered, take recorded hints; otherwise take persistent unlocked level (defaults to 0)
@@ -220,7 +221,8 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
       key,
       answerCorrect,
       hintsUsed,
-      undefined
+      undefined,
+      currentQ.version || 1
     );
 
     setRecords({ ...learningStorage.getRecords() });
@@ -1001,7 +1003,7 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
             )}
 
             {/* Review Queue Mastery Management Card (Independent of isCorrect: accessible whenever question needs review) */}
-            {isAnswered && (activeTrack === 'review' || reviewIdSet.has(currentQ.id)) && (
+            {(activeTrack === 'review' || reviewIdSet.has(currentQ.id) || currentRecord?.isMastered) && (
               <div className="bg-slate-900/90 border border-emerald-800/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in duration-300">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">

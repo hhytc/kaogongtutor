@@ -22,6 +22,7 @@ export interface AttemptHistoryItem {
 
 export interface QuestionRecord {
   questionId: string;
+  questionVersion?: number; // 题目版本号，区分换题/修正题目的作答历史
   selectedAnswer: string;
   isCorrect: boolean;
   hintsUsed: number; // 当前作答使用的提示阶数 (0..3)
@@ -98,6 +99,7 @@ function migrateRawRecords(raw: Record<string, any>): { records: Record<string, 
 
     migrated[qid] = {
       questionId: qid,
+      questionVersion: typeof r.questionVersion === 'number' ? r.questionVersion : 1,
       selectedAnswer: typeof r.selectedAnswer === 'string' ? r.selectedAnswer : '',
       isCorrect: Boolean(r.isCorrect),
       hintsUsed: typeof r.hintsUsed === 'number' ? r.hintsUsed : 0,
@@ -148,13 +150,15 @@ export const learningStorage = {
     selectedAnswer: string,
     isCorrect: boolean,
     hintsUsed: number,
-    errorReason?: ErrorReason
+    errorReason?: ErrorReason,
+    questionVersion: number = 1
   ): QuestionRecord {
     const records = this.getRecords();
     const existing = records[questionId];
+    const isVersionMatch = !existing || !existing.questionVersion || existing.questionVersion === questionVersion;
 
     // Strictly preserve historical first attempt, never synthesize or overwrite from new attempts
-    const isFirstAttempt = !existing || existing.attempts === 0;
+    const isFirstAttempt = !existing || existing.attempts === 0 || !isVersionMatch;
     let firstAttemptCorrect: boolean | null;
     let firstAttemptHints: number | null;
 
@@ -175,16 +179,17 @@ export const learningStorage = {
 
     const updated: QuestionRecord = {
       questionId,
+      questionVersion,
       selectedAnswer,
       isCorrect,
       hintsUsed,
       firstAttemptCorrect,
       firstAttemptHints,
-      isMastered: isCorrect && existing?.isMastered ? true : false,
-      errorReason: errorReason !== undefined ? errorReason : existing?.errorReason,
+      isMastered: isCorrect && isVersionMatch && existing?.isMastered ? true : false,
+      errorReason: errorReason !== undefined ? errorReason : (isVersionMatch ? existing?.errorReason : undefined),
       timestamp: Date.now(),
-      attempts: (existing?.attempts || 0) + 1,
-      history: [...(existing?.history || []), historyItem],
+      attempts: isVersionMatch ? (existing?.attempts || 0) + 1 : 1,
+      history: isVersionMatch ? [...(existing?.history || []), historyItem] : [historyItem],
     };
 
     records[questionId] = updated;
@@ -466,6 +471,7 @@ export const learningStorage = {
 
         validatedRecords[qid] = {
           questionId: qid,
+          questionVersion: typeof r.questionVersion === 'number' && Number.isInteger(r.questionVersion) && r.questionVersion >= 1 ? r.questionVersion : 1,
           selectedAnswer: r.selectedAnswer,
           isCorrect: r.isCorrect,
           hintsUsed: r.hintsUsed,
