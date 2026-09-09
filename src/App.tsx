@@ -12,7 +12,19 @@ import type { ExamQuestion } from './data/examQuestions';
 import { learningStorage } from './utils/learningStorage';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('origami');
+  const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
+    try {
+      const saved = localStorage.getItem('kaogong_active_tab');
+      if (saved) return saved as ActiveTab;
+    } catch {}
+    return 'quiz';
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('kaogong_active_tab', activeTab);
+    } catch {}
+  }, [activeTab]);
 
   // Question context for returning from 3D viewers back to quiz
   const [returnQuestion, setReturnQuestion] = useState<{

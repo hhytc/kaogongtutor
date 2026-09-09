@@ -6,6 +6,7 @@ interface WorkGridProps {
   workerAEff?: number;
   workerBEff?: number;
   initialScenario?: 'cooperate' | 'phase' | 'alternate';
+  showSolution?: boolean;
 }
 
 export const WorkGridVisualizer: React.FC<WorkGridProps> = ({
@@ -13,6 +14,7 @@ export const WorkGridVisualizer: React.FC<WorkGridProps> = ({
   workerAEff = 3,
   workerBEff = 2,
   initialScenario = 'cooperate',
+  showSolution = false,
 }) => {
   const [scenario, setScenario] = useState<'cooperate' | 'phase' | 'alternate'>(initialScenario);
   const [currentDay, setCurrentDay] = useState<number>(0);
@@ -130,7 +132,13 @@ export const WorkGridVisualizer: React.FC<WorkGridProps> = ({
         <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80">
           <span className="text-slate-400 text-[11px] block">当前进行天数</span>
           <span className="font-mono text-base font-bold text-white">第 {currentDay} 天</span>
-          <span className="text-[10px] text-slate-500 block">共需 {totalDaysNeeded} 天完工</span>
+          <span className="text-[10px] text-slate-500 block">
+            {showSolution
+              ? `共需 ${totalDaysNeeded} 天完工`
+              : isFinished
+              ? `推演完成！共耗时 ${currentDay} 天`
+              : '拖动下方滑块推演进度'}
+          </span>
         </div>
 
         <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80">

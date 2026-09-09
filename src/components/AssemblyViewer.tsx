@@ -73,16 +73,16 @@ const CANDIDATE_OPTIONS: CandidateOption[] = [
   },
   {
     key: 'D',
-    name: '选项 D (7个小立方体 · 扁平长条延伸)',
+    name: '选项 D (7个小立方体 · 扁平错位干扰)',
     count: 7,
     voxels: [
       [2, 0, 0], [2, 0, 1], [2, 0, 2],
-      [1, 0, 0], [1, 0, 1],
-      [2, 1, 0], [2, 1, 1],
+      [2, 1, 0], [2, 1, 1], [2, 1, 2],
+      [2, 2, 0],
     ],
     isCorrect: false,
     correctRotations: [],
-    explanation: '虽然有 7 块，但向外侧多延伸了 1 块且缺少顶层凸起，无论如何空间旋转都无法匹配三层缺口！',
+    explanation: '虽然恰好有 7 块小立方体，但其为 3×2 平板带顶端单凸起结构，在空间所有 24 种朝向下均无法贴合，最多只能吻合 5 块，必然与基准积木发生物理碰撞！',
   },
 ];
 
@@ -151,8 +151,7 @@ export const AssemblyViewer: React.FC<AssemblyViewerProps> = () => {
     });
 
     const isPerfect =
-      currentOption.isCorrect &&
-      matchedInCavity === 7 &&
+      matchedInCavity === CAVITY_VOXELS.length &&
       collidedWithBase === 0 &&
       outOfBounds === 0;
 

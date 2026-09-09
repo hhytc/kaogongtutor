@@ -267,7 +267,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
       formula: '任两边平方之和 a² + b² = x² + 2y² + z² > c²。由余弦定理可知任意角的余弦值必定大于 0，所有内角必为锐角！'
     },
     commonTraps: '很多考生以为三角形都可以切出来，却不知道正方体切出的三角形“只能是锐角三角形”，绝不可能切出钝角或直角三角形！',
-    fastTrick: '【正方体截面神定律】：\n① 边数：3~6 边形（最多 6 边形，不可能 7 边形，因为只有 6 个面）；\n② 三角形只能是锐角三角形（三边均满足 a²+b² > c²），绝无直角或钝角；\n③ 四边形可以是矩形、菱形、正方形、等腰梯形，但绝不可能是普通梯形或平行四边形（非矩形/菱形）。',
+    fastTrick: '【正方体截面神定律】：\n① 边数：只能截出 3~6 边形（最多 6 边形，绝不可能出现 7 边形及以上，因为正方体只有 6 个面）；\n② 三角形：只能是锐角三角形（三边均满足 a²+b² > c²，绝无直角或钝角三角形）；\n③ 梯形：可以截出等腰梯形或非等腰普通梯形，但绝对不可能截出直角梯形；\n④ 考场四大绝对排除项：直角三角形、钝角三角形、直角梯形、七边形及以上。',
     detailedAnalysis: '证明为什么不能是直角或钝角三角形：\n设截面的三个顶点分别在经过同一顶点的三条棱上，设距离分别为 x, y, z。\n则截面三角形的三条边长平方分别为：\na² = x² + y², b² = y² + z², c² = z² + x²。\n显然任意两边平方之和：\na² + b² = x² + 2y² + z² > z² + x² = c²。\n由余弦定理 cos C = (a² + b² - c²) / (2ab) > 0，故三个内角均为锐角！不可能为直角或钝角三角形。',
     mathFormula: 'a^2 + b^2 = x^2 + 2y^2 + z^2 > x^2 + z^2 = c^2 \\implies \\cos C > 0',
     simulatorConfig: {
@@ -358,10 +358,10 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     diagramType: 'assembly-q8',
     questionText: '下列立体图形均由大小相同的小正方体组成。已知图①有 11 个小正方体，图②有 9 个小正方体。问下列哪个选项的积木与图①、图②拼合后，可以组合成一个 3×3×3 的完整大正方体？',
     options: [
-      { key: 'A', text: '含有 8 个小立方体的一字型积木' },
-      { key: 'B', text: '含有 7 个小立方体、带凸起直角的异形积木' },
-      { key: 'C', text: '含有 6 个小立方体的三层凹字型积木' },
-      { key: 'D', text: '含有 7 个小立方体但具有单点空悬结构的积木' }
+      { key: 'A', text: '含有 8 个小立方体的 2×2×2 角落实心块' },
+      { key: 'B', text: '含有 7 个小立方体、L型拐角带单凸起的咬合积木' },
+      { key: 'C', text: '含有 6 个小立方体的双层两拐角积木' },
+      { key: 'D', text: '含有 7 个小立方体的 3×2 扁平平板带单顶角积木' }
     ],
     correctAnswer: 'B',
     difficulty: '中',
@@ -428,51 +428,53 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     subType: '合作完工',
     questionText: '【独立变式】一件文稿校对任务，由甲单独完成需要 12 小时，由乙单独完成需要 18 小时。若甲乙两人共同校对，需要多少小时完成？',
     options: [
-      { key: 'A', text: '6.4 小时' },
-      { key: 'B', text: '7.2 小时' },
+      { key: 'A', text: '7.2 小时' },
+      { key: 'B', text: '7.5 小时' },
       { key: 'C', text: '8 小时' },
       { key: 'D', text: '15 小时' }
     ],
-    correctAnswer: 'B',
+    correctAnswer: 'A',
     difficulty: '易',
     stepHints: {
-      relation: '同样利用特值法，设文稿总字数为 12 和 18 的最小公倍数。',
-      representation: '设工作总量 W = 36。甲效率 = 36÷12 = 3，乙效率 = 36÷18 = 2。',
-      formula: '合作时间 t = 36 ÷ (3 + 2) = 36 ÷ 5 = 7.2 小时。'
+      relation: '工作总量赋为 12 与 18 的公倍数 36。',
+      representation: '甲效率 = 36 ÷ 12 = 3，乙效率 = 36 ÷ 18 = 2。合作效率 = 3 + 2 = 5。',
+      formula: '完工时间 t = 36 ÷ 5 = 7.2 小时。'
     },
-    commonTraps: '千万不要选 (12+18)/2 = 15。',
-    fastTrick: 't = (12 × 18) / (12 + 18) = 216 / 30 = 7.2 小时。',
-    detailedAnalysis: '设总工作量 W = 36。甲的效率为 3，乙的效率为 2。合作效率为 5。所需时间 t = 36 / 5 = 7.2 小时。',
-    mathFormula: 't = \\frac{12 \\times 18}{12 + 18} = \\frac{216}{30} = 7.2\\text{ 小时}'
+    commonTraps: '两数积除以两数和：(12 × 18) / (12 + 18) = 216 / 30 = 7.2 小时。',
+    fastTrick: 't = (12 × 18) / 30 = 7.2 小时。',
+    detailedAnalysis: '总量设为 36。甲效率 3，乙效率 2。合作效率 5。时间 = 36 / 5 = 7.2 小时。',
+    mathFormula: 't = \\frac{12 \\times 18}{12 + 18} = 7.2\\text{ 小时}'
   },
   {
     id: 'eng_q1_var2',
     source: '同类变式题 · 独立训练',
-    title: '变式 2：已知合作与单人，求另一人效率',
+    title: '变式 2：工作效率变化的分段工程问题',
     track: 'engineering',
     unitId: 'work_efficiency',
     unitName: '效率理解与特值法',
     questionRole: 'variant',
     category: 'engineering',
-    subType: '反求单人效率',
-    questionText: '【独立变式】某项水利工程，甲乙两队合作 6 天可以完成。若甲队单独施工需要 10 天完成，则乙队单独施工需要多少天完成？',
+    subType: '分段合作',
+    diagramType: 'work-grid',
+    diagramProps: { totalWork: 60, workerAEff: 3, workerBEff: 2, initialScenario: 'phase' },
+    questionText: '【独立变式】甲工程队单独做需 20 天，乙工程队单独做需 30 天。现甲队先单独施工 5 天，随后乙队加入与甲队合作。问从开工到完工总共需要多少天？',
     options: [
-      { key: 'A', text: '12 天' },
+      { key: 'A', text: '9 天' },
       { key: 'B', text: '14 天' },
       { key: 'C', text: '15 天' },
-      { key: 'D', text: '16 天' }
+      { key: 'D', text: '17 天' }
     ],
-    correctAnswer: 'C',
+    correctAnswer: 'B',
     difficulty: '中',
     stepHints: {
-      relation: '已知总效率和甲效率，乙效率 = 合作效率 - 甲效率。',
-      representation: '设工作总量为 6 和 10 的最小公倍数 30。合作效率 = 30÷6 = 5，甲效率 = 30÷10 = 3。',
-      formula: '乙效率 = 5 - 3 = 2。乙单独需要时间 = 30 ÷ 2 = 15 天。'
+      relation: '总量仍取 60，甲效率 3，乙效率 2。分段计算工作量。',
+      representation: '甲先做 5 天：完成 3 × 5 = 15 格。剩余工作量 = 60 - 15 = 45 格。',
+      formula: '合作天数 = 45 ÷ (3 + 2) = 9 天。总天数 = 5 + 9 = 14 天。'
     },
-    commonTraps: '不可直接用 10 - 6 = 4。天数不能直接相减！',
-    fastTrick: '1/乙 = 1/6 - 1/10 = 4/60 = 1/15 ⟹ 乙天数 = 15 天。',
-    detailedAnalysis: '设总工作量为 30。合作效率 = 30/6 = 5。甲效率 = 30/10 = 3。故乙效率 = 5 - 3 = 2。乙单独完成所需天数 = 30/2 = 15 天。',
-    mathFormula: 'e_B = e_{\\text{合}} - e_A = \\frac{30}{6} - \\frac{30}{10} = 5 - 3 = 2 \\implies t_B = \\frac{30}{2} = 15\\text{ 天}'
+    commonTraps: '极易漏算前 5 天单独施工的时间，错选合作所需天数 9 天（选项 A）！题目问的是“从开工到完工总共需要多少天”！',
+    fastTrick: '剩余 45 格两队合作需 9 天，总天数 = 5 + 9 = 14 天。',
+    detailedAnalysis: '1. 总量设为 60，甲效率 3，乙效率 2。\n2. 甲先做 5 天：3 × 5 = 15。\n3. 剩余工作量：60 - 15 = 45。\n4. 合作天数：45 ÷ (3 + 2) = 9 天。\n5. 总天数：5 + 9 = 14 天。',
+    mathFormula: 'W_\\text{余} = 60 - 3 \\times 5 = 45 \\implies t_\\text{合} = \\frac{45}{5} = 9 \\implies t_\\text{总} = 5 + 9 = 14'
   },
 
   // =========================================================================
@@ -490,7 +492,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     category: 'tools',
     subType: '比例份数',
     diagramType: 'ratio-bar',
-    diagramProps: { initialTotal: 80, partA: 3, partB: 5, labelA: '甲部门', labelB: '乙部门' },
+    diagramProps: { initialTotal: 96, difference: 24, partA: 3, partB: 5, labelA: '甲部门', labelB: '乙部门' },
     questionText: '某单位计划组织志愿者活动，已知甲、乙两个部门的报名人数之比为 3 : 5，且乙部门比甲部门多 24 人。问这两个部门共有多少人报名？',
     options: [
       { key: 'A', text: '72 人' },
@@ -506,7 +508,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
       formula: '总份数 = 3 + 5 = 8 份。总人数 = 8 份 × 12 人/份 = 96 人。'
     },
     commonTraps: '勿把 24 人除以 8 份；24 人是两者的差，必须对应份数差 (5 - 3 = 2 份)！',
-    fastTrick: '【整除特性秒杀】：总人数占 3+5=8 份，必为 8 的倍数。选项中 96 ÷ 8 = 12 整除，极速锁定 C！',
+    fastTrick: '【倍数+差值秒杀】：\n乙比甲多 5 - 3 = 2 份，对应 24 人 ⟹ 每份为 24 ÷ 2 = 12 人。\n总人数为 3 + 5 = 8 份 ⟹ 总数必为 8 × 12 = 96 人（或差值占总人数的 2/8 = 1/4 ⟹ 总数 = 24 × 4 = 96 人，直接秒杀锁定 C）！',
     detailedAnalysis: '1. 份数分析：\n   设每份为 x 人，则甲部门为 3x 人，乙部门为 5x 人。\n2. 根据差值列式：\n   5x - 3x = 24 ⟹ 2x = 24 ⟹ x = 12（即每 1 份代表 12 人）。\n3. 计算总人数：\n   总人数 = 3x + 5x = 8x = 8 × 12 = 96 人。',
     mathFormula: 'x = \\frac{24}{5 - 3} = 12 \\implies N = (3 + 5) \\times 12 = 96\\text{ 人}'
   },

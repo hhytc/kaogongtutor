@@ -3,26 +3,35 @@ import { Layers } from 'lucide-react';
 
 interface RatioBarProps {
   initialTotal?: number;
+  difference?: number;
   partA?: number;
   partB?: number;
   labelA?: string;
   labelB?: string;
   unitLabel?: string;
+  showSolution?: boolean;
 }
 
 export const RatioBarVisualizer: React.FC<RatioBarProps> = ({
-  initialTotal = 80,
+  initialTotal,
+  difference = 24,
   partA = 3,
   partB = 5,
   labelA = '甲部门人数',
   labelB = '乙部门人数',
   unitLabel = '人',
+  showSolution = false,
 }) => {
-  const [total, setTotal] = useState<number>(initialTotal);
+  const diffParts = Math.abs(partB - partA) || 1;
+  const unitFromDiff = difference ? difference / diffParts : 12;
+  const defaultTotal = initialTotal ?? (partA + partB) * unitFromDiff;
+
+  const [total, setTotal] = useState<number>(defaultTotal);
   const totalParts = partA + partB;
   const unitValue = total / totalParts;
   const valueA = partA * unitValue;
   const valueB = partB * unitValue;
+  const currentDiff = (partB - partA) * unitValue;
 
   return (
     <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 lg:p-5 space-y-4">
@@ -32,31 +41,41 @@ export const RatioBarVisualizer: React.FC<RatioBarProps> = ({
           <span>数量关系“份数法”直观拆解 ({partA} : {partB})</span>
         </h3>
         <p className="text-xs text-slate-400 mt-0.5">
-          将总数划分为等额的“份数”，求出 <strong>每份代表的实际量</strong>，化繁为简。
+          将总数划分为等额的“份数”，根据已知差值求出 <strong>每 1 份代表的实际量</strong>，化繁为简。
         </p>
       </div>
 
       {/* Stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
         <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80">
-          <span className="text-slate-400 text-[11px] block">总量</span>
-          <span className="font-mono text-base font-bold text-white">{total} {unitLabel}</span>
-        </div>
-
-        <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80">
-          <span className="text-slate-400 text-[11px] block">总份数 (A+B)</span>
+          <span className="text-slate-400 text-[11px] block">总份数 (A + B)</span>
           <span className="font-mono text-base font-bold text-sky-400">{partA} + {partB} = {totalParts} 份</span>
+          <span className="text-[10px] text-slate-500 block">共计 {totalParts} 等份</span>
         </div>
 
         <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80">
-          <span className="text-slate-400 text-[11px] block">核心：每 1 份代表</span>
-          <span className="font-mono text-base font-bold text-emerald-400">{unitValue.toFixed(1)} {unitLabel}</span>
-        </div>
-
-        <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80">
-          <span className="text-slate-400 text-[11px] block">两量差值 (B - A)</span>
+          <span className="text-slate-400 text-[11px] block">份数差值 (B - A)</span>
           <span className="font-mono text-base font-bold text-amber-400">
-            {(partB - partA) * unitValue} {unitLabel} ({partB - partA} 份)
+            {partB - partA} 份 = {currentDiff.toFixed(0)} {unitLabel}
+          </span>
+          <span className="text-[10px] text-amber-400/80 block">已知差值条件</span>
+        </div>
+
+        <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80">
+          <span className="text-slate-400 text-[11px] block">核心基准：每 1 份代表</span>
+          <span className="font-mono text-base font-bold text-emerald-400">{unitValue.toFixed(1)} {unitLabel}</span>
+          <span className="text-[10px] text-emerald-400/80 block">
+            {currentDiff.toFixed(0)} ÷ {partB - partA} = {unitValue.toFixed(1)}
+          </span>
+        </div>
+
+        <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80">
+          <span className="text-slate-400 text-[11px] block">所求总量</span>
+          <span className="font-mono text-base font-bold text-white">
+            {showSolution ? `${total.toFixed(0)} ${unitLabel}` : `${totalParts} 份 × 每份`}
+          </span>
+          <span className="text-[10px] text-slate-400 block">
+            {showSolution ? '8 份 × 12 = 96' : '待求总量'}
           </span>
         </div>
       </div>
@@ -66,7 +85,7 @@ export const RatioBarVisualizer: React.FC<RatioBarProps> = ({
         <div className="flex items-center justify-between text-[11px] text-slate-400">
           <span>份数条形图划分：</span>
           <span className="font-mono text-slate-300">
-            {labelA}: <strong className="text-sky-400">{valueA.toFixed(0)}{unitLabel}</strong> vs {labelB}: <strong className="text-emerald-400">{valueB.toFixed(0)}{unitLabel}</strong>
+            {labelA}: <strong className="text-sky-400">{valueA.toFixed(0)}{unitLabel}</strong> ({partA}份) vs {labelB}: <strong className="text-emerald-400">{valueB.toFixed(0)}{unitLabel}</strong> ({partB}份)
           </span>
         </div>
 
@@ -98,9 +117,9 @@ export const RatioBarVisualizer: React.FC<RatioBarProps> = ({
         </div>
       </div>
 
-      {/* Interactive slider for test total */}
+      {/* Interactive slider */}
       <div className="flex items-center gap-3 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-xs">
-        <span className="text-slate-400 whitespace-nowrap">调整实际总量测试：</span>
+        <span className="text-slate-400 whitespace-nowrap">调整每份实际量推演：</span>
         <input
           type="range"
           min="16"
@@ -110,7 +129,7 @@ export const RatioBarVisualizer: React.FC<RatioBarProps> = ({
           onChange={(e) => setTotal(parseInt(e.target.value))}
           className="flex-1 accent-emerald-500 h-2 bg-slate-800 rounded-lg cursor-pointer"
         />
-        <span className="font-mono font-bold text-emerald-400 w-12 text-right">{total}</span>
+        <span className="font-mono font-bold text-emerald-400 w-16 text-right">总计 {total}</span>
       </div>
     </div>
   );
