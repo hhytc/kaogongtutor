@@ -1277,6 +1277,16 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
               </div>
             )}
 
+            {stats.firstCorrectUnknownHintsCount > 0 && (
+              <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-sky-500/10 border border-sky-500/25 text-xs text-sky-300">
+                <span className="flex items-center gap-1.5">
+                  <span>ℹ️</span>
+                  <span>首次答对（提示使用情况未知，不计入独立或提示答对；若答题包含提示则加入待练）</span>
+                </span>
+                <span className="font-mono font-bold text-sky-200">{stats.firstCorrectUnknownHintsCount} 题</span>
+              </div>
+            )}
+
             {/* Error Reasons Breakdown */}
             <div className="space-y-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
               <div className="flex justify-between items-center">

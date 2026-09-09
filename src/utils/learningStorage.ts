@@ -42,6 +42,7 @@ export interface LearningStats {
   hintAssistedCorrect: number; // 首次借助提示做对
   wrongCount: number; // 首次未做对题数
   unknownFirstAttemptCount: number; // 首次情况未知题数（旧数据无法推断首次是否做对）
+  firstCorrectUnknownHintsCount: number; // 首次答对但提示使用情况未知题数
   masteredCount: number; // 经过复练已掌握题数
   errorReasonDistribution: Record<ErrorReason, number>;
   uncategorizedCount: number; // 尚未打归因标签的错题数
@@ -442,6 +443,7 @@ export const learningStorage = {
       hintAssistedCorrect: 0,
       wrongCount: 0,
       unknownFirstAttemptCount: 0,
+      firstCorrectUnknownHintsCount: 0,
       masteredCount: 0,
       uncategorizedCount: 0,
       errorReasonDistribution: {
@@ -464,8 +466,11 @@ export const learningStorage = {
         if (r.firstAttemptCorrect === true) {
           if (r.firstAttemptHints === 0) {
             stats.independentCorrect++;
-          } else {
+          } else if (typeof r.firstAttemptHints === 'number' && r.firstAttemptHints >= 1 && r.firstAttemptHints <= 3) {
             stats.hintAssistedCorrect++;
+          } else {
+            // firstAttemptHints is null: first attempt was correct, but hint usage is unknown
+            stats.firstCorrectUnknownHintsCount++;
           }
         } else if (r.firstAttemptCorrect === false) {
           stats.wrongCount++;
@@ -500,6 +505,7 @@ export const learningStorage = {
         if (!r.isCorrect) return true;
         if (r.firstAttemptCorrect === false) return true;
         if (typeof r.firstAttemptHints === 'number' && r.firstAttemptHints > 0) return true;
+        if (r.firstAttemptHints === null && r.hintsUsed > 0) return true;
         if (r.firstAttemptCorrect === null && r.hintsUsed > 0) return true;
         return false;
       })
