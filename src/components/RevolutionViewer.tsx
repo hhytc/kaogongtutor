@@ -412,7 +412,7 @@ export const RevolutionViewer: React.FC<RevolutionViewerProps> = ({
   return (
     <div className="flex flex-col lg:flex-row w-full h-[calc(100dvh-5.5rem)] lg:h-[calc(100vh-4rem)] bg-slate-950 overflow-hidden">
       {/* 3D Canvas */}
-      <div className="relative w-full h-[40vh] min-h-[250px] lg:h-full lg:flex-1 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 flex-shrink-0">
+      <div className="relative w-full h-[48vh] min-h-[320px] sm:min-h-[360px] lg:h-full lg:flex-1 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 flex-shrink-0">
         <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing touch-none select-none" />
 
         {/* Floating Top Mode Selector */}
@@ -489,7 +489,7 @@ export const RevolutionViewer: React.FC<RevolutionViewerProps> = ({
         </div>
 
         {/* View instruction */}
-        <div className="absolute top-2 right-2 hidden sm:flex items-center gap-1 px-2 py-0.5 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-[10px] text-slate-400 rounded-lg">
+        <div className="absolute top-11 right-2 hidden xl:flex items-center gap-1 px-2 py-0.5 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-[10px] text-slate-400 rounded-lg pointer-events-none">
           <Eye className="w-3 h-3 text-slate-400" />
           <span>黄虚线为旋转轴 · 红框为当前旋转截面</span>
         </div>

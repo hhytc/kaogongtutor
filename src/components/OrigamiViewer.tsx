@@ -5,7 +5,6 @@ import {
   Play,
   Pause,
   RotateCcw,
-  Eye,
   Sparkles,
   CheckCircle2,
   AlertOctagon,
@@ -16,6 +15,7 @@ import {
   GraduationCap,
   Compass,
   ChevronRight,
+  ChevronLeft,
   Camera,
   Check,
   HelpCircle,
@@ -512,10 +512,30 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     }
   };
 
-
-
-
-  // Create canvas textures once
+  // Reset all guided ladder progress to clean initial state (ideal for sharing with friends)
+  const handleResetGuidedProgress = () => {
+    if (window.confirm('确定要重置空间直觉引导教学的全部进度，从第 1 阶从头开始吗？（适合给新朋友重新体验）')) {
+      stopAnimation();
+      learningStorage.clearSpatialIntuitionProgress();
+      setGuidedStep(1);
+      setGuidedStep1Found(false);
+      setGuidedStep1Feedback(null);
+      setGuidedStep2Answer(null);
+      setGuidedStep3Answer(null);
+      setGuidedStep4Answer(null);
+      setStep5SubQuestion(1);
+      setGuidedStep5Q1Answer(null);
+      setStep5Q1FirstTryCorrect(null);
+      setGuidedStep5Q2Answer(null);
+      setStep5Q2FirstTryCorrect(null);
+      setGuidedCompletedSteps([]);
+      setAnchorFaceId(0);
+      setFoldProgress(0);
+      setNetType('1-4-1');
+      step5Q1FoldedRef.current = false;
+      step5Q2FoldedRef.current = false;
+    }
+  };
   const faceTextures = useMemo(() => {
     return PATTERNS.map((p) => {
       const canvas = document.createElement('canvas');
@@ -1059,202 +1079,205 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
   return (
     <div className="flex flex-col lg:flex-row w-full h-[calc(100dvh-5.5rem)] lg:h-[calc(100vh-4rem)] bg-slate-950 overflow-hidden">
       {/* 3D Canvas */}
-      <div className="relative w-full h-[45vh] min-h-[270px] lg:h-full lg:flex-1 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 flex-shrink-0">
+      <div className="relative w-full h-[52vh] min-h-[340px] sm:min-h-[380px] lg:h-full lg:flex-1 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 flex-shrink-0">
         <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing touch-none select-none" />
 
-        {/* Row 1: Mode Switcher + Camera Preset Toolbar */}
-        <div className="absolute top-2 left-2 right-2 flex items-center justify-between gap-2 z-10">
-          {/* Main Mode Toggle: Guided Ladder vs Free Exploration */}
-          <div className="flex items-center bg-slate-900/90 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg">
-            <button
-              onClick={() => {
-                stopAnimation();
-                setViewMode('guided');
-                handleSelectGuidedStep(guidedStep);
-              }}
-              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                viewMode === 'guided'
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md shadow-amber-500/20'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <GraduationCap className="w-3.5 h-3.5" />
-              <span>💡 空间直觉引导教学</span>
-            </button>
-            <button
-              onClick={() => {
-                stopAnimation();
-                setViewMode('free');
-                setFoldProgress(0);
-              }}
-              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                viewMode === 'free'
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>🎮 自由探索与11种图鉴</span>
-            </button>
-          </div>
-
-          {/* Camera View Presets */}
-          <div className="flex items-center gap-1 bg-slate-900/90 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg">
-            <button
-              onClick={() => setCameraView('top')}
-              title="俯视视角（正对平面展开图）"
-              className="px-2 py-1 text-[11px] font-medium text-slate-300 hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
-            >
-              <Camera className="w-3 h-3 text-sky-400" />
-              <span className="hidden sm:inline">俯视</span>
-            </button>
-            <button
-              onClick={() => setCameraView('front')}
-              title="前视视角（正对正面）"
-              className="px-2 py-1 text-[11px] font-medium text-slate-300 hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
-            >
-              <Camera className="w-3 h-3 text-emerald-400" />
-              <span className="hidden sm:inline">正视</span>
-            </button>
-            <button
-              onClick={() => setCameraView('iso')}
-              title="45° 轴测立体视角"
-              className="px-2 py-1 text-[11px] font-medium text-slate-300 hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
-            >
-              <Compass className="w-3 h-3 text-indigo-400" />
-              <span className="hidden sm:inline">立体</span>
-            </button>
-            <button
-              onClick={() => setCameraView('reset')}
-              title="复位默认视角"
-              className="p-1 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
-            >
-              <RotateCcw className="w-3 h-3" />
-            </button>
-          </div>
-        </div>
-
-        {/* Row 2: Secondary Toolbar (Guided Step Pills OR Free Archetype Selector) */}
-        {viewMode === 'guided' ? (
-          <div className="absolute top-12 left-2 right-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar z-10">
-            <div className="flex items-center gap-1 bg-slate-900/95 backdrop-blur-md px-2 py-1.5 rounded-xl border border-amber-500/30 shadow-lg">
-              <span className="text-[11px] font-bold text-amber-300 flex items-center gap-1 mr-1 flex-shrink-0">
-                <span>阶梯任务:</span>
-              </span>
-
-              {[
-                { step: 1 as const, name: '① 认基准面', done: guidedStep1Found || guidedCompletedSteps.includes(1) },
-                { step: 2 as const, name: '② 辨相对面', done: guidedStep2Answer === 'C' || guidedCompletedSteps.includes(2) },
-                { step: 3 as const, name: '③ 跟踪公共边', done: guidedStep3Answer === 'F' || guidedCompletedSteps.includes(3) },
-                { step: 4 as const, name: '④ 跟踪公共顶点', done: guidedStep4Answer === 'ABE' || guidedCompletedSteps.includes(4) },
-                { step: 5 as const, name: '⑤ 变式盲测', done: guidedCompletedSteps.includes(5) },
-              ].map((item) => (
-                <button
-                  key={item.step}
-                  onClick={() => handleSelectGuidedStep(item.step)}
-                  className={`px-2 py-1 rounded-lg text-[11px] font-medium transition-all whitespace-nowrap flex items-center gap-1 cursor-pointer flex-shrink-0 ${
-                    guidedStep === item.step
-                      ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/30 ring-1 ring-amber-300'
-                      : item.done
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30'
-                      : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700/80'
-                  }`}
-                >
-                  {item.done && <Check className="w-3 h-3 text-emerald-400" />}
-                  <span>{item.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="absolute top-12 left-2 right-2 flex flex-col gap-1.5 z-10">
-            {/* Free Archetype Selector */}
-            <div className="flex overflow-x-auto no-scrollbar gap-1.5">
+        {/* Unified Collision-Free Top Toolbars Container */}
+        <div className="absolute top-2 left-2 right-2 flex flex-col gap-1.5 z-10 pointer-events-none">
+          {/* Row 1: Mode Switcher + Camera Preset Toolbar */}
+          <div className="flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
+            {/* Main Mode Toggle: Guided Ladder vs Free Exploration */}
+            <div className="flex items-center bg-slate-900/90 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg pointer-events-auto">
               <button
-                onClick={() => { stopAnimation(); setNetType('1-4-1'); setFoldProgress(0); }}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer ${
-                  netType === '1-4-1'
-                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400'
-                    : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700/80'
+                onClick={() => {
+                  stopAnimation();
+                  setViewMode('guided');
+                  handleSelectGuidedStep(guidedStep);
+                }}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  viewMode === 'guided'
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md shadow-amber-500/20'
+                    : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                ⭐ 1-4-1型 (经典十字 · 6种)
+                <GraduationCap className="w-3.5 h-3.5" />
+                <span>💡 阶梯引导教学</span>
               </button>
               <button
-                onClick={() => { stopAnimation(); setNetType('2-3-1'); setFoldProgress(0); }}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer ${
-                  netType === '2-3-1'
-                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400'
-                    : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700/80'
+                onClick={() => {
+                  stopAnimation();
+                  setViewMode('free');
+                  setFoldProgress(0);
+                }}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  viewMode === 'free'
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                    : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                📐 2-3-1型 (楼梯拐角 · 3种)
-              </button>
-              <button
-                onClick={() => { stopAnimation(); setNetType('2-2-2'); setFoldProgress(0); }}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer ${
-                  netType === '2-2-2'
-                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400'
-                    : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700/80'
-                }`}
-              >
-                🪜 2-2-2型 (阶梯台阶 · 1种)
-              </button>
-              <button
-                onClick={() => { stopAnimation(); setNetType('3-3'); setFoldProgress(0); }}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer ${
-                  netType === '3-3'
-                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400'
-                    : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700/80'
-                }`}
-              >
-                🔀 3-3型 (两排错开 · 1种)
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>🎮 自由探索图鉴</span>
               </button>
             </div>
 
-            {/* Quick Anchor Face Selector Strip */}
-            <div className="max-w-full flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md px-2.5 py-1 rounded-xl border border-slate-700/80 shadow-lg overflow-x-auto no-scrollbar">
-              <div className="flex items-center gap-1 text-[11px] font-bold text-amber-400 mr-0.5 flex-shrink-0">
-                <Crown className="w-3.5 h-3.5 text-amber-400" />
-                <span className="hidden sm:inline">基准面:</span>
-              </div>
-              {PATTERNS.map((p) => {
-                const isAnchor = p.id === anchorFaceId;
-                return (
+            {/* Camera View Presets */}
+            <div className="flex items-center gap-1 bg-slate-900/90 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg pointer-events-auto">
+              <button
+                onClick={() => setCameraView('top')}
+                title="俯视视角（正对平面展开图）"
+                className="px-2 py-1 text-[11px] font-medium text-slate-300 hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
+              >
+                <Camera className="w-3 h-3 text-sky-400" />
+                <span className="hidden sm:inline">俯视</span>
+              </button>
+              <button
+                onClick={() => setCameraView('front')}
+                title="前视视角（正对正面）"
+                className="px-2 py-1 text-[11px] font-medium text-slate-300 hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
+              >
+                <Camera className="w-3 h-3 text-emerald-400" />
+                <span className="hidden sm:inline">正视</span>
+              </button>
+              <button
+                onClick={() => setCameraView('iso')}
+                title="45° 轴测立体视角"
+                className="px-2 py-1 text-[11px] font-medium text-slate-300 hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
+              >
+                <Compass className="w-3 h-3 text-indigo-400" />
+                <span className="hidden sm:inline">立体</span>
+              </button>
+              <button
+                onClick={() => setCameraView('reset')}
+                title="复位默认视角"
+                className="p-1 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+              >
+                <RotateCcw className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
+
+          {/* Row 2: Secondary Toolbar (Guided Step Pills OR Free Archetype Selector) */}
+          {viewMode === 'guided' ? (
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pointer-events-auto">
+              <div className="flex items-center gap-1 bg-slate-900/95 backdrop-blur-md px-2 py-1.5 rounded-xl border border-amber-500/30 shadow-lg">
+                <span className="text-[11px] font-bold text-amber-300 flex items-center gap-1 mr-1 flex-shrink-0">
+                  <span>阶梯任务:</span>
+                </span>
+
+                {[
+                  { step: 1 as const, name: '① 认基准面', done: guidedStep1Found || guidedCompletedSteps.includes(1) },
+                  { step: 2 as const, name: '② 辨相对面', done: guidedStep2Answer === 'C' || guidedCompletedSteps.includes(2) },
+                  { step: 3 as const, name: '③ 跟踪公共边', done: guidedStep3Answer === 'F' || guidedCompletedSteps.includes(3) },
+                  { step: 4 as const, name: '④ 跟踪公共顶点', done: guidedStep4Answer === 'ABE' || guidedCompletedSteps.includes(4) },
+                  { step: 5 as const, name: '⑤ 变式盲测', done: guidedCompletedSteps.includes(5) },
+                ].map((item) => (
                   <button
-                    key={p.id}
-                    onClick={() => setAnchorFaceId(p.id)}
-                    onMouseEnter={() => setHoveredFaceId(p.id)}
-                    onMouseLeave={() => setHoveredFaceId(null)}
-                    title={`选定【${p.name}】为折叠基准面（其余5面折向它）`}
-                    className={`flex items-center gap-1 px-1.5 py-0.5 rounded-lg text-[10px] font-medium transition-all flex-shrink-0 cursor-pointer ${
-                      isAnchor
-                        ? 'bg-amber-500/20 text-amber-300 border border-amber-400/50 shadow-sm'
-                        : 'bg-slate-800/80 text-slate-400 hover:text-slate-200 border border-slate-700/50'
+                    key={item.step}
+                    onClick={() => handleSelectGuidedStep(item.step)}
+                    className={`px-2 py-1 rounded-lg text-[11px] font-medium transition-all whitespace-nowrap flex items-center gap-1 cursor-pointer flex-shrink-0 ${
+                      guidedStep === item.step
+                        ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/30 ring-1 ring-amber-300'
+                        : item.done
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30'
+                        : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700/80'
                     }`}
                   >
-                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: p.color }} />
-                    <span>{p.letter}</span>
-                    {isAnchor && <span className="text-[9px] text-amber-400">★</span>}
+                    {item.done && <Check className="w-3 h-3 text-emerald-400" />}
+                    <span>{item.name}</span>
                   </button>
-                );
-              })}
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="flex flex-col gap-1.5 pointer-events-auto">
+              {/* Free Archetype Selector */}
+              <div className="flex overflow-x-auto no-scrollbar gap-1.5">
+                <button
+                  onClick={() => { stopAnimation(); setNetType('1-4-1'); setFoldProgress(0); }}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer ${
+                    netType === '1-4-1'
+                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400'
+                      : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700/80'
+                  }`}
+                >
+                  ⭐ 1-4-1型 (经典十字 · 6种)
+                </button>
+                <button
+                  onClick={() => { stopAnimation(); setNetType('2-3-1'); setFoldProgress(0); }}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer ${
+                    netType === '2-3-1'
+                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400'
+                      : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700/80'
+                  }`}
+                >
+                  📐 2-3-1型 (楼梯拐角 · 3种)
+                </button>
+                <button
+                  onClick={() => { stopAnimation(); setNetType('2-2-2'); setFoldProgress(0); }}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer ${
+                    netType === '2-2-2'
+                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400'
+                      : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700/80'
+                  }`}
+                >
+                  🪜 2-2-2型 (阶梯台阶 · 1种)
+                </button>
+                <button
+                  onClick={() => { stopAnimation(); setNetType('3-3'); setFoldProgress(0); }}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer ${
+                    netType === '3-3'
+                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400'
+                      : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700/80'
+                  }`}
+                >
+                  🔀 3-3型 (两排错开 · 1种)
+                </button>
+              </div>
 
-        {/* 3D Direct Click / Hover Floating Notification */}
-        {hoveredFaceId !== null ? (
-          <div className="absolute top-[5.75rem] left-2 flex items-center gap-1.5 px-2.5 py-1 bg-amber-500/90 text-slate-950 font-bold text-[11px] rounded-lg shadow-xl backdrop-blur-md z-10 pointer-events-none animate-in fade-in">
-            <MousePointerClick className="w-3.5 h-3.5 text-slate-950" />
-            <span>点击设定基准面：{PATTERNS[hoveredFaceId].name}</span>
-          </div>
-        ) : (
-          <div className="absolute top-[5.75rem] left-2 hidden md:flex items-center gap-1.5 px-2 py-0.5 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-[10px] text-slate-400 rounded-lg pointer-events-none z-10">
-            <MousePointerClick className="w-3 h-3 text-amber-400" />
-            <span>可直接在 3D 画布中点击任意面切换基准面</span>
-          </div>
-        )}
+              {/* Quick Anchor Face Selector Strip */}
+              <div className="max-w-full flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md px-2.5 py-1 rounded-xl border border-slate-700/80 shadow-lg overflow-x-auto no-scrollbar">
+                <div className="flex items-center gap-1 text-[11px] font-bold text-amber-400 mr-0.5 flex-shrink-0">
+                  <Crown className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="hidden sm:inline">基准面:</span>
+                </div>
+                {PATTERNS.map((p) => {
+                  const isAnchor = p.id === anchorFaceId;
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => setAnchorFaceId(p.id)}
+                      onMouseEnter={() => setHoveredFaceId(p.id)}
+                      onMouseLeave={() => setHoveredFaceId(null)}
+                      title={`选定【${p.name}】为折叠基准面（其余5面折向它）`}
+                      className={`flex items-center gap-1 px-1.5 py-0.5 rounded-lg text-[10px] font-medium transition-all flex-shrink-0 cursor-pointer ${
+                        isAnchor
+                          ? 'bg-amber-500/20 text-amber-300 border border-amber-400/50 shadow-sm'
+                          : 'bg-slate-800/80 text-slate-400 hover:text-slate-200 border border-slate-700/50'
+                      }`}
+                    >
+                      <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: p.color }} />
+                      <span>{p.letter}</span>
+                      {isAnchor && <span className="text-[9px] text-amber-400">★</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Row 3: 3D Direct Click / Hover Floating Notification */}
+          {hoveredFaceId !== null ? (
+            <div className="self-start flex items-center gap-1.5 px-2.5 py-1 bg-amber-500/90 text-slate-950 font-bold text-[11px] rounded-lg shadow-xl backdrop-blur-md pointer-events-none animate-in fade-in">
+              <MousePointerClick className="w-3.5 h-3.5 text-slate-950" />
+              <span>点击设定基准面：{PATTERNS[hoveredFaceId].name}</span>
+            </div>
+          ) : viewMode === 'free' ? (
+            <div className="self-start hidden md:flex items-center gap-1.5 px-2 py-0.5 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-[10px] text-slate-400 rounded-lg pointer-events-none">
+              <MousePointerClick className="w-3 h-3 text-amber-400" />
+              <span>可直接在 3D 画布中点击任意面切换基准面</span>
+            </div>
+          ) : null}
+        </div>
 
         {/* Bottom Folding Slider & Step Controls */}
         {(() => {
@@ -1358,10 +1381,6 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
           );
         })()}
 
-        <div className="absolute top-2 right-2 hidden 2xl:flex items-center gap-1 px-2 py-0.5 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-[10px] text-slate-400 rounded-lg">
-          <Eye className="w-3 h-3 text-slate-400" />
-          <span>旋转 3D 视角观察图案闭合</span>
-        </div>
       </div>
 
       {/* Right Control & Theory Panel */}
@@ -1372,19 +1391,29 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
           /* ========================================================= */
           <div className="space-y-4 animate-in fade-in duration-200">
             {/* Guided Header Card */}
-            <div className="bg-gradient-to-br from-amber-950/30 via-slate-900/80 to-slate-900 border border-amber-500/40 p-4 rounded-2xl space-y-2">
-              <div className="flex items-center justify-between">
+            <div className="bg-gradient-to-br from-amber-950/30 via-slate-900/80 to-slate-900 border border-amber-500/40 p-4 rounded-2xl space-y-2.5">
+              <div className="flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
                 <div className="flex items-center gap-2 text-amber-400 font-bold text-sm">
-                  <GraduationCap className="w-4 h-4 text-amber-400" />
+                  <GraduationCap className="w-4 h-4 text-amber-400 flex-shrink-0" />
                   <span>空间直觉阶梯引导 · 第 {guidedStep} / 5 阶</span>
                 </div>
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">
-                  {guidedStep === 1 && '空间基准锚定'}
-                  {guidedStep === 2 && '相对面排除法则'}
-                  {guidedStep === 3 && '公共边旋转贴合'}
-                  {guidedStep === 4 && '三面公共顶点'}
-                  {guidedStep === 5 && '独立盲测检验'}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">
+                    {guidedStep === 1 && '空间基准锚定'}
+                    {guidedStep === 2 && '相对面排除法则'}
+                    {guidedStep === 3 && '公共边旋转贴合'}
+                    {guidedStep === 4 && '三面公共顶点'}
+                    {guidedStep === 5 && '独立盲测检验'}
+                  </span>
+                  <button
+                    onClick={handleResetGuidedProgress}
+                    title="清空当前教学进度，从第 1 阶重新开始（方便给朋友演示或重温）"
+                    className="px-2 py-0.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-amber-300 text-[11px] font-medium transition-colors border border-slate-700/80 flex items-center gap-1 flex-shrink-0 cursor-pointer"
+                  >
+                    <RotateCcw className="w-3 h-3 text-amber-400" />
+                    <span>从头教学</span>
+                  </button>
+                </div>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
                 遵循<strong>“先猜 ➔ 再操作 ➔ 最后验证”</strong>的认知规律，每次只攻克一个空间几何关系，轻松打破空间直觉壁垒！
@@ -1443,13 +1472,26 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                     <p className="text-emerald-200/90 leading-relaxed text-[11px]">
                       无论纸盒如何翻转闭合，<strong>基准面都是三维空间的固定参照面</strong>。有了这个固定基准，其余 5 个面在脑海里就不会乱飞！
                     </p>
-                    <button
-                      onClick={() => handleSelectGuidedStep(2)}
-                      className="w-full py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-950 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                    >
-                      <span>进入第 2 阶：辨析相对面与相邻面</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <button
+                        onClick={() => {
+                          setGuidedStep1Found(false);
+                          setGuidedStep1Feedback(null);
+                          setFoldProgress(0);
+                        }}
+                        className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-slate-100 text-xs font-medium transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
+                        <span>重新体验第 1 阶</span>
+                      </button>
+                      <button
+                        onClick={() => handleSelectGuidedStep(2)}
+                        className="flex-1 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-950 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <span>进入第 2 阶：辨析相对面与相邻面</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -1586,6 +1628,16 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                     )}
                   </div>
                 )}
+
+                <div className="pt-2 border-t border-slate-800 flex justify-between items-center">
+                  <button
+                    onClick={() => handleSelectGuidedStep(1)}
+                    className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                    <span>返回第 1 阶：认基准面</span>
+                  </button>
+                </div>
               </div>
             )}
 
@@ -1688,6 +1740,16 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                     )}
                   </div>
                 )}
+
+                <div className="pt-2 border-t border-slate-800 flex justify-between items-center">
+                  <button
+                    onClick={() => handleSelectGuidedStep(2)}
+                    className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                    <span>返回第 2 阶：辨相对面</span>
+                  </button>
+                </div>
               </div>
             )}
 
@@ -1783,6 +1845,16 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                     )}
                   </div>
                 )}
+
+                <div className="pt-2 border-t border-slate-800 flex justify-between items-center">
+                  <button
+                    onClick={() => handleSelectGuidedStep(3)}
+                    className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                    <span>返回第 3 阶：公共边</span>
+                  </button>
+                </div>
               </div>
             )}
 
@@ -2084,6 +2156,16 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                     )}
                   </div>
                 )}
+
+                <div className="pt-2 border-t border-slate-800 flex justify-between items-center">
+                  <button
+                    onClick={() => handleSelectGuidedStep(4)}
+                    className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                    <span>返回第 4 阶：公共顶点</span>
+                  </button>
+                </div>
               </div>
             )}
           </div>

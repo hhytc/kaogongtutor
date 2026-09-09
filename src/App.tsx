@@ -143,12 +143,12 @@ export function App() {
 
       {/* Floating Return Pill (when user jumped from a question into 3D simulator) */}
       {returnQuestion && activeTab !== 'quiz' && (
-        <div className="fixed top-18 right-4 sm:right-6 z-40 animate-in slide-in-from-top-4 duration-300">
-          <div className="bg-slate-900/95 border border-sky-500/40 rounded-2xl shadow-2xl shadow-sky-950/80 p-2.5 pl-3.5 pr-2 flex items-center gap-3 backdrop-blur-md">
+        <div className="fixed top-16 sm:top-18 left-1/2 -translate-x-1/2 z-40 animate-in slide-in-from-top-4 duration-300 max-w-[92vw]">
+          <div className="bg-slate-900/95 border border-sky-500/40 rounded-2xl shadow-2xl shadow-sky-950/80 p-2 pl-3.5 pr-2 flex items-center gap-2.5 sm:gap-3 backdrop-blur-md">
             <div className="flex items-center gap-2 text-xs">
-              <span className="w-2 h-2 rounded-full bg-sky-400 animate-ping" />
+              <span className="w-2 h-2 rounded-full bg-sky-400 animate-ping flex-shrink-0" />
               <span className="text-slate-400 hidden sm:inline">3D演练复盘中：</span>
-              <span className="font-bold text-white max-w-[140px] sm:max-w-[220px] truncate">
+              <span className="font-bold text-white max-w-[130px] sm:max-w-[220px] truncate">
                 {returnQuestion.title}
               </span>
             </div>
@@ -157,7 +157,7 @@ export function App() {
                 setQuizActiveQuestionId(returnQuestion.id);
                 setActiveTab('quiz');
               }}
-              className="flex items-center gap-1 px-3 py-1.5 bg-sky-500 hover:bg-sky-400 text-white text-xs font-semibold rounded-xl shadow-md shadow-sky-500/25 transition-all cursor-pointer"
+              className="flex items-center gap-1 px-2.5 sm:px-3 py-1 bg-sky-500 hover:bg-sky-400 text-white text-xs font-semibold rounded-xl shadow-md shadow-sky-500/25 transition-all cursor-pointer whitespace-nowrap"
             >
               <span>返回原题</span>
               <ArrowRight className="w-3.5 h-3.5" />
