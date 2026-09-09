@@ -71,11 +71,27 @@ function isValidSpatialProgress(obj: any): obj is SavedSpatialIntuitionProgress 
   if (typeof obj.guidedStep1Found !== 'boolean') return false;
   if (!Array.isArray(obj.guidedCompletedSteps)) return false;
   for (const s of obj.guidedCompletedSteps) {
-    if (typeof s !== 'number' || s < 1 || s > 5) return false;
+    if (typeof s !== 'number' || !Number.isInteger(s) || s < 1 || s > 5) return false;
   }
-  const stringOrNullFields = ['guidedStep2Answer', 'guidedStep3Answer', 'guidedStep4Answer', 'guidedStep5Q1Answer', 'guidedStep5Q2Answer'];
-  for (const f of stringOrNullFields) {
-    if (obj[f] !== null && typeof obj[f] !== 'string') return false;
+  const validStep2Answers = ['B', 'C', 'D', 'E', 'F'];
+  if (obj.guidedStep2Answer !== null && (typeof obj.guidedStep2Answer !== 'string' || !validStep2Answers.includes(obj.guidedStep2Answer))) {
+    return false;
+  }
+  const validStep3Answers = ['F', 'D', 'C'];
+  if (obj.guidedStep3Answer !== null && (typeof obj.guidedStep3Answer !== 'string' || !validStep3Answers.includes(obj.guidedStep3Answer))) {
+    return false;
+  }
+  const validStep4Answers = ['ABE', 'ACD', 'BCF'];
+  if (obj.guidedStep4Answer !== null && (typeof obj.guidedStep4Answer !== 'string' || !validStep4Answers.includes(obj.guidedStep4Answer))) {
+    return false;
+  }
+  const validStep5Q1Answers = ['D', 'C', 'E', 'F'];
+  if (obj.guidedStep5Q1Answer !== null && (typeof obj.guidedStep5Q1Answer !== 'string' || !validStep5Q1Answers.includes(obj.guidedStep5Q1Answer))) {
+    return false;
+  }
+  const validStep5Q2Answers = ['C', 'B', 'D', 'E'];
+  if (obj.guidedStep5Q2Answer !== null && (typeof obj.guidedStep5Q2Answer !== 'string' || !validStep5Q2Answers.includes(obj.guidedStep5Q2Answer))) {
+    return false;
   }
   const boolOrNullFields = ['step5Q1FirstTryCorrect', 'step5Q2FirstTryCorrect'];
   for (const f of boolOrNullFields) {
@@ -139,11 +155,38 @@ function migrateRawRecords(raw: Record<string, any>): { records: Record<string, 
         : [];
       modified = true;
     } else {
-      // Ensure existing history items have explicit versions assigned
+      // Distinguish pure single-version history from mixed history across versions
+      const explicitVersions = new Set<number>();
+      let hasUnversioned = false;
       for (const h of r.history) {
-        if (h && typeof h === 'object' && typeof h.version !== 'number') {
-          h.version = recVersion;
-          modified = true;
+        if (h && typeof h === 'object') {
+          if (typeof h.version === 'number' && Number.isInteger(h.version) && h.version >= 1) {
+            explicitVersions.add(h.version);
+          } else {
+            hasUnversioned = true;
+          }
+        }
+      }
+
+      if (hasUnversioned) {
+        if (explicitVersions.size === 0 && recVersion === 1) {
+          // Entire legacy history belongs to v1
+          for (const h of r.history) {
+            if (h && typeof h === 'object' && typeof h.version !== 'number') {
+              h.version = 1;
+              modified = true;
+            }
+          }
+        } else {
+          // Mixed history across versions or ambiguous origin:
+          // Do NOT assign recVersion to unversioned items! Leave them undefined (unknown)
+          // to avoid polluting version stats.
+          for (const h of r.history) {
+            if (h && typeof h === 'object' && (typeof h.version !== 'number' || h.version < 1) && h.version !== undefined) {
+              delete h.version;
+              modified = true;
+            }
+          }
         }
       }
     }
@@ -224,7 +267,7 @@ export const learningStorage = {
     const fullHistory = [...(existing?.history || []), historyItem];
 
     // Filter history specifically for the current questionVersion
-    const currentVersionHistory = fullHistory.filter((h) => (h.version || 1) === questionVersion);
+    const currentVersionHistory = fullHistory.filter((h) => h.version === questionVersion);
 
     let firstAttemptCorrect: boolean | null;
     let firstAttemptHints: number | null;
@@ -252,7 +295,7 @@ export const learningStorage = {
     } else {
       // Version does not match existing record (e.g. existing was v1, now answering v2)
       // Check if this version has any prior history in fullHistory (excluding the item we just added)
-      const priorHistoryForVersion = (existing?.history || []).filter((h) => (h.version || 1) === questionVersion);
+      const priorHistoryForVersion = (existing?.history || []).filter((h) => h.version === questionVersion);
       if (priorHistoryForVersion.length > 0) {
         // Was attempted before in an earlier session for this version
         firstAttemptCorrect = priorHistoryForVersion[0].isCorrect;
@@ -381,14 +424,6 @@ export const learningStorage = {
           // Unknown legacy record (firstAttemptCorrect === null):
           // Record as unknown, do NOT assume it was correct or wrong on first attempt!
           stats.unknownFirstAttemptCount++;
-          // Only attribute to uncategorized if it is currently wrong (an actual wrong answer)
-          if (!r.isCorrect) {
-            if (r.errorReason && stats.errorReasonDistribution[r.errorReason] !== undefined) {
-              stats.errorReasonDistribution[r.errorReason]++;
-            } else {
-              stats.uncategorizedCount++;
-            }
-          }
         }
       }
     });
@@ -428,16 +463,17 @@ export const learningStorage = {
         let needsMigration = false;
         for (const [k, v] of Object.entries(parsed)) {
           if (typeof v === 'number' && Number.isInteger(v) && v >= 0 && v <= 3) {
-            if (k.includes('_v')) {
-              clean[k] = v;
+            if (/_v[1-9]\d*$/.test(k)) {
+              clean[k] = Math.max(clean[k] || 0, v);
             } else {
               // Legacy unversioned key "qid": migrate to "qid_v1"
-              clean[`${k}_v1`] = Math.max(clean[`${k}_v1`] || 0, v);
+              const target = `${k}_v1`;
+              clean[target] = Math.max(clean[target] || 0, v);
               needsMigration = true;
             }
           }
         }
-        if (needsMigration) {
+        if (needsMigration || Object.keys(clean).length !== Object.keys(parsed).length) {
           try {
             localStorage.setItem(HINTS_KEY, JSON.stringify(clean));
           } catch {}
@@ -462,24 +498,31 @@ export const learningStorage = {
   clearUnlockedHint(questionIdOrKey: string, version?: number) {
     const hints = this.getUnlockedHints();
     let changed = false;
-    if (hints[questionIdOrKey] !== undefined) {
-      delete hints[questionIdOrKey];
-      changed = true;
-    }
+
     if (version !== undefined) {
-      const vKey = `${questionIdOrKey}_v${version}`;
-      if (hints[vKey] !== undefined) {
-        delete hints[vKey];
+      // Precise deletion for the specified version only
+      const targetKey = `${questionIdOrKey}_v${version}`;
+      if (hints[targetKey] !== undefined) {
+        delete hints[targetKey];
         changed = true;
       }
-    }
-    const prefix = `${questionIdOrKey}_v`;
-    for (const k of Object.keys(hints)) {
-      if (k.startsWith(prefix)) {
-        delete hints[k];
+    } else {
+      // No version specified:
+      // If questionIdOrKey is itself an exact key in hints, delete it
+      if (hints[questionIdOrKey] !== undefined) {
+        delete hints[questionIdOrKey];
         changed = true;
       }
+      // Delete all versioned keys belonging strictly to this questionId
+      for (const k of Object.keys(hints)) {
+        const match = k.match(/^(.*)_v([1-9]\d*)$/);
+        if (match && match[1] === questionIdOrKey) {
+          delete hints[k];
+          changed = true;
+        }
+      }
     }
+
     if (changed) {
       try {
         localStorage.setItem(HINTS_KEY, JSON.stringify(hints));
@@ -655,13 +698,18 @@ export const learningStorage = {
         }
       }
 
-      // Validate spatialIntuitionProgress container if present
+      // Validate spatialIntuitionProgress container if present (distinguish missing undefined vs explicit null)
       let validatedSpatial: SavedSpatialIntuitionProgress | null = null;
-      if (parsed.spatialIntuitionProgress !== undefined && parsed.spatialIntuitionProgress !== null) {
-        if (!isValidSpatialProgress(parsed.spatialIntuitionProgress)) {
-          return false;
+      let shouldClearSpatial = false;
+      if (parsed.spatialIntuitionProgress !== undefined) {
+        if (parsed.spatialIntuitionProgress === null) {
+          shouldClearSpatial = true;
+        } else {
+          if (!isValidSpatialProgress(parsed.spatialIntuitionProgress)) {
+            return false;
+          }
+          validatedSpatial = parsed.spatialIntuitionProgress;
         }
-        validatedSpatial = parsed.spatialIntuitionProgress;
       }
 
       // Snapshot previous state for atomic rollback if quota exceeded or write fails
@@ -674,7 +722,9 @@ export const learningStorage = {
         if (parsed.unlockedHints !== undefined) {
           localStorage.setItem(HINTS_KEY, JSON.stringify(validatedHints));
         }
-        if (validatedSpatial !== null) {
+        if (shouldClearSpatial) {
+          localStorage.removeItem(SPATIAL_INTUITION_STORAGE_KEY);
+        } else if (validatedSpatial !== null) {
           localStorage.setItem(SPATIAL_INTUITION_STORAGE_KEY, JSON.stringify(validatedSpatial));
         }
         return true;

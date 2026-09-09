@@ -2030,7 +2030,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                                 </div>
                                 <div className="flex items-center gap-1.5">
                                   <span className={guidedCompletedSteps.includes(4) ? 'text-emerald-400' : 'text-slate-500'}>
-                                    {guidedCompletedSteps.includes(4) ? '✓' : '○'} ④ 公共顶点三面汇聚时针法则
+                                    {guidedCompletedSteps.includes(4) ? '✓' : '○'} ④ 三面公共顶点识别
                                   </span>
                                 </div>
                               </div>

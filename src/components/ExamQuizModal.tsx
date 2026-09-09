@@ -1233,6 +1233,16 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
               </div>
             </div>
 
+            {stats.unknownFirstAttemptCount > 0 && (
+              <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-xs text-amber-300">
+                <span className="flex items-center gap-1.5">
+                  <span>ℹ️</span>
+                  <span>早期版本答题记录（首答状态未知，未计入首答独立/提示/错题分类）</span>
+                </span>
+                <span className="font-mono font-bold text-amber-200">{stats.unknownFirstAttemptCount} 题</span>
+              </div>
+            )}
+
             {/* Error Reasons Breakdown */}
             <div className="space-y-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
               <div className="flex justify-between items-center">
@@ -1248,7 +1258,7 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                   ([key, label]) => {
                     const count = stats.errorReasonDistribution[key] || 0;
                     const pct =
-                      stats.wrongCount > 0 ? Math.round((count / stats.wrongCount) * 100) : 0;
+                      stats.wrongCount > 0 ? Math.min(100, Math.round((count / stats.wrongCount) * 100)) : 0;
 
                     return (
                       <div key={key} className="space-y-1">
