@@ -1,7 +1,19 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { Play, Pause, RotateCcw, Eye, Sparkles, CheckCircle2, AlertOctagon, BookOpen } from 'lucide-react';
+import {
+  Play,
+  Pause,
+  RotateCcw,
+  Eye,
+  Sparkles,
+  CheckCircle2,
+  AlertOctagon,
+  BookOpen,
+  Crown,
+  MousePointerClick,
+  RefreshCw,
+} from 'lucide-react';
 
 export type NetType = '1-4-1' | '2-3-1' | '2-2-2' | '3-3';
 
@@ -145,38 +157,153 @@ const PATTERNS: FacePattern[] = [
   },
 ];
 
+const FaceThumbnail: React.FC<{ pattern: FacePattern; size?: number; className?: string }> = ({
+  pattern,
+  size = 36,
+  className = '',
+}) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.clearRect(0, 0, size, size);
+    pattern.draw(ctx, size);
+
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(0.5, 0.5, size - 1, size - 1);
+  }, [pattern, size]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      width={size}
+      height={size}
+      className={`rounded-md shadow-sm flex-shrink-0 ${className}`}
+    />
+  );
+};
+
+interface NetDefinition {
+  faces: Record<number, [number, number]>;
+  edges: [number, number][];
+}
+
+const NET_DEFINITIONS: Record<NetType, NetDefinition> = {
+  '1-4-1': {
+    faces: {
+      0: [0, 0],   // Top
+      1: [0, 1],   // Front
+      2: [0, 2],   // Bottom
+      3: [0, -1],  // Back
+      4: [-1, 0],  // Left
+      5: [1, 0],   // Right
+    },
+    edges: [
+      [0, 1],
+      [1, 2],
+      [0, 3],
+      [0, 4],
+      [0, 5],
+    ],
+  },
+  '2-3-1': {
+    faces: {
+      0: [0, 0],
+      1: [0, 1],
+      5: [1, 0],
+      2: [2, 0],
+      3: [0, -1],
+      4: [-1, -1],
+    },
+    edges: [
+      [0, 1],
+      [0, 5],
+      [5, 2],
+      [0, 3],
+      [3, 4],
+    ],
+  },
+  '2-2-2': {
+    faces: {
+      0: [0, 0],
+      3: [0, -1],
+      4: [-1, -1],
+      5: [1, 0],
+      1: [1, 1],
+      2: [2, 1],
+    },
+    edges: [
+      [0, 3],
+      [3, 4],
+      [0, 5],
+      [5, 1],
+      [1, 2],
+    ],
+  },
+  '3-3': {
+    faces: {
+      3: [0, 0],
+      4: [-1, 0],
+      5: [1, 0],
+      0: [1, 1],
+      1: [2, 1],
+      2: [3, 1],
+    },
+    edges: [
+      [3, 4],
+      [3, 5],
+      [5, 0],
+      [0, 1],
+      [1, 2],
+    ],
+  },
+};
+
 export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
   initialParams = {},
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
 
   // Active net archetype: 1-4-1, 2-3-1, 2-2-2, 3-3
-  const [netType, setNetType] = useState<NetType>('1-4-1');
+  const [netType, setNetType] = useState<NetType>(() => {
+    if (initialParams.mode && ['1-4-1', '2-3-1', '2-2-2', '3-3'].includes(initialParams.mode)) {
+      return initialParams.mode as NetType;
+    }
+    return '1-4-1';
+  });
 
   // Folding progress: 0 (completely flat 2D net) -> 1 (fully folded 3D cube)
   const [foldProgress, setFoldProgress] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
+  // Active anchor face (the base face that stays flat on ground, others fold towards it)
+  const [anchorFaceId, setAnchorFaceId] = useState<number>(() => {
+    if (typeof initialParams.anchorFace === 'number' && initialParams.anchorFace >= 0 && initialParams.anchorFace <= 5) {
+      return initialParams.anchorFace;
+    }
+    return 0;
+  });
+  const [hoveredFaceId, setHoveredFaceId] = useState<number | null>(null);
+
   // Helper toggles
-  const [highlightOpposite, setHighlightOpposite] = useState<boolean>(true);
+  const [highlightOpposite, setHighlightOpposite] = useState<boolean>(() => {
+    return initialParams.highlight === 'opposite';
+  });
   const [showClockwiseVertex, setShowClockwiseVertex] = useState<boolean>(true);
   const [showCatalog, setShowCatalog] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (initialParams.highlight === 'opposite') {
-      setHighlightOpposite(true);
-    }
-    if (initialParams.mode && ['1-4-1', '2-3-1', '2-2-2', '3-3'].includes(initialParams.mode)) {
-      setNetType(initialParams.mode as NetType);
-    }
-  }, [initialParams]);
 
   // Three.js refs
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const controlsRef = useRef<OrbitControls | null>(null);
   const dynamicGroupRef = useRef<THREE.Group | null>(null);
   const animFrameIdRef = useRef<number | null>(null);
+  const faceMeshesRef = useRef<THREE.Mesh[]>([]);
 
   // Create canvas textures once
   const faceTextures = useMemo(() => {
@@ -210,6 +337,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
 
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.set(5, 9, 10);
+    cameraRef.current = camera;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
@@ -239,6 +367,68 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     scene.add(dynamicGroup);
     dynamicGroupRef.current = dynamicGroup;
 
+    let pointerDownTime = 0;
+    let pointerDownX = 0;
+    let pointerDownY = 0;
+
+    const onPointerDown = (e: PointerEvent) => {
+      pointerDownTime = Date.now();
+      pointerDownX = e.clientX;
+      pointerDownY = e.clientY;
+    };
+
+    const onPointerUp = (e: PointerEvent) => {
+      const dist = Math.hypot(e.clientX - pointerDownX, e.clientY - pointerDownY);
+      const elapsed = Date.now() - pointerDownTime;
+
+      // Only treat as click if pointer moved minimally (< 6px) and quickly (< 450ms)
+      if (dist < 6 && elapsed < 450) {
+        const rect = container.getBoundingClientRect();
+        const mouse = new THREE.Vector2(
+          ((e.clientX - rect.left) / rect.width) * 2 - 1,
+          -((e.clientY - rect.top) / rect.height) * 2 + 1
+        );
+
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(faceMeshesRef.current, false);
+        if (intersects.length > 0) {
+          const hitMesh = intersects[0].object;
+          const fid = hitMesh.userData?.faceId;
+          if (typeof fid === 'number' && fid >= 0 && fid <= 5) {
+            setAnchorFaceId(fid);
+          }
+        }
+      }
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      const rect = container.getBoundingClientRect();
+      const mouse = new THREE.Vector2(
+        ((e.clientX - rect.left) / rect.width) * 2 - 1,
+        -((e.clientY - rect.top) / rect.height) * 2 + 1
+      );
+
+      const raycaster = new THREE.Raycaster();
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(faceMeshesRef.current, false);
+      if (intersects.length > 0) {
+        const hitMesh = intersects[0].object;
+        const fid = hitMesh.userData?.faceId;
+        if (typeof fid === 'number') {
+          container.style.cursor = 'pointer';
+          setHoveredFaceId(fid);
+          return;
+        }
+      }
+      container.style.cursor = 'grab';
+      setHoveredFaceId(null);
+    };
+
+    container.addEventListener('pointerdown', onPointerDown);
+    container.addEventListener('pointerup', onPointerUp);
+    container.addEventListener('pointermove', onPointerMove);
+
     let isMounted = true;
     const animate = () => {
       if (!isMounted) return;
@@ -261,6 +451,9 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     return () => {
       isMounted = false;
       window.removeEventListener('resize', handleResize);
+      container.removeEventListener('pointerdown', onPointerDown);
+      container.removeEventListener('pointerup', onPointerUp);
+      container.removeEventListener('pointermove', onPointerMove);
       if (animFrameIdRef.current) cancelAnimationFrame(animFrameIdRef.current);
       renderer.dispose();
     };
@@ -300,9 +493,37 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     const u = foldProgress; // 0 = flat, 1 = folded
     const foldAngle = u * (Math.PI / 2);
 
-    const createFaceMesh = (patternIndex: number, pairIndex: number) => {
+    const netDef = NET_DEFINITIONS[netType];
+    const rootId = anchorFaceId;
+
+    // Centering calculation:
+    // When flat (u = 0), center the entire 6-face bounding box at (0, 0, 0)
+    // When folded (u = 1), center the cube at (0, 0, 0)
+    const [rx, ry] = netDef.faces[rootId];
+    let sumDx = 0;
+    let sumDz = 0;
+    for (let i = 0; i < 6; i++) {
+      const [fx, fy] = netDef.faces[i];
+      sumDx += (fx - rx) * a;
+      sumDz += (fy - ry) * a;
+    }
+    const avgDx = sumDx / 6;
+    const avgDz = sumDz / 6;
+    group.position.set(-avgDx * (1 - u), 0, -avgDz * (1 - u));
+
+    faceMeshesRef.current = [];
+
+    const getPairIndex = (patternId: number) => {
+      if (patternId === 1 || patternId === 3) return 0; // Front & Back (Red)
+      if (patternId === 4 || patternId === 5) return 1; // Left & Right (Green)
+      return 2; // Top & Bottom (Blue)
+    };
+
+    const createFaceMesh = (patternIndex: number) => {
       const geom = new THREE.PlaneGeometry(a, a);
       geom.rotateX(-Math.PI / 2); // Flat horizontal on XZ plane, normal +Y
+      const isAnchor = patternIndex === anchorFaceId;
+
       const mat = new THREE.MeshStandardMaterial({
         map: faceTextures[patternIndex],
         roughness: 0.25,
@@ -310,9 +531,31 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
         side: THREE.DoubleSide,
       });
       const mesh = new THREE.Mesh(geom, mat);
+      mesh.name = `face_${patternIndex}`;
+      mesh.userData = { faceId: patternIndex };
+      faceMeshesRef.current.push(mesh);
 
-      if (highlightOpposite) {
-        const edgeGeom = new THREE.EdgesGeometry(geom);
+      // Edge borders
+      const edgeGeom = new THREE.EdgesGeometry(geom);
+      if (isAnchor) {
+        // Prominent Golden / Amber border for the anchor face
+        const edgeMat = new THREE.LineBasicMaterial({ color: 0xf59e0b, linewidth: 6 });
+        mesh.add(new THREE.LineSegments(edgeGeom, edgeMat));
+
+        // Add a subtle golden base glow plate under the anchor face
+        const plateGeom = new THREE.PlaneGeometry(a * 1.05, a * 1.05);
+        plateGeom.rotateX(-Math.PI / 2);
+        const plateMat = new THREE.MeshBasicMaterial({
+          color: 0xf59e0b,
+          transparent: true,
+          opacity: 0.22,
+          side: THREE.DoubleSide,
+        });
+        const plateMesh = new THREE.Mesh(plateGeom, plateMat);
+        plateMesh.position.y = -0.01;
+        mesh.add(plateMesh);
+      } else if (highlightOpposite) {
+        const pairIndex = getPairIndex(patternIndex);
         let color = 0x38bdf8;
         if (pairIndex === 0) color = 0xef4444; // Front & Back (Red)
         if (pairIndex === 1) color = 0x22c55e; // Left & Right (Green)
@@ -320,269 +563,89 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
 
         const edgeMat = new THREE.LineBasicMaterial({ color, linewidth: 4 });
         mesh.add(new THREE.LineSegments(edgeGeom, edgeMat));
+      } else {
+        const edgeMat = new THREE.LineBasicMaterial({ color: 0x475569, linewidth: 2 });
+        mesh.add(new THREE.LineSegments(edgeGeom, edgeMat));
       }
 
       return mesh;
     };
 
-    // -------------------------------------------------------------
-    // Archetype 1: "1-4-1" 标准一四一型 (经典十字形，占 6 种)
-    // -------------------------------------------------------------
-    if (netType === '1-4-1') {
-      group.position.set(0, 0, -h * (1 - u));
-
-      // Top (0) - Pair 2 (Blue, anchor)
-      const topMesh = createFaceMesh(0, 2);
-      topMesh.position.set(0, h, 0);
-      group.add(topMesh);
-
-      // Front (1) - Pair 0 (Red, South of Top)
-      const frontPivot = new THREE.Group();
-      frontPivot.position.set(0, h, h);
-      frontPivot.rotation.x = foldAngle;
-      const frontMesh = createFaceMesh(1, 0);
-      frontMesh.position.set(0, 0, h);
-      frontPivot.add(frontMesh);
-
-      // Bottom (2) - Pair 2 (Blue, South of Front)
-      const bottomPivot = new THREE.Group();
-      bottomPivot.position.set(0, 0, 2 * h);
-      bottomPivot.rotation.x = foldAngle;
-      const bottomMesh = createFaceMesh(2, 2);
-      bottomMesh.position.set(0, 0, h);
-      bottomPivot.add(bottomMesh);
-      frontPivot.add(bottomPivot);
-
-      group.add(frontPivot);
-
-      // Back (3) - Pair 0 (Red, North of Top)
-      const backPivot = new THREE.Group();
-      backPivot.position.set(0, h, -h);
-      backPivot.rotation.x = -foldAngle;
-      const backMesh = createFaceMesh(3, 0);
-      backMesh.position.set(0, 0, -h);
-      backPivot.add(backMesh);
-      group.add(backPivot);
-
-      // Left (4) - Pair 1 (Green, West of Top)
-      const leftPivot = new THREE.Group();
-      leftPivot.position.set(-h, h, 0);
-      leftPivot.rotation.z = foldAngle;
-      const leftMesh = createFaceMesh(4, 1);
-      leftMesh.position.set(-h, 0, 0);
-      leftPivot.add(leftMesh);
-      group.add(leftPivot);
-
-      // Right (5) - Pair 1 (Green, East of Top)
-      const rightPivot = new THREE.Group();
-      rightPivot.position.set(h, h, 0);
-      rightPivot.rotation.z = -foldAngle;
-      const rightMesh = createFaceMesh(5, 1);
-      rightMesh.position.set(h, 0, 0);
-      rightPivot.add(rightMesh);
-      group.add(rightPivot);
-
-      if (showClockwiseVertex) {
-        const pin = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), new THREE.MeshBasicMaterial({ color: 0xfacc15 }));
-        pin.position.set(h, 0, 2 * h);
-        frontPivot.add(pin);
-      }
+    // Build adjacency tree
+    const adj: Record<number, number[]> = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [] };
+    for (const [uNode, vNode] of netDef.edges) {
+      adj[uNode].push(vNode);
+      adj[vNode].push(uNode);
     }
 
-    // -------------------------------------------------------------
-    // Archetype 2: "2-3-1" 楼梯拐角型 (公考常考重点，占 3 种)
-    // -------------------------------------------------------------
-    else if (netType === '2-3-1') {
-      group.position.set(-h * (1 - u), 0, 0);
+    const visited = new Set<number>([rootId]);
 
-      // Top (0) - Pair 2 (Blue, anchor)
-      const topMesh = createFaceMesh(0, 2);
-      topMesh.position.set(0, h, 0);
-      group.add(topMesh);
+    // Root face (Anchor)
+    const rootMesh = createFaceMesh(rootId);
+    rootMesh.position.set(0, h, 0);
+    group.add(rootMesh);
 
-      // Front (1) - Pair 0 (Red, South of Top)
-      const frontPivot = new THREE.Group();
-      frontPivot.position.set(0, h, h);
-      frontPivot.rotation.x = foldAngle;
-      const frontMesh = createFaceMesh(1, 0);
-      frontMesh.position.set(0, 0, h);
-      frontPivot.add(frontMesh);
-      group.add(frontPivot);
+    const traverse = (currId: number, parentObj: THREE.Object3D, isRoot: boolean) => {
+      for (const neighborId of adj[currId]) {
+        if (visited.has(neighborId)) continue;
+        visited.add(neighborId);
 
-      // Right (5) - Pair 1 (Green, East of Top)
-      const rightPivot = new THREE.Group();
-      rightPivot.position.set(h, h, 0);
-      rightPivot.rotation.z = -foldAngle;
-      const rightMesh = createFaceMesh(5, 1);
-      rightMesh.position.set(h, 0, 0);
-      rightPivot.add(rightMesh);
+        const [px, py] = netDef.faces[currId];
+        const [cx, cy] = netDef.faces[neighborId];
+        const dx = cx - px;
+        const dy = cy - py;
 
-      // Bottom (2) - Pair 2 (Blue, attached to Right)
-      const bottomPivot = new THREE.Group();
-      bottomPivot.position.set(2 * h, 0, 0);
-      bottomPivot.rotation.z = -foldAngle;
-      const bottomMesh = createFaceMesh(2, 2);
-      bottomMesh.position.set(h, 0, 0);
-      bottomPivot.add(bottomMesh);
-      rightPivot.add(bottomPivot);
+        const pivot = new THREE.Group();
+        const childMeshPos = new THREE.Vector3();
 
-      group.add(rightPivot);
+        if (dx === 1 && dy === 0) {
+          // East (local +X)
+          pivot.position.set(h, isRoot ? h : 0, 0);
+          pivot.rotation.z = -foldAngle;
+          childMeshPos.set(h, 0, 0);
+        } else if (dx === -1 && dy === 0) {
+          // West (local -X)
+          pivot.position.set(-h, isRoot ? h : 0, 0);
+          pivot.rotation.z = foldAngle;
+          childMeshPos.set(-h, 0, 0);
+        } else if (dx === 0 && dy === 1) {
+          // South (local +Z)
+          pivot.position.set(0, isRoot ? h : 0, h);
+          pivot.rotation.x = foldAngle;
+          childMeshPos.set(0, 0, h);
+        } else if (dx === 0 && dy === -1) {
+          // North (local -Z)
+          pivot.position.set(0, isRoot ? h : 0, -h);
+          pivot.rotation.x = -foldAngle;
+          childMeshPos.set(0, 0, -h);
+        }
 
-      // Back (3) - Pair 0 (Red, North of Top)
-      const backPivot = new THREE.Group();
-      backPivot.position.set(0, h, -h);
-      backPivot.rotation.x = -foldAngle;
-      const backMesh = createFaceMesh(3, 0);
-      backMesh.position.set(0, 0, -h);
-      backPivot.add(backMesh);
+        const nodeGroup = new THREE.Group();
+        nodeGroup.position.copy(childMeshPos);
+        pivot.add(nodeGroup);
 
-      // Left (4) - Pair 1 (Green, attached to Back)
-      const leftPivot = new THREE.Group();
-      leftPivot.position.set(-h, 0, -h);
-      leftPivot.rotation.z = foldAngle;
-      const leftMesh = createFaceMesh(4, 1);
-      leftMesh.position.set(-h, 0, 0);
-      leftPivot.add(leftMesh);
-      backPivot.add(leftPivot);
+        const childMesh = createFaceMesh(neighborId);
+        childMesh.position.set(0, 0, 0);
+        nodeGroup.add(childMesh);
 
-      group.add(backPivot);
+        parentObj.add(pivot);
 
-      if (showClockwiseVertex) {
-        const pin = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), new THREE.MeshBasicMaterial({ color: 0xfacc15 }));
-        pin.position.set(h, 0, 2 * h);
-        frontPivot.add(pin);
+        traverse(neighborId, nodeGroup, false);
       }
+    };
+
+    traverse(rootId, group, true);
+
+    if (showClockwiseVertex) {
+      const pin = new THREE.Mesh(
+        new THREE.SphereGeometry(0.12, 16, 16),
+        new THREE.MeshBasicMaterial({ color: 0xfacc15 })
+      );
+      // Position at front-right-top corner
+      pin.position.set(h, h + 0.05, h);
+      group.add(pin);
     }
-
-    // -------------------------------------------------------------
-    // Archetype 3: "2-2-2" 阶梯三级台阶型 (占 1 种)
-    // -------------------------------------------------------------
-    else if (netType === '2-2-2') {
-      group.position.set(-h * (1 - u), 0, 0);
-
-      // Top (0) - Pair 2 (Blue, anchor)
-      const topMesh = createFaceMesh(0, 2);
-      topMesh.position.set(0, h, 0);
-      group.add(topMesh);
-
-      // Back (3) - Pair 0 (Red, North of Top)
-      const backPivot = new THREE.Group();
-      backPivot.position.set(0, h, -h);
-      backPivot.rotation.x = -foldAngle;
-      const backMesh = createFaceMesh(3, 0);
-      backMesh.position.set(0, 0, -h);
-      backPivot.add(backMesh);
-
-      // Left (4) - Pair 1 (Green, attached to Back)
-      const leftPivot = new THREE.Group();
-      leftPivot.position.set(-h, 0, -h);
-      leftPivot.rotation.z = foldAngle;
-      const leftMesh = createFaceMesh(4, 1);
-      leftMesh.position.set(-h, 0, 0);
-      leftPivot.add(leftMesh);
-      backPivot.add(leftPivot);
-
-      group.add(backPivot);
-
-      // Right (5) - Pair 1 (Green, East of Top)
-      const rightPivot = new THREE.Group();
-      rightPivot.position.set(h, h, 0);
-      rightPivot.rotation.z = -foldAngle;
-      const rightMesh = createFaceMesh(5, 1);
-      rightMesh.position.set(h, 0, 0);
-      rightPivot.add(rightMesh);
-
-      // Front (1) - Pair 0 (Red, attached to Right)
-      const frontPivot = new THREE.Group();
-      frontPivot.position.set(h, 0, h);
-      frontPivot.rotation.x = foldAngle;
-      const frontMesh = createFaceMesh(1, 0);
-      frontMesh.position.set(0, 0, h);
-      frontPivot.add(frontMesh);
-
-      // Bottom (2) - Pair 2 (Blue, attached to Front)
-      const bottomPivot = new THREE.Group();
-      bottomPivot.position.set(h, 0, h);
-      bottomPivot.rotation.z = -foldAngle;
-      const bottomMesh = createFaceMesh(2, 2);
-      bottomMesh.position.set(h, 0, 0);
-      bottomPivot.add(bottomMesh);
-      frontPivot.add(bottomPivot);
-
-      rightPivot.add(frontPivot);
-      group.add(rightPivot);
-
-      if (showClockwiseVertex) {
-        const pin = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), new THREE.MeshBasicMaterial({ color: 0xfacc15 }));
-        pin.position.set(0, 0, 2 * h);
-        frontPivot.add(pin);
-      }
-    }
-
-    // -------------------------------------------------------------
-    // Archetype 4: "3-3" 两排相错型 (占 1 种)
-    // -------------------------------------------------------------
-    else if (netType === '3-3') {
-      group.position.set(-h * (1 - u), 0, -h * (1 - u));
-
-      // Back (3) - Pair 0 (Red, anchor)
-      const backMesh = createFaceMesh(3, 0);
-      backMesh.position.set(0, h, 0);
-      group.add(backMesh);
-
-      // Left (4) - Pair 1 (Green, West of Back)
-      const leftPivot = new THREE.Group();
-      leftPivot.position.set(-h, h, 0);
-      leftPivot.rotation.z = foldAngle;
-      const leftMesh = createFaceMesh(4, 1);
-      leftMesh.position.set(-h, 0, 0);
-      leftPivot.add(leftMesh);
-      group.add(leftPivot);
-
-      // Right (5) - Pair 1 (Green, East of Back)
-      const rightPivot = new THREE.Group();
-      rightPivot.position.set(h, h, 0);
-      rightPivot.rotation.z = -foldAngle;
-      const rightMesh = createFaceMesh(5, 1);
-      rightMesh.position.set(h, 0, 0);
-      rightPivot.add(rightMesh);
-
-      // Top (0) - Pair 2 (Blue, South of Right)
-      const topPivot = new THREE.Group();
-      topPivot.position.set(h, 0, h);
-      topPivot.rotation.x = foldAngle;
-      const topMesh = createFaceMesh(0, 2);
-      topMesh.position.set(0, 0, h);
-      topPivot.add(topMesh);
-
-      // Front (1) - Pair 0 (Red, East of Top)
-      const frontPivot = new THREE.Group();
-      frontPivot.position.set(h, 0, h);
-      frontPivot.rotation.z = -foldAngle;
-      const frontMesh = createFaceMesh(1, 0);
-      frontMesh.position.set(h, 0, 0);
-      frontPivot.add(frontMesh);
-
-      // Bottom (2) - Pair 2 (Blue, East of Front)
-      const bottomPivot = new THREE.Group();
-      bottomPivot.position.set(2 * h, 0, 0);
-      bottomPivot.rotation.z = -foldAngle;
-      const bottomMesh = createFaceMesh(2, 2);
-      bottomMesh.position.set(h, 0, 0);
-      bottomPivot.add(bottomMesh);
-      frontPivot.add(bottomPivot);
-
-      topPivot.add(frontPivot);
-      rightPivot.add(topPivot);
-      group.add(rightPivot);
-
-      if (showClockwiseVertex) {
-        const pin = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), new THREE.MeshBasicMaterial({ color: 0xfacc15 }));
-        pin.position.set(0, 0, 2 * h);
-        topPivot.add(pin);
-      }
-    }
-  }, [netType, foldProgress, highlightOpposite, showClockwiseVertex, faceTextures]);
+  }, [netType, foldProgress, highlightOpposite, showClockwiseVertex, faceTextures, anchorFaceId]);
 
   return (
     <div className="flex flex-col lg:flex-row w-full h-[calc(100dvh-5.5rem)] lg:h-[calc(100vh-4rem)] bg-slate-950 overflow-hidden">
@@ -634,17 +697,63 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
           </button>
         </div>
 
+        {/* Floating Quick Anchor Face Selector Strip */}
+        <div className="absolute top-11 left-2 max-w-[calc(100%-1rem)] flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md px-2.5 py-1.5 rounded-xl border border-slate-700/80 shadow-lg z-10 overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-1 text-[11px] font-bold text-amber-400 mr-0.5 flex-shrink-0">
+            <Crown className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden sm:inline">基准底面:</span>
+          </div>
+          {PATTERNS.map((p) => {
+            const isAnchor = p.id === anchorFaceId;
+            return (
+              <button
+                key={p.id}
+                onClick={() => setAnchorFaceId(p.id)}
+                onMouseEnter={() => setHoveredFaceId(p.id)}
+                onMouseLeave={() => setHoveredFaceId(null)}
+                title={`选定【${p.name}】为折叠基准面（其余5面折向它）`}
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded-lg text-[10px] font-medium transition-all flex-shrink-0 ${
+                  isAnchor
+                    ? 'bg-amber-500/25 text-amber-300 ring-1.5 ring-amber-400 shadow-sm font-semibold'
+                    : 'bg-slate-800/80 hover:bg-slate-700/90 text-slate-300'
+                }`}
+              >
+                <FaceThumbnail pattern={p} size={16} />
+                <span>{p.name.split(' · ')[0]}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* 3D Direct Click / Hover Floating Notification */}
+        {hoveredFaceId !== null ? (
+          <div className="absolute top-[5.25rem] left-2 flex items-center gap-1.5 px-2.5 py-1 bg-amber-500/90 text-slate-950 font-bold text-[11px] rounded-lg shadow-xl backdrop-blur-md z-10 pointer-events-none animate-in fade-in">
+            <MousePointerClick className="w-3.5 h-3.5 text-slate-950" />
+            <span>点击设定基准面：{PATTERNS[hoveredFaceId].name}</span>
+          </div>
+        ) : (
+          <div className="absolute top-[5.25rem] left-2 hidden md:flex items-center gap-1.5 px-2 py-0.5 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-[10px] text-slate-400 rounded-lg pointer-events-none z-10">
+            <MousePointerClick className="w-3 h-3 text-amber-400" />
+            <span>可直接在 3D 画布中点击任意面切换基准面</span>
+          </div>
+        )}
+
         {/* Bottom Folding Slider Controls */}
         <div className="absolute bottom-2 left-2 right-2 max-w-xl mx-auto bg-slate-900/95 backdrop-blur-md p-2.5 rounded-xl border border-slate-700/70 shadow-2xl z-10">
           <div className="flex items-center justify-between gap-2 text-xs mb-1.5">
-            <span className="font-semibold text-slate-200 text-[11px] flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-indigo-400" />
-              <span>当前模式: <strong className="text-indigo-300 font-mono">{netType}型</strong></span>
-              <span className="text-slate-400">
-                {foldProgress <= 0.05 ? '【平面展开】' : foldProgress >= 0.95 ? '【折成立体】' : '【折叠中】'}
+            <span className="font-semibold text-slate-200 text-[11px] flex items-center gap-1.5 flex-wrap">
+              <Sparkles className="w-3 h-3 text-indigo-400 flex-shrink-0" />
+              <span>展开型: <strong className="text-indigo-300 font-mono">{netType}</strong></span>
+              <span className="text-slate-600">|</span>
+              <span className="text-amber-300 font-medium flex items-center gap-1">
+                <Crown className="w-3 h-3 text-amber-400" />
+                基准: <strong>{PATTERNS[anchorFaceId].name.split(' · ')[0]}</strong>
+              </span>
+              <span className="text-slate-400 text-[10px]">
+                {foldProgress <= 0.05 ? '【平铺】' : foldProgress >= 0.95 ? '【成盒】' : '【折叠中】'}
               </span>
             </span>
-            <span className="font-mono text-indigo-400 font-bold text-xs">
+            <span className="font-mono text-indigo-400 font-bold text-xs flex-shrink-0">
               {(foldProgress * 100).toFixed(0)}%
             </span>
           </div>
@@ -695,7 +804,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
           </div>
         </div>
 
-        <div className="absolute top-2 right-2 hidden sm:flex items-center gap-1 px-2 py-0.5 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-[10px] text-slate-400 rounded-lg">
+        <div className="absolute top-2 right-2 hidden xl:flex items-center gap-1 px-2 py-0.5 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-[10px] text-slate-400 rounded-lg">
           <Eye className="w-3 h-3 text-slate-400" />
           <span>旋转 3D 视角观察图案闭合</span>
         </div>
@@ -719,6 +828,86 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
           <p className="text-xs text-slate-400 mt-1 leading-relaxed">
             正方体展开图绝非千变万化，<strong>全世界只有 11 种合法形态</strong>！牢记“一四一六、二三一三、二二二台阶、三三错开”即通关。
           </p>
+        </div>
+
+        {/* Anchor Face Selection Card */}
+        <div className="bg-gradient-to-br from-amber-950/20 via-slate-900/70 to-slate-900/90 p-3.5 rounded-xl border border-amber-500/40 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300">
+              <Crown className="w-4 h-4 text-amber-400 flex-shrink-0" />
+              <span>🎯 自由选定折叠基准面 (其余面折向它)</span>
+            </div>
+            {anchorFaceId !== 0 && (
+              <button
+                onClick={() => setAnchorFaceId(0)}
+                className="text-[11px] text-amber-400 hover:text-amber-300 underline flex items-center gap-1"
+              >
+                <RefreshCw className="w-3 h-3" />
+                恢复默认
+              </button>
+            )}
+          </div>
+
+          <p className="text-[11px] text-slate-300 leading-relaxed">
+            公考解题绝技：<strong>主动选定任意面为基准不动</strong>，观察其余 5 个面如何折叠闭合！在 3D 画布中直接点击任意面，或点击下方卡片即可切换。
+          </p>
+
+          <div className="grid grid-cols-2 gap-2">
+            {PATTERNS.map((p) => {
+              const isSelected = p.id === anchorFaceId;
+              const isHovered = p.id === hoveredFaceId;
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => {
+                    setAnchorFaceId(p.id);
+                  }}
+                  onMouseEnter={() => setHoveredFaceId(p.id)}
+                  onMouseLeave={() => setHoveredFaceId(null)}
+                  className={`p-2 rounded-lg border text-left transition-all flex items-center gap-2 relative ${
+                    isSelected
+                      ? 'bg-amber-500/20 border-amber-400 text-white shadow-md shadow-amber-500/10 ring-1 ring-amber-400/50'
+                      : isHovered
+                      ? 'bg-slate-800/90 border-slate-600 text-slate-200'
+                      : 'bg-slate-950/60 border-slate-800/80 text-slate-300 hover:border-slate-700'
+                  }`}
+                >
+                  <FaceThumbnail pattern={p} size={32} />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1">
+                      <span className={`text-[11px] font-bold truncate ${isSelected ? 'text-amber-300' : 'text-slate-200'}`}>
+                        {p.name.split(' · ')[0]}
+                      </span>
+                      {isSelected && (
+                        <span className="px-1 py-0.2 text-[9px] bg-amber-400/20 text-amber-300 rounded font-bold">
+                          基准
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[10px] text-slate-400 truncate">
+                      {p.name.split(' · ')[1]}
+                    </div>
+                    <div className="text-[9px] text-slate-500 truncate">
+                      对立面: {PATTERNS[p.oppositeId].name.split(' · ')[0]}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="pt-1">
+            <button
+              onClick={() => {
+                setFoldProgress(0);
+                setIsPlaying(true);
+              }}
+              className="w-full py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-semibold border border-amber-500/30 flex items-center justify-center gap-1.5 transition-colors"
+            >
+              <Play className="w-3.5 h-3.5 text-amber-400" />
+              <span>以【{PATTERNS[anchorFaceId].name.split(' · ')[0]}】为底，自动演示折叠成盒</span>
+            </button>
+          </div>
         </div>
 
         {/* 11 Nets Catalog Modal / Expandable Card */}
