@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { ArrowRight, X } from 'lucide-react';
 import { Navbar, type ActiveTab } from './components/Navbar';
 import { OrigamiViewer } from './components/OrigamiViewer';
 import { AssemblyViewer } from './components/AssemblyViewer';
@@ -8,9 +9,33 @@ import { CrossSectionViewer } from './components/CrossSectionViewer';
 import { ExamQuizModal } from './components/ExamQuizModal';
 import { ExamCheatsheet } from './components/ExamCheatsheet';
 import type { ExamQuestion } from './data/examQuestions';
+import { learningStorage } from './utils/learningStorage';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('origami');
+
+  // Question context for returning from 3D viewers back to quiz
+  const [returnQuestion, setReturnQuestion] = useState<{
+    id: string;
+    title: string;
+    tab: string;
+  } | null>(null);
+
+  // Target question ID to activate in quiz
+  const [quizActiveQuestionId, setQuizActiveQuestionId] = useState<string | null>(null);
+
+  // Review questions count for badge in Navbar
+  const [reviewCount, setReviewCount] = useState<number>(0);
+
+  useEffect(() => {
+    const updateReviewBadge = () => {
+      const needed = learningStorage.getQuestionsNeedingReview();
+      setReviewCount(needed.length);
+    };
+    updateReviewBadge();
+    const timer = setInterval(updateReviewBadge, 2000);
+    return () => clearInterval(timer);
+  }, [activeTab]);
 
   // Parameters passed when clicking "载入 3D 演练台" from Quiz
   const [origamiParams, setOrigamiParams] = useState<Record<string, any>>({});
@@ -35,7 +60,19 @@ export function App() {
   });
 
   // Handler to load question into 3D simulator
-  const handleLoadIntoSimulator = (config: ExamQuestion['simulatorConfig']) => {
+  const handleLoadIntoSimulator = (
+    config: ExamQuestion['simulatorConfig'],
+    questionId: string,
+    questionTitle: string
+  ) => {
+    if (!config) return;
+
+    setReturnQuestion({
+      id: questionId,
+      title: questionTitle,
+      tab: config.tab,
+    });
+
     if (config.tab === 'origami') {
       if (config.params) setOrigamiParams(config.params);
       setActiveTab('origami');
@@ -73,7 +110,48 @@ export function App() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
       {/* Top Navigation */}
-      <Navbar activeTab={activeTab} onTabChange={setActiveTab} />
+      <Navbar
+        activeTab={activeTab}
+        onTabChange={(tab) => {
+          setActiveTab(tab);
+          if (tab === 'quiz' && returnQuestion) {
+            setQuizActiveQuestionId(returnQuestion.id);
+          }
+        }}
+        reviewCount={reviewCount}
+      />
+
+      {/* Floating Return Pill (when user jumped from a question into 3D simulator) */}
+      {returnQuestion && activeTab !== 'quiz' && (
+        <div className="fixed top-18 right-4 sm:right-6 z-40 animate-in slide-in-from-top-4 duration-300">
+          <div className="bg-slate-900/95 border border-sky-500/40 rounded-2xl shadow-2xl shadow-sky-950/80 p-2.5 pl-3.5 pr-2 flex items-center gap-3 backdrop-blur-md">
+            <div className="flex items-center gap-2 text-xs">
+              <span className="w-2 h-2 rounded-full bg-sky-400 animate-ping" />
+              <span className="text-slate-400 hidden sm:inline">3D演练复盘中：</span>
+              <span className="font-bold text-white max-w-[140px] sm:max-w-[220px] truncate">
+                {returnQuestion.title}
+              </span>
+            </div>
+            <button
+              onClick={() => {
+                setQuizActiveQuestionId(returnQuestion.id);
+                setActiveTab('quiz');
+              }}
+              className="flex items-center gap-1 px-3 py-1.5 bg-sky-500 hover:bg-sky-400 text-white text-xs font-semibold rounded-xl shadow-md shadow-sky-500/25 transition-all cursor-pointer"
+            >
+              <span>返回原题</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => setReturnQuestion(null)}
+              className="p-1 text-slate-500 hover:text-slate-300 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
+              title="关闭悬浮条"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Module Content */}
       <main className="flex-1 relative overflow-hidden">
@@ -115,7 +193,10 @@ export function App() {
         )}
 
         {activeTab === 'quiz' && (
-          <ExamQuizModal onLoadIntoSimulator={handleLoadIntoSimulator} />
+          <ExamQuizModal
+            onLoadIntoSimulator={handleLoadIntoSimulator}
+            initialQuestionId={quizActiveQuestionId}
+          />
         )}
 
         {activeTab === 'cheatsheet' && (

@@ -1,89 +1,156 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
-import { CheckCircle2, XCircle, Sparkles, ArrowRight, Eye, Lightbulb, AlertTriangle, BookOpen, RotateCcw } from 'lucide-react';
+import {
+  CheckCircle2,
+  XCircle,
+  Sparkles,
+  ArrowRight,
+  Eye,
+  Lightbulb,
+  AlertTriangle,
+  BookOpen,
+  RotateCcw,
+  BarChart2,
+  Download,
+  Upload,
+  Compass,
+  AlertCircle,
+  X,
+} from 'lucide-react';
 import { EXAM_QUESTIONS, type ExamQuestion } from '../data/examQuestions';
+import {
+  learningStorage,
+  type ErrorReason,
+  ERROR_REASON_LABELS,
+  type QuestionRecord,
+  type LearningStats,
+} from '../utils/learningStorage';
 import { MathView } from './MathView';
+import { WorkGridVisualizer } from './WorkGridVisualizer';
+import { RatioBarVisualizer } from './RatioBarVisualizer';
 
 interface ExamQuizModalProps {
-  onLoadIntoSimulator: (config: ExamQuestion['simulatorConfig']) => void;
+  onLoadIntoSimulator: (
+    config: ExamQuestion['simulatorConfig'],
+    questionId: string,
+    questionTitle: string
+  ) => void;
+  initialQuestionId?: string | null;
 }
 
-export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({ onLoadIntoSimulator }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+type TabTrackFilter = 'all' | 'geometry' | 'engineering' | 'tools' | 'review';
 
-  // Persist active question and answers in localStorage
+export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
+  onLoadIntoSimulator,
+  initialQuestionId,
+}) => {
+  // Records from local storage
+  const [records, setRecords] = useState<Record<string, QuestionRecord>>(() =>
+    learningStorage.getRecords()
+  );
+
+  // Active track filter: all, geometry, engineering, tools, review
+  const [activeTrack, setActiveTrack] = useState<TabTrackFilter>('all');
+  const [geometryCategory, setGeometryCategory] = useState<string>('all');
+
+  // Active question ID
   const [activeQuestionId, setActiveQuestionId] = useState<string>(() => {
-    try {
-      return localStorage.getItem('kaogong_quiz_active_id') || EXAM_QUESTIONS[0].id;
-    } catch {
-      return EXAM_QUESTIONS[0].id;
-    }
+    if (initialQuestionId) return initialQuestionId;
+    return learningStorage.getActiveQuestionId(EXAM_QUESTIONS[0].id);
   });
 
-  const [userAnswers, setUserAnswers] = useState<Record<string, string>>(() => {
-    try {
-      const saved = localStorage.getItem('kaogong_quiz_answers');
-      return saved ? JSON.parse(saved) : {};
-    } catch {
-      return {};
-    }
+  // Hints unlocked per question (0: none, 1: relation, 2: representation, 3: formula)
+  const [unlockedHints, setUnlockedHints] = useState<Record<string, number>>(() => {
+    const init: Record<string, number> = {};
+    const existing = learningStorage.getRecords();
+    Object.entries(existing).forEach(([qid, rec]) => {
+      init[qid] = rec.hintsUsed || (rec.isCorrect ? 0 : 3);
+    });
+    return init;
   });
 
-  const [showExplanation, setShowExplanation] = useState<Record<string, boolean>>(() => {
-    try {
-      const saved = localStorage.getItem('kaogong_quiz_expl');
-      return saved ? JSON.parse(saved) : {};
-    } catch {
-      return {};
-    }
-  });
+  // Toggle for full solution
+  const [showExplanation, setShowExplanation] = useState<Record<string, boolean>>({});
 
+  // Backup & Stats Modal state
+  const [showStatsModal, setShowStatsModal] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Sync initialQuestionId from parent
   useEffect(() => {
-    try {
-      localStorage.setItem('kaogong_quiz_active_id', activeQuestionId);
-    } catch {}
+    if (initialQuestionId && initialQuestionId !== activeQuestionId) {
+      setActiveQuestionId(initialQuestionId);
+      // Auto switch track if initial question is in that track
+      const targetQ = EXAM_QUESTIONS.find((q) => q.id === initialQuestionId);
+      if (targetQ) {
+        if (activeTrack !== 'all' && activeTrack !== targetQ.track && activeTrack !== 'review') {
+          setActiveTrack(targetQ.track);
+        }
+      }
+    }
+  }, [initialQuestionId]);
+
+  // Sync active question to storage
+  useEffect(() => {
+    learningStorage.setActiveQuestionId(activeQuestionId);
   }, [activeQuestionId]);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem('kaogong_quiz_answers', JSON.stringify(userAnswers));
-    } catch {}
-  }, [userAnswers]);
+  // Compute stats
+  const stats: LearningStats = learningStorage.getStats();
+  const reviewIds = learningStorage.getQuestionsNeedingReview();
+  const reviewIdSet = new Set(reviewIds);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem('kaogong_quiz_expl', JSON.stringify(showExplanation));
-    } catch {}
-  }, [showExplanation]);
-
-  const handleResetQuiz = () => {
-    if (confirm('确定要清空做题记录并重新练习吗？')) {
-      setUserAnswers({});
-      setShowExplanation({});
-      try {
-        localStorage.removeItem('kaogong_quiz_answers');
-        localStorage.removeItem('kaogong_quiz_expl');
-      } catch {}
-    }
-  };
-
+  // Filter questions
   const filteredQuestions = EXAM_QUESTIONS.filter((q) => {
-    if (selectedCategory === 'all') return true;
-    return q.category === selectedCategory;
+    if (activeTrack === 'review') {
+      return reviewIdSet.has(q.id);
+    }
+    if (activeTrack === 'geometry') {
+      if (q.track !== 'geometry') return false;
+      if (geometryCategory !== 'all') return q.category === geometryCategory;
+      return true;
+    }
+    if (activeTrack === 'engineering') {
+      return q.track === 'engineering';
+    }
+    if (activeTrack === 'tools') {
+      return q.track === 'tools';
+    }
+    return true;
   });
 
-  const currentQ = EXAM_QUESTIONS.find((q) => q.id === activeQuestionId) || filteredQuestions[0];
-  const selectedAnswer = userAnswers[currentQ.id];
-  const isAnswered = Boolean(selectedAnswer);
-  const isCorrect = selectedAnswer === currentQ.correctAnswer;
-  const isExplVisible = showExplanation[currentQ.id];
+  // Ensure current question is valid
+  const currentQ =
+    EXAM_QUESTIONS.find((q) => q.id === activeQuestionId) ||
+    filteredQuestions[0] ||
+    EXAM_QUESTIONS[0];
 
+  const currentRecord = records[currentQ.id];
+  const isAnswered = Boolean(currentRecord);
+  const selectedAnswer = currentRecord?.selectedAnswer;
+  const isCorrect = currentRecord?.isCorrect ?? false;
+  const isExplVisible = showExplanation[currentQ.id] ?? isAnswered;
+  const currentHintsLevel = unlockedHints[currentQ.id] || (isAnswered ? 3 : 0);
+
+  // Handle option selection
   const handleSelectOption = (key: string) => {
     if (isAnswered) return;
-    setUserAnswers((prev) => ({ ...prev, [currentQ.id]: key }));
+
+    const answerCorrect = key === currentQ.correctAnswer;
+    const hintsUsed = unlockedHints[currentQ.id] || 0;
+
+    learningStorage.saveAttempt(
+      currentQ.id,
+      key,
+      answerCorrect,
+      hintsUsed,
+      answerCorrect ? undefined : 'relation_error'
+    );
+
+    setRecords({ ...learningStorage.getRecords() });
     setShowExplanation((prev) => ({ ...prev, [currentQ.id]: true }));
 
-    if (key === currentQ.correctAnswer) {
+    if (answerCorrect) {
       confetti({
         particleCount: 80,
         spread: 70,
@@ -92,8 +159,103 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({ onLoadIntoSimulato
     }
   };
 
+  // Unlock progressive hint
+  const handleUnlockHint = (level: number) => {
+    setUnlockedHints((prev) => ({
+      ...prev,
+      [currentQ.id]: Math.max(prev[currentQ.id] || 0, level),
+    }));
+  };
+
+  // Update error reason
+  const handleUpdateErrorReason = (reason: ErrorReason) => {
+    learningStorage.updateErrorReason(currentQ.id, reason);
+    setRecords({ ...learningStorage.getRecords() });
+  };
+
+  // Re-attempt question
+  const handleReattempt = (qid: string) => {
+    const allRecords = learningStorage.getRecords();
+    delete allRecords[qid];
+    localStorage.setItem('kaogong_learning_records_v1', JSON.stringify(allRecords));
+    setRecords({ ...allRecords });
+    setUnlockedHints((prev) => ({ ...prev, [qid]: 0 }));
+    setShowExplanation((prev) => ({ ...prev, [qid]: false }));
+  };
+
+  // Mark as mastered (remove from review)
+  const handleMarkMastered = (qid: string) => {
+    learningStorage.saveAttempt(qid, currentQ.correctAnswer, true, 0);
+    setRecords({ ...learningStorage.getRecords() });
+  };
+
+  // Export records to JSON file
+  const handleExportBackup = () => {
+    const jsonStr = learningStorage.exportBackup();
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kaogong_records_${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // Import records from JSON file
+  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      if (learningStorage.importBackup(content)) {
+        setRecords(learningStorage.getRecords());
+        alert('数据导入成功！');
+      } else {
+        alert('导入失败：文件格式不符合要求。');
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  // Clear all data
+  const handleClearAll = () => {
+    if (confirm('确定要清空全部做题记录、错题本与答题统计吗？此操作无法撤销。')) {
+      learningStorage.clearAll();
+      setRecords({});
+      setUnlockedHints({});
+      setShowExplanation({});
+      setShowStatsModal(false);
+    }
+  };
+
+  // Parent example for variants
+  const parentExample =
+    currentQ.questionRole === 'variant'
+      ? EXAM_QUESTIONS.find((q) => q.variantIds?.includes(currentQ.id))
+      : null;
+
   // Render question diagrams
   const renderDiagram = () => {
+    if (currentQ.diagramType === 'work-grid') {
+      return (
+        <div className="my-3">
+          <WorkGridVisualizer {...currentQ.diagramProps} />
+        </div>
+      );
+    }
+
+    if (currentQ.diagramType === 'ratio-bar') {
+      return (
+        <div className="my-3">
+          <RatioBarVisualizer {...currentQ.diagramProps} />
+        </div>
+      );
+    }
+
     if (currentQ.diagramType === 'origami-q7') {
       return (
         <div className="my-3 p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex flex-col items-center">
@@ -177,190 +339,283 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({ onLoadIntoSimulato
 
   return (
     <div className="w-full h-[calc(100dvh-5.5rem)] lg:h-[calc(100vh-4rem)] bg-slate-950 flex flex-col lg:flex-row overflow-hidden">
-      {/* Left Questions List Sidebar (Desktop) / Top Horizontal Question Bar (Mobile) */}
-      <div className="w-full lg:w-80 border-b lg:border-b-0 lg:border-r border-slate-800 bg-slate-900/60 flex flex-col flex-shrink-0">
-        {/* Category Filters */}
-        <div className="p-3 lg:p-4 border-b border-slate-800">
-          <div className="flex items-center justify-between gap-2 mb-2 lg:mb-3">
+      {/* Left Questions List Sidebar (Desktop) / Top Horizontal Bar (Mobile) */}
+      <div className="w-full lg:w-84 border-b lg:border-b-0 lg:border-r border-slate-800 bg-slate-900/70 flex flex-col flex-shrink-0">
+        {/* Track & Topic Filter Header */}
+        <div className="p-3 lg:p-4 border-b border-slate-800 space-y-2.5">
+          <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-1.5">
               <BookOpen className="w-4 h-4 text-sky-400" />
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider">真题题库</h3>
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider">真题实训体系</h3>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] text-slate-400 font-mono font-medium">
-                共 {filteredQuestions.length} 道
-              </span>
+            <div className="flex items-center gap-1.5">
+              {/* Learning Stats / Backup Button */}
               <button
-                onClick={handleResetQuiz}
-                title="清空做题进度与答题记录"
-                className="p-1 rounded text-slate-500 hover:text-slate-300 hover:bg-slate-800 transition-colors"
+                onClick={() => setShowStatsModal(true)}
+                title="学习轨迹与数据管理"
+                className="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
               >
-                <RotateCcw className="w-3 h-3" />
+                <BarChart2 className="w-3.5 h-3.5 text-sky-400" />
+                <span>档案</span>
               </button>
             </div>
           </div>
-          <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5 text-xs touch-pan-x">
+
+          {/* Primary Track Tabs */}
+          <div className="grid grid-cols-5 gap-1 text-[11px] font-semibold">
             <button
-              onClick={() => setSelectedCategory('all')}
-              className={`px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap ${
-                selectedCategory === 'all'
+              onClick={() => setActiveTrack('all')}
+              className={`py-1.5 rounded-lg text-center transition-all cursor-pointer ${
+                activeTrack === 'all'
                   ? 'bg-sky-500 text-white shadow-sm'
-                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                  : 'bg-slate-800/80 text-slate-400 hover:text-slate-200'
               }`}
             >
-              全部
+              全部 ({EXAM_QUESTIONS.length})
             </button>
             <button
-              onClick={() => setSelectedCategory('origami')}
-              className={`px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap ${
-                selectedCategory === 'origami'
+              onClick={() => setActiveTrack('geometry')}
+              className={`py-1.5 rounded-lg text-center transition-all cursor-pointer ${
+                activeTrack === 'geometry'
                   ? 'bg-sky-500 text-white shadow-sm'
-                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                  : 'bg-slate-800/80 text-slate-400 hover:text-slate-200'
               }`}
             >
-              折纸盒
+              几何 (10)
             </button>
             <button
-              onClick={() => setSelectedCategory('assembly')}
-              className={`px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap ${
-                selectedCategory === 'assembly'
+              onClick={() => setActiveTrack('engineering')}
+              className={`py-1.5 rounded-lg text-center transition-all cursor-pointer ${
+                activeTrack === 'engineering'
                   ? 'bg-sky-500 text-white shadow-sm'
-                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                  : 'bg-slate-800/80 text-slate-400 hover:text-slate-200'
               }`}
             >
-              立体拼合
+              工程 (3)
             </button>
             <button
-              onClick={() => setSelectedCategory('unfold')}
-              className={`px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap ${
-                selectedCategory === 'unfold'
+              onClick={() => setActiveTrack('tools')}
+              className={`py-1.5 rounded-lg text-center transition-all cursor-pointer ${
+                activeTrack === 'tools'
                   ? 'bg-sky-500 text-white shadow-sm'
-                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                  : 'bg-slate-800/80 text-slate-400 hover:text-slate-200'
               }`}
             >
-              展开路径
+              工具 (2)
             </button>
             <button
-              onClick={() => setSelectedCategory('revolution')}
-              className={`px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap ${
-                selectedCategory === 'revolution'
-                  ? 'bg-sky-500 text-white shadow-sm'
-                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+              onClick={() => setActiveTrack('review')}
+              className={`py-1.5 rounded-lg text-center transition-all relative cursor-pointer ${
+                activeTrack === 'review'
+                  ? 'bg-rose-500 text-white shadow-sm'
+                  : 'bg-slate-800/80 text-rose-300 hover:bg-slate-800'
               }`}
             >
-              旋转体
-            </button>
-            <button
-              onClick={() => setSelectedCategory('cross_section')}
-              className={`px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap ${
-                selectedCategory === 'cross_section'
-                  ? 'bg-sky-500 text-white shadow-sm'
-                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
-              }`}
-            >
-              空间截面
+              错题
+              {reviewIds.length > 0 && (
+                <span className="ml-0.5 px-1 py-0.2 rounded-full text-[9px] bg-rose-600 text-white font-mono">
+                  {reviewIds.length}
+                </span>
+              )}
             </button>
           </div>
+
+          {/* Geometry Subcategory Filter (when in geometry track) */}
+          {activeTrack === 'geometry' && (
+            <div className="flex gap-1 overflow-x-auto no-scrollbar pt-1 text-[11px] touch-pan-x">
+              {[
+                { key: 'all', label: '全部' },
+                { key: 'origami', label: '折纸盒' },
+                { key: 'assembly', label: '拼合' },
+                { key: 'unfold', label: '展开' },
+                { key: 'revolution', label: '旋转' },
+                { key: 'cross_section', label: '截面' },
+              ].map((c) => (
+                <button
+                  key={c.key}
+                  onClick={() => setGeometryCategory(c.key)}
+                  className={`px-2 py-0.5 rounded-md font-medium whitespace-nowrap transition-colors cursor-pointer ${
+                    geometryCategory === c.key
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {c.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Mobile: Horizontal Question Number Pills Bar */}
+        {/* Mobile: Horizontal Pills Bar */}
         <div className="flex lg:hidden p-2 bg-slate-950/80 border-b border-slate-800/80 gap-1.5 overflow-x-auto no-scrollbar touch-pan-x">
-          {filteredQuestions.map((q, idx) => {
-            const answered = userAnswers[q.id];
-            const isCurrent = q.id === currentQ.id;
+          {filteredQuestions.length === 0 ? (
+            <div className="text-xs text-slate-500 py-1 px-2">暂无符合条件的题目</div>
+          ) : (
+            filteredQuestions.map((q, idx) => {
+              const rec = records[q.id];
+              const isCurrent = q.id === currentQ.id;
 
-            return (
-              <button
-                key={q.id}
-                onClick={() => setActiveQuestionId(q.id)}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border transition-all ${
-                  isCurrent
-                    ? 'bg-sky-500/20 border-sky-500 text-sky-300 ring-1 ring-sky-500'
-                    : answered
-                    ? 'bg-slate-900 border-slate-700 text-slate-300'
-                    : 'bg-slate-900/60 border-slate-800 text-slate-500'
-                }`}
-              >
-                <span>第{idx + 1}题</span>
-                {answered && (
-                  <span
-                    className={`w-1.5 h-1.5 rounded-full ${
-                      answered === q.correctAnswer ? 'bg-emerald-400' : 'bg-rose-400'
-                    }`}
-                  />
-                )}
-              </button>
-            );
-          })}
+              return (
+                <button
+                  key={q.id}
+                  onClick={() => setActiveQuestionId(q.id)}
+                  className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border transition-all ${
+                    isCurrent
+                      ? 'bg-sky-500/20 border-sky-500 text-sky-300 ring-1 ring-sky-500'
+                      : rec
+                      ? 'bg-slate-900 border-slate-700 text-slate-300'
+                      : 'bg-slate-900/60 border-slate-800 text-slate-500'
+                  }`}
+                >
+                  <span>第{idx + 1}题</span>
+                  {rec && (
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        rec.isCorrect ? 'bg-emerald-400' : 'bg-rose-400'
+                      }`}
+                    />
+                  )}
+                </button>
+              );
+            })
+          )}
         </div>
 
         {/* Desktop: Vertical Question Cards Sidebar */}
         <div className="hidden lg:flex flex-1 overflow-y-auto p-3 space-y-2">
-          {filteredQuestions.map((q, idx) => {
-            const answered = userAnswers[q.id];
-            const correct = answered === q.correctAnswer;
-            const isCurrent = q.id === currentQ.id;
+          {filteredQuestions.length === 0 ? (
+            <div className="h-48 flex flex-col items-center justify-center text-center p-4 text-slate-400 space-y-2">
+              <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+              <p className="text-xs font-medium">当前分类下暂无题目</p>
+              {activeTrack === 'review' && (
+                <p className="text-[11px] text-slate-500">
+                  太棒了！错题与提示本中暂无待回练题目。
+                </p>
+              )}
+            </div>
+          ) : (
+            filteredQuestions.map((q, idx) => {
+              const rec = records[q.id];
+              const isCurrent = q.id === currentQ.id;
 
-            return (
-              <button
-                key={q.id}
-                onClick={() => setActiveQuestionId(q.id)}
-                className={`w-full text-left p-3 rounded-xl border transition-all flex flex-col gap-1.5 ${
-                  isCurrent
-                    ? 'bg-sky-500/10 border-sky-500 shadow-lg shadow-sky-500/10'
-                    : 'bg-slate-900/80 border-slate-800/80 hover:bg-slate-800/60'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-semibold text-slate-400">
-                    第 {idx + 1} 题 · {q.subType}
-                  </span>
-                  {answered && (
-                    <span
-                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
-                        correct ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
-                      }`}
-                    >
-                      {correct ? '正确' : '已答错'}
-                    </span>
-                  )}
-                </div>
-                <div className="text-xs font-medium text-slate-200 line-clamp-1">{q.title}</div>
-                <div className="text-[10px] text-slate-500">{q.source}</div>
-              </button>
-            );
-          })}
+              return (
+                <button
+                  key={q.id}
+                  onClick={() => setActiveQuestionId(q.id)}
+                  className={`w-full text-left p-3 rounded-xl border transition-all flex flex-col gap-1.5 cursor-pointer ${
+                    isCurrent
+                      ? 'bg-sky-500/10 border-sky-500 shadow-lg shadow-sky-500/10'
+                      : 'bg-slate-900/80 border-slate-800/80 hover:bg-slate-800/60'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[11px] font-semibold text-slate-400">
+                        第 {idx + 1} 题 · {q.subType}
+                      </span>
+                      {q.questionRole === 'variant' && (
+                        <span className="text-[9px] px-1 py-0.2 rounded bg-indigo-500/20 text-indigo-300 font-semibold">
+                          变式
+                        </span>
+                      )}
+                    </div>
+                    {rec && (
+                      <span
+                        className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                          rec.isCorrect
+                            ? rec.hintsUsed === 0
+                              ? 'bg-emerald-500/20 text-emerald-400'
+                              : 'bg-teal-500/20 text-teal-300'
+                            : 'bg-rose-500/20 text-rose-400'
+                        }`}
+                      >
+                        {rec.isCorrect
+                          ? rec.hintsUsed === 0
+                            ? '独立答对'
+                            : '提示答对'
+                          : '已答错'}
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-xs font-medium text-slate-200 line-clamp-1">{q.title}</div>
+                  <div className="text-[10px] text-slate-500 flex items-center justify-between">
+                    <span>{q.source}</span>
+                    <span>难度: {q.difficulty}</span>
+                  </div>
+                </button>
+              );
+            })
+          )}
         </div>
       </div>
 
-      {/* Main Question & Solution View */}
-      <div className="flex-1 h-full overflow-y-auto p-4 lg:p-8 flex flex-col gap-4 lg:gap-6 pb-12">
-        {/* Question Header */}
+      {/* Main Question & Derivation View */}
+      <div className="flex-1 h-full overflow-y-auto p-4 lg:p-8 flex flex-col gap-4 lg:gap-6 pb-16">
+        {/* Variant Linking Banner */}
+        {parentExample && (
+          <div className="bg-indigo-950/40 border border-indigo-800/50 rounded-xl p-3 flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2 text-indigo-200">
+              <Compass className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+              <span>
+                🎯 本题是【<strong>{parentExample.title}</strong>】的独立变式练习题。
+              </span>
+            </div>
+            <button
+              onClick={() => setActiveQuestionId(parentExample.id)}
+              className="text-indigo-400 hover:text-indigo-300 underline font-semibold flex items-center gap-1 flex-shrink-0 ml-2 cursor-pointer"
+            >
+              <span>← 查看原例题</span>
+            </button>
+          </div>
+        )}
+
+        {/* Question Header Card */}
         <div className="bg-slate-900/90 p-4 lg:p-6 rounded-2xl border border-slate-800 space-y-3 lg:space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-sky-500/20 text-sky-300 border border-sky-500/30">
                 {currentQ.source}
               </span>
               <span className="text-xs text-slate-400 font-medium">难度: {currentQ.difficulty}</span>
+              <span className="text-xs text-slate-500 font-mono">
+                {currentQ.unitName}
+              </span>
             </div>
 
-            {/* Load directly to 3D simulator */}
-            <button
-              onClick={() => onLoadIntoSimulator(currentQ.simulatorConfig)}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-xs font-semibold shadow-md shadow-sky-500/20 transition-all cursor-pointer"
-            >
-              <Eye className="w-4 h-4" />
-              <span>载入 3D 演练台直观复盘</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+            {/* 3D Simulator Jump or Review Operations */}
+            <div className="flex items-center gap-2">
+              {currentQ.simulatorConfig && (
+                <button
+                  onClick={() =>
+                    onLoadIntoSimulator(currentQ.simulatorConfig, currentQ.id, currentQ.title)
+                  }
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-xs font-semibold shadow-md shadow-sky-500/20 transition-all cursor-pointer"
+                >
+                  <Eye className="w-4 h-4" />
+                  <span>载入 3D 演练台直观复盘</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              )}
+
+              {isAnswered && (
+                <button
+                  onClick={() => handleReattempt(currentQ.id)}
+                  title="重新作答本题"
+                  className="p-1.5 text-slate-400 hover:text-slate-200 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">重做</span>
+                </button>
+              )}
+            </div>
           </div>
 
           <h2 className="text-sm sm:text-base lg:text-lg font-bold text-white leading-relaxed">
             {currentQ.questionText}
           </h2>
 
-          {/* Inline Graphic Diagram (if question has diagram) */}
+          {/* Inline Diagram */}
           {renderDiagram()}
 
           {/* Options Grid */}
@@ -370,11 +625,12 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({ onLoadIntoSimulato
               const isThisCorrect = opt.key === currentQ.correctAnswer;
 
               let btnClass =
-                'bg-slate-950/80 border-slate-800 hover:border-slate-700 text-slate-200';
+                'bg-slate-950/80 border-slate-800 hover:border-slate-700 text-slate-200 cursor-pointer';
 
               if (isAnswered) {
                 if (isThisCorrect) {
-                  btnClass = 'bg-emerald-500/20 border-emerald-500 text-emerald-300 shadow-md shadow-emerald-500/20';
+                  btnClass =
+                    'bg-emerald-500/20 border-emerald-500 text-emerald-300 shadow-md shadow-emerald-500/20';
                 } else if (isChosen) {
                   btnClass = 'bg-rose-500/20 border-rose-500 text-rose-300';
                 } else {
@@ -407,6 +663,197 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({ onLoadIntoSimulato
           </div>
         </div>
 
+        {/* 3-Tier Progressive Hints Accordion */}
+        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 lg:p-5 space-y-3">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="flex items-center gap-2 text-xs lg:text-sm font-bold text-amber-400">
+              <Lightbulb className="w-4 h-4 text-amber-400" />
+              <span>三阶递进式启发提示 (按需逐步解锁)</span>
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <span className="text-slate-400">
+                当前已解锁: <strong className="text-amber-300">{currentHintsLevel}/3</strong> 阶
+              </span>
+              <span
+                className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
+                  currentHintsLevel === 0
+                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                    : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                }`}
+              >
+                {currentHintsLevel === 0 ? '独立答对模式' : '提示辅助模式'}
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-2.5">
+            {/* Tier 1: Relation hint */}
+            <div className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-sky-400 flex items-center gap-1.5">
+                  <span className="w-4 h-4 rounded-full bg-sky-500/20 text-sky-300 flex items-center justify-center text-[10px]">
+                    1
+                  </span>
+                  第 1 阶：核心数量/空间关系定位
+                </span>
+                {currentHintsLevel < 1 && !isAnswered && (
+                  <button
+                    onClick={() => handleUnlockHint(1)}
+                    className="text-xs px-2.5 py-1 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 rounded-lg transition-colors cursor-pointer"
+                  >
+                    解锁提示 1
+                  </button>
+                )}
+              </div>
+              {(currentHintsLevel >= 1 || isAnswered) && (
+                <p className="mt-2 text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
+                  {currentQ.stepHints.relation}
+                </p>
+              )}
+            </div>
+
+            {/* Tier 2: Representation hint */}
+            <div className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-indigo-400 flex items-center gap-1.5">
+                  <span className="w-4 h-4 rounded-full bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-[10px]">
+                    2
+                  </span>
+                  第 2 阶：图解表征与模型建构 (展开图/工作格/条形)
+                </span>
+                {currentHintsLevel < 2 && !isAnswered && (
+                  <button
+                    onClick={() => handleUnlockHint(2)}
+                    className="text-xs px-2.5 py-1 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 rounded-lg transition-colors cursor-pointer"
+                  >
+                    解锁提示 2
+                  </button>
+                )}
+              </div>
+              {(currentHintsLevel >= 2 || isAnswered) && (
+                <p className="mt-2 text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
+                  {currentQ.stepHints.representation}
+                </p>
+              )}
+            </div>
+
+            {/* Tier 3: Formula skeleton hint */}
+            <div className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                  <span className="w-4 h-4 rounded-full bg-amber-500/20 text-amber-300 flex items-center justify-center text-[10px]">
+                    3
+                  </span>
+                  第 3 阶：列式算式骨架填空
+                </span>
+                {currentHintsLevel < 3 && !isAnswered && (
+                  <button
+                    onClick={() => handleUnlockHint(3)}
+                    className="text-xs px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg transition-colors cursor-pointer"
+                  >
+                    解锁提示 3
+                  </button>
+                )}
+              </div>
+              {(currentHintsLevel >= 3 || isAnswered) && (
+                <p className="mt-2 text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
+                  {currentQ.stepHints.formula}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Mistake Reflection & 5-Category Attribution (Shown when wrong) */}
+        {isAnswered && !isCorrect && (
+          <div className="bg-rose-950/30 border border-rose-800/60 rounded-2xl p-4 lg:p-5 space-y-3 animate-in fade-in duration-300">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-rose-300 font-bold text-xs lg:text-sm">
+                <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
+                <span>错因反思 · 归因标签（选择本题做错的关键原因）</span>
+              </div>
+              <span className="text-[11px] text-slate-400">
+                帮助系统在学习档案中精准追踪薄弱项
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+              {(Object.entries(ERROR_REASON_LABELS) as [ErrorReason, string][]).map(
+                ([reasonKey, label]) => {
+                  const isChosenReason = currentRecord?.errorReason === reasonKey;
+                  return (
+                    <button
+                      key={reasonKey}
+                      onClick={() => handleUpdateErrorReason(reasonKey)}
+                      className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all text-center cursor-pointer ${
+                        isChosenReason
+                          ? 'bg-rose-600 text-white border-rose-400 shadow-md shadow-rose-950'
+                          : 'bg-slate-900/90 text-slate-300 border-slate-800 hover:border-slate-700'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                }
+              )}
+            </div>
+
+            {activeTrack === 'review' && (
+              <div className="pt-2 flex justify-end">
+                <button
+                  onClick={() => handleMarkMastered(currentQ.id)}
+                  className="text-xs px-3 py-1.5 rounded-lg bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/30 font-semibold transition-colors cursor-pointer"
+                >
+                  ✓ 本题已彻底搞懂，移出错题本
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Example to Variants Recommendation */}
+        {currentQ.questionRole === 'example' &&
+          currentQ.variantIds &&
+          currentQ.variantIds.length > 0 && (
+            <div className="bg-gradient-to-r from-indigo-950/50 to-slate-900/80 border border-indigo-800/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-xs font-bold text-indigo-300">
+                  <Sparkles className="w-4 h-4 text-indigo-400" />
+                  <span>方法迁移 · 典型例题变式拓展</span>
+                </div>
+                <p className="text-xs text-slate-400">
+                  已理解本题解法？立即做一做同类独立变式题检验掌握度：
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {currentQ.variantIds.map((varId, idx) => {
+                  const varQ = EXAM_QUESTIONS.find((q) => q.id === varId);
+                  if (!varQ) return null;
+                  const varRec = records[varId];
+
+                  return (
+                    <button
+                      key={varId}
+                      onClick={() => setActiveQuestionId(varId)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow-md shadow-indigo-600/20 transition-all cursor-pointer"
+                    >
+                      <span>变式 {idx + 1}: {varQ.subType}</span>
+                      {varRec && (
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            varRec.isCorrect ? 'bg-emerald-400' : 'bg-rose-400'
+                          }`}
+                        />
+                      )}
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
         {/* Dynamic Solution Section (Shown when answered or toggled) */}
         {isAnswered && (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -422,7 +869,9 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({ onLoadIntoSimulato
                 {isCorrect ? (
                   <>
                     <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                    <span>恭喜回答正确！秒杀直觉很敏锐！</span>
+                    <span>
+                      恭喜回答正确！{currentHintsLevel === 0 ? '独立完成，掌握牢固！' : '借助启发提示顺利推演！'}
+                    </span>
                   </>
                 ) : (
                   <>
@@ -436,15 +885,15 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({ onLoadIntoSimulato
                 onClick={() =>
                   setShowExplanation((prev) => ({ ...prev, [currentQ.id]: !prev[currentQ.id] }))
                 }
-                className="text-xs underline font-medium text-slate-400 hover:text-slate-200"
+                className="text-xs underline font-medium text-slate-400 hover:text-slate-200 cursor-pointer"
               >
-                {isExplVisible ? '折叠解析' : '展开完整推演'}
+                {isExplVisible ? '折叠解析' : '展开完整解析'}
               </button>
             </div>
 
             {isExplVisible && (
               <div className="space-y-4">
-                {/* 1. Fast Trick Box (秒杀秘籍) */}
+                {/* 1. Fast Trick Box */}
                 <div className="bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold text-amber-300">
                     <Sparkles className="w-4 h-4 text-amber-400" />
@@ -455,7 +904,7 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({ onLoadIntoSimulato
                   </p>
                 </div>
 
-                {/* 2. Common Traps Box (高频雷区) */}
+                {/* 2. Common Traps Box */}
                 <div className="bg-rose-500/10 border border-rose-500/30 p-4 rounded-xl space-y-1.5">
                   <div className="flex items-center gap-2 text-xs font-bold text-rose-400">
                     <AlertTriangle className="w-4 h-4 text-rose-400" />
@@ -488,6 +937,124 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({ onLoadIntoSimulato
           </div>
         )}
       </div>
+
+      {/* Learning Stats & Data Backup Modal */}
+      {showStatsModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center">
+                  <BarChart2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">个人学习档案与数据管理</h3>
+                  <p className="text-xs text-slate-400">本地持久化存储 · 支持多设备导出备份</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowStatsModal(false)}
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Metrics Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+              <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                <span className="text-[11px] text-slate-400 block">累计作答</span>
+                <span className="font-mono text-xl font-bold text-white">{stats.totalAttempted}</span>
+              </div>
+              <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                <span className="text-[11px] text-emerald-400 block">独立做对</span>
+                <span className="font-mono text-xl font-bold text-emerald-400">
+                  {stats.independentCorrect}
+                </span>
+              </div>
+              <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                <span className="text-[11px] text-sky-400 block">提示做对</span>
+                <span className="font-mono text-xl font-bold text-sky-400">
+                  {stats.hintAssistedCorrect}
+                </span>
+              </div>
+              <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                <span className="text-[11px] text-rose-400 block">错题待练</span>
+                <span className="font-mono text-xl font-bold text-rose-400">{reviewIds.length}</span>
+              </div>
+            </div>
+
+            {/* Error Reasons Breakdown */}
+            <div className="space-y-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
+              <h4 className="text-xs font-bold text-slate-300">错因归因分布统计</h4>
+              <div className="space-y-2">
+                {(Object.entries(ERROR_REASON_LABELS) as [ErrorReason, string][]).map(
+                  ([key, label]) => {
+                    const count = stats.errorReasonDistribution[key] || 0;
+                    const pct =
+                      stats.wrongCount > 0 ? Math.round((count / stats.wrongCount) * 100) : 0;
+
+                    return (
+                      <div key={key} className="space-y-1">
+                        <div className="flex justify-between text-xs">
+                          <span className="text-slate-400">{label}</span>
+                          <span className="font-mono text-slate-300">
+                            {count} 次 ({pct}%)
+                          </span>
+                        </div>
+                        <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-rose-500 rounded-full transition-all duration-500"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  }
+                )}
+              </div>
+            </div>
+
+            {/* Backup / Export / Reset Buttons */}
+            <div className="space-y-3 pt-2">
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={handleExportBackup}
+                  className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors cursor-pointer"
+                >
+                  <Download className="w-4 h-4 text-sky-400" />
+                  <span>导出学习数据 (JSON)</span>
+                </button>
+
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors cursor-pointer"
+                >
+                  <Upload className="w-4 h-4 text-emerald-400" />
+                  <span>导入备份数据</span>
+                </button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImportFile}
+                  accept=".json"
+                  className="hidden"
+                />
+              </div>
+
+              <div className="pt-2 border-t border-slate-800 flex justify-between items-center">
+                <span className="text-[11px] text-slate-500">重置所有记录</span>
+                <button
+                  onClick={handleClearAll}
+                  className="text-xs px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 transition-colors cursor-pointer"
+                >
+                  清空全部进度
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -6,9 +6,10 @@ export type ActiveTab = 'unfold' | 'revolution' | 'cross_section' | 'origami' | 
 interface NavbarProps {
   activeTab: ActiveTab;
   onTabChange: (tab: ActiveTab) => void;
+  reviewCount?: number;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
+export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange, reviewCount = 0 }) => {
   return (
     <header className="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-3 lg:px-8 py-2 lg:py-0 lg:h-16 flex flex-col lg:flex-row lg:items-center justify-between z-30 sticky top-0 gap-2 lg:gap-4">
       {/* Brand Title */}
@@ -32,7 +33,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
       <nav className="flex items-center gap-1 bg-slate-950/70 p-1 rounded-xl border border-slate-800/80 overflow-x-auto no-scrollbar max-w-full touch-pan-x">
         <button
           onClick={() => onTabChange('origami')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
             activeTab === 'origami'
               ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/25'
               : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
@@ -44,7 +45,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
 
         <button
           onClick={() => onTabChange('assembly')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
             activeTab === 'assembly'
               ? 'bg-amber-600 text-white shadow-md shadow-amber-600/25'
               : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
@@ -56,7 +57,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
 
         <button
           onClick={() => onTabChange('unfold')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
             activeTab === 'unfold'
               ? 'bg-sky-500 text-white shadow-md shadow-sky-500/25'
               : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
@@ -68,7 +69,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
 
         <button
           onClick={() => onTabChange('revolution')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
             activeTab === 'revolution'
               ? 'bg-purple-600 text-white shadow-md shadow-purple-600/25'
               : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
@@ -80,7 +81,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
 
         <button
           onClick={() => onTabChange('cross_section')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
             activeTab === 'cross_section'
               ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25'
               : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
@@ -94,7 +95,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
 
         <button
           onClick={() => onTabChange('quiz')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
             activeTab === 'quiz'
               ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/25'
               : 'text-amber-400/90 hover:text-amber-300 hover:bg-slate-900'
@@ -102,11 +103,16 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
         >
           <Award className="w-3.5 h-3.5" />
           <span>真题实训</span>
+          {reviewCount > 0 && (
+            <span className="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-rose-500 text-white font-mono font-bold">
+              {reviewCount}
+            </span>
+          )}
         </button>
 
         <button
           onClick={() => onTabChange('cheatsheet')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
             activeTab === 'cheatsheet'
               ? 'bg-slate-800 text-slate-100 shadow-sm'
               : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
