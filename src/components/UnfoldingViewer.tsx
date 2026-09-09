@@ -17,7 +17,14 @@ export const UnfoldingViewer: React.FC<UnfoldingViewerProps> = ({
   const [modelType, setModelType] = useState<'cylinder' | 'cube' | 'cone'>(initialMode);
 
   // Cylinder parameters
-  const [radius, setRadius] = useState<number>(Number(initialParams.radius) || 2);
+  const [explicitCircumference, setExplicitCircumference] = useState<number | null>(
+    initialParams.circumference ? Number(initialParams.circumference) : null
+  );
+  const [radius, setRadius] = useState<number>(
+    initialParams.circumference
+      ? Number(initialParams.circumference) / (2 * Math.PI)
+      : Number(initialParams.radius) || 2
+  );
   const [height, setHeight] = useState<number>(Number(initialParams.height) || 6);
   const [turns, setTurns] = useState<number>(Number(initialParams.turns) || 0.5); // 0.5 for opposite side, 1.0 for full circle
 
@@ -45,7 +52,14 @@ export const UnfoldingViewer: React.FC<UnfoldingViewerProps> = ({
     if (initialParams.mode && typeof initialParams.mode === 'string') {
       setModelType(initialParams.mode as any);
     }
-    if (initialParams.radius) setRadius(Number(initialParams.radius));
+    if (initialParams.circumference) {
+      const c = Number(initialParams.circumference);
+      setExplicitCircumference(c);
+      setRadius(c / (2 * Math.PI));
+    } else {
+      setExplicitCircumference(null);
+      if (initialParams.radius) setRadius(Number(initialParams.radius));
+    }
     if (initialParams.height) setHeight(Number(initialParams.height));
     if (initialParams.turns) setTurns(Number(initialParams.turns));
     if (initialParams.edge) setCubeEdge(Number(initialParams.edge));
@@ -590,11 +604,11 @@ export const UnfoldingViewer: React.FC<UnfoldingViewerProps> = ({
 
   // Calculations for current model
   const cylinderCalcs = useMemo(() => {
-    const C = 2 * Math.PI * radius;
+    const C = explicitCircumference !== null ? explicitCircumference : 2 * Math.PI * radius;
     const deltaX = turns * C;
     const shortestDist = Math.sqrt(deltaX * deltaX + height * height);
     return { C, deltaX, shortestDist };
-  }, [radius, height, turns]);
+  }, [radius, height, turns, explicitCircumference]);
 
   const cubeCalcs = useMemo(() => {
     const surfaceDist = Math.sqrt(Math.pow(2 * cubeEdge, 2) + Math.pow(cubeEdge, 2));
@@ -891,7 +905,9 @@ export const UnfoldingViewer: React.FC<UnfoldingViewerProps> = ({
               <div className="flex justify-between">
                 <span className="text-slate-400">展开长方形水平宽度：</span>
                 <span className="font-mono font-bold text-sky-300">
-                  {turns === 0.5 ? 'π × r' : '2π × r'} = {cylinderCalcs.deltaX.toFixed(2)}
+                  {explicitCircumference !== null
+                    ? (turns === 0.5 ? '底面周长/2' : '底面周长')
+                    : (turns === 0.5 ? 'π × r' : '2π × r')} = {cylinderCalcs.deltaX.toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between">

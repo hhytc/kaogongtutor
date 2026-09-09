@@ -35,55 +35,54 @@ interface CandidateOption {
 const CANDIDATE_OPTIONS: CandidateOption[] = [
   {
     key: 'B',
-    name: '选项 B (正解 · 7个小立方体)',
+    name: '选项 B (7个小立方体 · L型拐角带凸起)',
     count: 7,
-    // When correctly oriented, matches CAVITY_VOXELS exactly!
+    // 7 voxels exactly matching CAVITY_VOXELS in target orientation!
     voxels: [
-      [0, 0, 0], [0, 0, 1], [1, 0, 0],
-      [0, 1, 0], [0, 1, 1], [1, 1, 0],
-      [0, 2, 0],
+      [2, 0, 0], [2, 0, 1], [1, 0, 0],
+      [2, 1, 0], [2, 1, 1], [1, 1, 0],
+      [2, 2, 0],
     ],
     isCorrect: true,
     correctRotations: [{ rx: 0, ry: 0, rz: 0 }],
-    explanation: '数量恰好为 27 - 20 = 7 块，空间旋转后其拐角与凸起能够与图①、图②的缺口完全咬合！',
+    explanation: '数量为 27 - 20 = 7 块，拐角与凸起能够与缺口 100% 紧密咬合，完美形成 3×3×3 大正方体！',
   },
   {
     key: 'A',
-    name: '选项 A (错项 · 8个小立方体)',
+    name: '选项 A (8个小立方体 · 2×2×2 角落实心)',
     count: 8,
     voxels: [
-      [0, 0, 0], [0, 0, 1], [0, 0, 2],
-      [0, 1, 0], [0, 1, 1], [0, 1, 2],
-      [0, 2, 0], [0, 2, 1],
+      [2, 0, 0], [2, 0, 1], [1, 0, 0], [1, 0, 1],
+      [2, 1, 0], [2, 1, 1], [1, 1, 0], [1, 1, 1],
     ],
     isCorrect: false,
     correctRotations: [],
-    explanation: '直接通过数量守恒排除！目标需 7 块，该选项有 8 块，拼合后超出大正方体体积！',
+    explanation: '通过数量守恒直接排除！目标空缺需 7 块，该选项含 8 块，拼合后超出大正方体并与基准积木冲突！',
   },
   {
     key: 'C',
-    name: '选项 C (错项 · 6个小立方体)',
+    name: '选项 C (6个小立方体 · 双层两拐角)',
     count: 6,
     voxels: [
-      [0, 0, 0], [0, 0, 1], [1, 0, 0],
-      [0, 1, 0], [0, 1, 1], [1, 1, 0],
+      [2, 0, 0], [2, 0, 1], [1, 0, 0],
+      [2, 1, 0], [2, 1, 1], [1, 1, 0],
     ],
     isCorrect: false,
     correctRotations: [],
-    explanation: '直接通过数量守恒排除！目标需 7 块，该选项仅有 6 块，拼合后存在空缺！',
+    explanation: '通过数量守恒直接排除！目标空缺需 7 块，该选项仅含 6 块，拼合后顶层仍有 1 块空缺！',
   },
   {
     key: 'D',
-    name: '选项 D (错项 · 7块但形状不符)',
+    name: '选项 D (7个小立方体 · 扁平长条延伸)',
     count: 7,
     voxels: [
-      [0, 0, 0], [1, 0, 0], [2, 0, 0],
-      [0, 1, 0], [1, 1, 0],
-      [0, 2, 0], [1, 2, 0],
+      [2, 0, 0], [2, 0, 1], [2, 0, 2],
+      [1, 0, 0], [1, 0, 1],
+      [2, 1, 0], [2, 1, 1],
     ],
     isCorrect: false,
     correctRotations: [],
-    explanation: '虽然有 7 块，但呈扁平两层结构，无论如何空间旋转都无法填补三层的直角凹槽！',
+    explanation: '虽然有 7 块，但向外侧多延伸了 1 块且缺少顶层凸起，无论如何空间旋转都无法匹配三层缺口！',
   },
 ];
 
@@ -98,6 +97,7 @@ export const AssemblyViewer: React.FC<AssemblyViewerProps> = () => {
   // Assemble progress: 0 (detached outside) to 1 (slotted in)
   const [assembleProgress, setAssembleProgress] = useState<number>(0);
   const [showCavityGuide, setShowCavityGuide] = useState<boolean>(true);
+  const [showAnalysis, setShowAnalysis] = useState<boolean>(false);
 
   // Three.js refs
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -110,18 +110,61 @@ export const AssemblyViewer: React.FC<AssemblyViewerProps> = () => {
     return CANDIDATE_OPTIONS.find((o) => o.key === selectedOptionKey) || CANDIDATE_OPTIONS[0];
   }, [selectedOptionKey]);
 
-  // Check if current rotation & option matches perfectly
-  const isPerfectMatch = useMemo(() => {
-    if (!currentOption.isCorrect) return false;
-    // Normalized angles mod 360
-    const normX = ((rotX % 360) + 360) % 360;
-    const normY = ((rotY % 360) + 360) % 360;
-    const normZ = ((rotZ % 360) + 360) % 360;
+  // Real 3D physical occupancy & collision calculation
+  const occupancyStats = useMemo(() => {
+    const rxRad = (rotX * Math.PI) / 180;
+    const ryRad = (rotY * Math.PI) / 180;
+    const rzRad = (rotZ * Math.PI) / 180;
+    const euler = new THREE.Euler(rxRad, ryRad, rzRad, 'XYZ');
 
-    return currentOption.correctRotations.some(
-      (r) => r.rx === normX && r.ry === normY && r.rz === normZ
-    );
+    const cavitySet = new Set(CAVITY_VOXELS.map(([x, y, z]) => `${x},${y},${z}`));
+    let matchedInCavity = 0;
+    let collidedWithBase = 0;
+    let outOfBounds = 0;
+
+    currentOption.voxels.forEach(([vx, vy, vz]) => {
+      // Local position before rotation around center (1, 1, 1)
+      const p = new THREE.Vector3(vx - 1, vy - 1, vz - 1).applyEuler(euler);
+      const gx = Math.round(p.x + 1);
+      const gy = Math.round(p.y + 1);
+      const gz = Math.round(p.z + 1);
+
+      if (
+        Math.abs(p.x + 1 - gx) > 0.05 ||
+        Math.abs(p.y + 1 - gy) > 0.05 ||
+        Math.abs(p.z + 1 - gz) > 0.05
+      ) {
+        outOfBounds++;
+        return;
+      }
+
+      if (gx < 0 || gx > 2 || gy < 0 || gy > 2 || gz < 0 || gz > 2) {
+        outOfBounds++;
+      } else {
+        const key = `${gx},${gy},${gz}`;
+        if (cavitySet.has(key)) {
+          matchedInCavity++;
+        } else {
+          collidedWithBase++;
+        }
+      }
+    });
+
+    const isPerfect =
+      currentOption.isCorrect &&
+      matchedInCavity === 7 &&
+      collidedWithBase === 0 &&
+      outOfBounds === 0;
+
+    return {
+      matchedInCavity,
+      collidedWithBase,
+      outOfBounds,
+      isPerfect,
+    };
   }, [currentOption, rotX, rotY, rotZ]);
+
+  const isPerfectMatch = occupancyStats.isPerfect;
 
   // Trigger celebration when assembled correctly
   useEffect(() => {
@@ -433,7 +476,15 @@ export const AssemblyViewer: React.FC<AssemblyViewerProps> = () => {
 
         {/* Options Switcher */}
         <div className="space-y-2">
-          <div className="text-xs font-semibold text-slate-300">切换测试选项：</div>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-300">测试备选组件：</span>
+            <button
+              onClick={() => setShowAnalysis(!showAnalysis)}
+              className="text-[11px] text-sky-400 hover:text-sky-300 font-medium"
+            >
+              {showAnalysis ? '收起解析' : '查看解题解析'}
+            </button>
+          </div>
           <div className="grid grid-cols-1 gap-2">
             {CANDIDATE_OPTIONS.map((opt) => {
               const isSelected = opt.key === selectedOptionKey;
@@ -447,40 +498,48 @@ export const AssemblyViewer: React.FC<AssemblyViewerProps> = () => {
                     setRotY(0);
                     setRotZ(0);
                   }}
-                  className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all ${
+                  className={`p-3 rounded-xl border text-left flex items-start justify-between transition-all ${
                     isSelected
                       ? 'bg-amber-500/15 border-amber-500 text-amber-200 shadow-md shadow-amber-500/10'
                       : 'bg-slate-900/80 border-slate-800 text-slate-400 hover:bg-slate-800/60'
                   }`}
                 >
-                  <div>
-                    <div className="font-bold text-xs flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-md bg-slate-800 flex items-center justify-center font-mono text-slate-200">
-                        {opt.key}
+                  <div className="w-full">
+                    <div className="font-bold text-xs flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="w-5 h-5 rounded-md bg-slate-800 flex items-center justify-center font-mono text-slate-200">
+                          {opt.key}
+                        </span>
+                        <span>{opt.name}</span>
+                      </div>
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">
+                        {opt.count} 块
                       </span>
-                      <span>{opt.name}</span>
                     </div>
-                    <div className="text-[11px] text-slate-400 mt-1">{opt.explanation}</div>
+                    {showAnalysis && (
+                      <div className="text-[11px] text-slate-400 mt-2 pt-2 border-t border-slate-800/60 leading-relaxed">
+                        {opt.explanation}
+                      </div>
+                    )}
                   </div>
-                  {opt.isCorrect && (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                  )}
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Match Feedback Banner */}
+        {/* Real-time Match Feedback Banner */}
         <div
-          className={`p-4 rounded-xl border flex items-center gap-3 ${
+          className={`p-4 rounded-xl border flex flex-col gap-2.5 ${
             isPerfectMatch && assembleProgress >= 0.95
               ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
+              : occupancyStats.collidedWithBase > 0 && assembleProgress > 0.4
+              ? 'bg-rose-500/10 border-rose-500/30 text-rose-300'
               : 'bg-slate-900 border-slate-800 text-slate-300'
           }`}
         >
           {isPerfectMatch && assembleProgress >= 0.95 ? (
-            <>
+            <div className="flex items-center gap-3">
               <CheckCircle2 className="w-6 h-6 text-emerald-400 flex-shrink-0" />
               <div>
                 <div className="font-bold text-xs">🎉 严丝合缝！完美拼成 3×3×3 大正方体！</div>
@@ -488,17 +547,45 @@ export const AssemblyViewer: React.FC<AssemblyViewerProps> = () => {
                   凹凸完全咬合，数量 20 + 7 = 27 块无缝填满。
                 </div>
               </div>
-            </>
+            </div>
           ) : (
-            <>
-              <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0" />
-              <div className="text-xs">
-                当前状态：
-                {currentOption.isCorrect
-                  ? '选中了正确组件 B，请尝试点击下方 X/Y/Z 轴旋转按钮并拖动推入滑块！'
-                  : '选中的是错误选项，无法完成拼合。请看下方秒杀技巧。'}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs font-semibold">
+                <span className="flex items-center gap-1.5">
+                  <Box className="w-4 h-4 text-amber-400" />
+                  空间占位与咬合检测
+                </span>
+                <span className="font-mono text-[11px]">
+                  缺口咬合: <strong className={occupancyStats.matchedInCavity === 7 ? 'text-emerald-400' : 'text-amber-400'}>{occupancyStats.matchedInCavity} / 7 块</strong>
+                </span>
               </div>
-            </>
+
+              {/* Status details */}
+              <div className="grid grid-cols-2 gap-2 text-[11px] bg-slate-950/60 p-2 rounded-lg border border-slate-800">
+                <div>
+                  碰撞基准块: <strong className={occupancyStats.collidedWithBase > 0 ? 'text-rose-400' : 'text-slate-400'}>{occupancyStats.collidedWithBase} 块</strong>
+                </div>
+                <div>
+                  超出大立方体: <strong className={occupancyStats.outOfBounds > 0 ? 'text-rose-400' : 'text-slate-400'}>{occupancyStats.outOfBounds} 块</strong>
+                </div>
+              </div>
+
+              <div className="text-[11px] text-slate-400 leading-relaxed flex items-center gap-1.5">
+                {occupancyStats.collidedWithBase > 0 ? (
+                  <>
+                    <AlertTriangle className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
+                    <span className="text-rose-300">当前姿态与已有积木发生空间重叠冲突，无法完全拼入。</span>
+                  </>
+                ) : occupancyStats.matchedInCavity === 7 ? (
+                  <>
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-emerald-300">姿态已与缺口完全吻合！拖动上方滑块推入即可严密拼合。</span>
+                  </>
+                ) : (
+                  <span>提示：可点击 X/Y/Z 轴旋转积木，观察其凹凸形态是否能填补绿色虚线缺口。</span>
+                )}
+              </div>
+            </div>
           )}
         </div>
 

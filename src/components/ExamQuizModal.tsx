@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { CheckCircle2, XCircle, Sparkles, ArrowRight, Eye, Lightbulb, AlertTriangle, BookOpen } from 'lucide-react';
+import { CheckCircle2, XCircle, Sparkles, ArrowRight, Eye, Lightbulb, AlertTriangle, BookOpen, RotateCcw } from 'lucide-react';
 import { EXAM_QUESTIONS, type ExamQuestion } from '../data/examQuestions';
 import { MathView } from './MathView';
 
@@ -10,9 +10,62 @@ interface ExamQuizModalProps {
 
 export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({ onLoadIntoSimulator }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [activeQuestionId, setActiveQuestionId] = useState<string>(EXAM_QUESTIONS[0].id);
-  const [userAnswers, setUserAnswers] = useState<Record<string, string>>({});
-  const [showExplanation, setShowExplanation] = useState<Record<string, boolean>>({});
+
+  // Persist active question and answers in localStorage
+  const [activeQuestionId, setActiveQuestionId] = useState<string>(() => {
+    try {
+      return localStorage.getItem('kaogong_quiz_active_id') || EXAM_QUESTIONS[0].id;
+    } catch {
+      return EXAM_QUESTIONS[0].id;
+    }
+  });
+
+  const [userAnswers, setUserAnswers] = useState<Record<string, string>>(() => {
+    try {
+      const saved = localStorage.getItem('kaogong_quiz_answers');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  const [showExplanation, setShowExplanation] = useState<Record<string, boolean>>(() => {
+    try {
+      const saved = localStorage.getItem('kaogong_quiz_expl');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('kaogong_quiz_active_id', activeQuestionId);
+    } catch {}
+  }, [activeQuestionId]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('kaogong_quiz_answers', JSON.stringify(userAnswers));
+    } catch {}
+  }, [userAnswers]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('kaogong_quiz_expl', JSON.stringify(showExplanation));
+    } catch {}
+  }, [showExplanation]);
+
+  const handleResetQuiz = () => {
+    if (confirm('确定要清空做题记录并重新练习吗？')) {
+      setUserAnswers({});
+      setShowExplanation({});
+      try {
+        localStorage.removeItem('kaogong_quiz_answers');
+        localStorage.removeItem('kaogong_quiz_expl');
+      } catch {}
+    }
+  };
 
   const filteredQuestions = EXAM_QUESTIONS.filter((q) => {
     if (selectedCategory === 'all') return true;
@@ -39,6 +92,89 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({ onLoadIntoSimulato
     }
   };
 
+  // Render question diagrams
+  const renderDiagram = () => {
+    if (currentQ.diagramType === 'origami-q7') {
+      return (
+        <div className="my-3 p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex flex-col items-center">
+          <div className="text-[11px] text-slate-400 mb-2 font-medium">【题干给定外表面展开图 (1-4-1 十字构型)】</div>
+          <svg viewBox="0 0 240 180" className="w-64 max-w-full h-auto drop-shadow-md">
+            {/* Col 0, Row 1: Double Circle */}
+            <g transform="translate(15, 65)">
+              <rect width="45" height="45" fill="#1e293b" stroke="#38bdf8" strokeWidth="2" rx="4" />
+              <circle cx="22.5" cy="22.5" r="14" fill="none" stroke="#38bdf8" strokeWidth="2" />
+              <circle cx="22.5" cy="22.5" r="8" fill="none" stroke="#38bdf8" strokeWidth="2" />
+            </g>
+
+            {/* Col 1, Row 0: Up Arrow */}
+            <g transform="translate(65, 15)">
+              <rect width="45" height="45" fill="#1e293b" stroke="#38bdf8" strokeWidth="2" rx="4" />
+              <path d="M 22.5 8 L 33 22 L 26 22 L 26 37 L 19 37 L 19 22 L 12 22 Z" fill="#38bdf8" />
+            </g>
+
+            {/* Col 1, Row 1: Five-Pointed Star */}
+            <g transform="translate(65, 65)">
+              <rect width="45" height="45" fill="#1e293b" stroke="#38bdf8" strokeWidth="2" rx="4" />
+              <polygon points="22.5,7 26.5,18 38,18 28.5,25 32,36 22.5,29.5 13,36 16.5,25 7,18 18.5,18" fill="#facc15" />
+            </g>
+
+            {/* Col 1, Row 2: Diagonal Hatched Lines */}
+            <g transform="translate(65, 115)">
+              <rect width="45" height="45" fill="#1e293b" stroke="#38bdf8" strokeWidth="2" rx="4" />
+              <line x1="6" y1="39" x2="39" y2="6" stroke="#94a3b8" strokeWidth="2" />
+              <line x1="6" y1="24" x2="24" y2="6" stroke="#94a3b8" strokeWidth="2" />
+              <line x1="21" y1="39" x2="39" y2="21" stroke="#94a3b8" strokeWidth="2" />
+            </g>
+
+            {/* Col 2, Row 1: Diagonal Cross */}
+            <g transform="translate(115, 65)">
+              <rect width="45" height="45" fill="#1e293b" stroke="#38bdf8" strokeWidth="2" rx="4" />
+              <line x1="10" y1="10" x2="35" y2="35" stroke="#ef4444" strokeWidth="3.5" strokeLinecap="round" />
+              <line x1="35" y1="10" x2="10" y2="35" stroke="#ef4444" strokeWidth="3.5" strokeLinecap="round" />
+            </g>
+
+            {/* Col 3, Row 1: Shaded Solid Square */}
+            <g transform="translate(165, 65)">
+              <rect width="45" height="45" fill="#1e293b" stroke="#38bdf8" strokeWidth="2" rx="4" />
+              <rect x="11.25" y="11.25" width="22.5" height="22.5" fill="#64748b" rx="2" />
+            </g>
+          </svg>
+          <div className="text-[10px] text-slate-500 mt-2 text-center">
+            提示：同行隔一格必为【相对面】（★五角星 与 ■阴影方块；◎双圆环 与 ✕对角叉）
+          </div>
+        </div>
+      );
+    }
+
+    if (currentQ.diagramType === 'assembly-q8') {
+      return (
+        <div className="my-3 p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex flex-col items-center">
+          <div className="text-[11px] text-slate-400 mb-2 font-medium">【3×3×3 大正方体拼合示意 (目标 27 块小立方体)】</div>
+          <svg viewBox="0 0 280 110" className="w-72 max-w-full h-auto drop-shadow-md">
+            <g transform="translate(10, 10)">
+              <rect width="120" height="85" fill="#1e293b" stroke="#3b82f6" strokeWidth="1.5" rx="8" />
+              <text x="60" y="26" fill="#93c5fd" fontSize="11" fontWeight="bold" textAnchor="middle">图① + 图② (已有)</text>
+              <text x="60" y="52" fill="#e2e8f0" fontSize="18" fontWeight="bold" textAnchor="middle">20 块</text>
+              <text x="60" y="73" fill="#64748b" fontSize="9" textAnchor="middle">底层缺3 + 中层缺3 + 顶层缺1</text>
+            </g>
+            <text x="140" y="60" fill="#64748b" fontSize="20" fontWeight="bold" textAnchor="middle">+</text>
+            <g transform="translate(150, 10)">
+              <rect width="120" height="85" fill="#064e3b" stroke="#10b981" strokeWidth="1.5" strokeDasharray="4 2" rx="8" />
+              <text x="60" y="26" fill="#6ee7b7" fontSize="11" fontWeight="bold" textAnchor="middle">待拼合选项 (缺口)</text>
+              <text x="60" y="52" fill="#34d399" fontSize="18" fontWeight="bold" textAnchor="middle">7 块</text>
+              <text x="60" y="73" fill="#a7f3d0" fontSize="9" textAnchor="middle">27 - 20 = 7 块凹凸互补</text>
+            </g>
+          </svg>
+          <div className="text-[10px] text-slate-500 mt-2 text-center">
+            第一步按数量守恒排除：目标 27 - (11 + 9) = 7 块，排除 A (8块) 和 C (6块)
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <div className="w-full h-[calc(100dvh-5.5rem)] lg:h-[calc(100vh-4rem)] bg-slate-950 flex flex-col lg:flex-row overflow-hidden">
       {/* Left Questions List Sidebar (Desktop) / Top Horizontal Question Bar (Mobile) */}
@@ -50,9 +186,18 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({ onLoadIntoSimulato
               <BookOpen className="w-4 h-4 text-sky-400" />
               <h3 className="text-xs font-bold text-white uppercase tracking-wider">真题题库</h3>
             </div>
-            <span className="text-[11px] text-slate-400 font-mono font-medium">
-              共 {filteredQuestions.length} 道
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-slate-400 font-mono font-medium">
+                共 {filteredQuestions.length} 道
+              </span>
+              <button
+                onClick={handleResetQuiz}
+                title="清空做题进度与答题记录"
+                className="p-1 rounded text-slate-500 hover:text-slate-300 hover:bg-slate-800 transition-colors"
+              >
+                <RotateCcw className="w-3 h-3" />
+              </button>
+            </div>
           </div>
           <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5 text-xs touch-pan-x">
             <button
@@ -214,6 +359,9 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({ onLoadIntoSimulato
           <h2 className="text-sm sm:text-base lg:text-lg font-bold text-white leading-relaxed">
             {currentQ.questionText}
           </h2>
+
+          {/* Inline Graphic Diagram (if question has diagram) */}
+          {renderDiagram()}
 
           {/* Options Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">

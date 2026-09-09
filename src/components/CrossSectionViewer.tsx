@@ -46,10 +46,11 @@ export const CrossSectionViewer: React.FC<CrossSectionViewerProps> = ({
   const applyPreset = (type: string) => {
     switch (type) {
       case 'triangle':
-        // Equilateral triangle (cuts through 3 edges near corner)
-        setPitch(54.7);
+        // Equilateral triangle (cuts through 3 edges near corner symmetrically)
+        // Space diagonal normal: y = 1/sqrt(3) -> pitch = asin(1/sqrt(3)) ≈ 35.3°
+        setPitch(35.3);
         setYaw(45);
-        setOffset(1.2);
+        setOffset(1.8);
         break;
       case 'rectangle':
         // Rectangle through opposite edges
@@ -58,10 +59,10 @@ export const CrossSectionViewer: React.FC<CrossSectionViewerProps> = ({
         setOffset(0);
         break;
       case 'trapezoid':
-        // Isosceles trapezoid
-        setPitch(30);
+        // Isosceles trapezoid (parallel top & bottom, equal legs)
+        setPitch(25);
         setYaw(45);
-        setOffset(0.7);
+        setOffset(1.1);
         break;
       case 'pentagon':
         // 5-sided polygon
@@ -70,8 +71,8 @@ export const CrossSectionViewer: React.FC<CrossSectionViewerProps> = ({
         setOffset(0.4);
         break;
       case 'hexagon':
-        // Regular hexagon passing through 6 edge midpoints
-        setPitch(54.7);
+        // Regular hexagon passing through 6 edge midpoints symmetrically
+        setPitch(35.3);
         setYaw(45);
         setOffset(0);
         break;
