@@ -107,6 +107,50 @@ const STORAGE_KEY = 'kaogong_learning_records_v1';
 const ACTIVE_Q_KEY = 'kaogong_quiz_active_id';
 const HINTS_KEY = 'kaogong_unlocked_hints_v1';
 
+// Shared helper to safely recover or validate first-attempt records isolated by version
+function resolveFirstAttempt(
+  r: Partial<QuestionRecord>,
+  history: AttemptHistoryItem[],
+  recVersion: number
+): { firstAttemptCorrect: boolean | null; firstAttemptHints: number | null } {
+  // If firstAttemptCorrect is explicitly boolean, retain it
+  if (typeof r.firstAttemptCorrect === 'boolean') {
+    const hints = typeof r.firstAttemptHints === 'number' && Number.isInteger(r.firstAttemptHints) && r.firstAttemptHints >= 0 && r.firstAttemptHints <= 3
+      ? r.firstAttemptHints
+      : (typeof r.hintsUsed === 'number' && r.hintsUsed >= 0 && r.hintsUsed <= 3 ? r.hintsUsed : 0);
+    return { firstAttemptCorrect: r.firstAttemptCorrect, firstAttemptHints: hints };
+  }
+  // If explicitly null, it is an established unrecoverable record
+  if (r.firstAttemptCorrect === null) {
+    return { firstAttemptCorrect: null, firstAttemptHints: null };
+  }
+
+  // Strictly recover for the current recVersion from history items matching recVersion
+  const versionHistory = history.filter((h) => h && typeof h === 'object' && h.version === recVersion);
+  if (versionHistory.length > 0) {
+    return {
+      firstAttemptCorrect: versionHistory[0].isCorrect,
+      firstAttemptHints: typeof versionHistory[0].hintsUsed === 'number' ? versionHistory[0].hintsUsed : 0,
+    };
+  }
+
+  // No explicit history for current version:
+  // If there are multiple attempts or foreign version history, do NOT assume foreign history belongs to current version
+  if ((typeof r.attempts === 'number' && r.attempts > 1) || history.length > 0) {
+    return { firstAttemptCorrect: null, firstAttemptHints: null };
+  }
+
+  // Single attempt legacy record without history: only recover if answer is present
+  if (r.selectedAnswer) {
+    return {
+      firstAttemptCorrect: typeof r.isCorrect === 'boolean' ? r.isCorrect : false,
+      firstAttemptHints: typeof r.hintsUsed === 'number' ? r.hintsUsed : 0,
+    };
+  }
+
+  return { firstAttemptCorrect: null, firstAttemptHints: null };
+}
+
 // Migration helper to ensure legacy records are converted safely
 function migrateRawRecords(raw: Record<string, any>): { records: Record<string, QuestionRecord>; modified: boolean } {
   let modified = false;
@@ -120,27 +164,7 @@ function migrateRawRecords(raw: Record<string, any>): { records: Record<string, 
       ? r.questionVersion
       : 1;
 
-    // Migrate missing firstAttempt fields from legacy records
-    const hasValidFirstAttempt = typeof r.firstAttemptCorrect === 'boolean' || r.firstAttemptCorrect === null;
-    if (!hasValidFirstAttempt) {
-      if (Array.isArray(r.history) && r.history.length > 0) {
-        r.firstAttemptCorrect = r.history[0].isCorrect;
-        r.firstAttemptHints = typeof r.history[0].hintsUsed === 'number' ? r.history[0].hintsUsed : 0;
-      } else if (typeof r.attempts === 'number' && r.attempts > 1) {
-        // Legacy record with multiple attempts but lost history -> mark as unknown (null), cannot synthesize
-        r.firstAttemptCorrect = null;
-        r.firstAttemptHints = null;
-      } else {
-        // Single attempt legacy record -> can reliably recover from current record
-        r.firstAttemptCorrect = typeof r.isCorrect === 'boolean' ? r.isCorrect : false;
-        r.firstAttemptHints = typeof r.hintsUsed === 'number' ? r.hintsUsed : 0;
-      }
-      modified = true;
-    }
-    if (r.firstAttemptCorrect !== null && typeof r.firstAttemptHints !== 'number') {
-      r.firstAttemptHints = typeof r.hintsUsed === 'number' ? r.hintsUsed : 0;
-      modified = true;
-    }
+    // 1. Normalize history array and versions first
     if (!Array.isArray(r.history)) {
       r.history = r.selectedAnswer
         ? [
@@ -189,6 +213,14 @@ function migrateRawRecords(raw: Record<string, any>): { records: Record<string, 
           }
         }
       }
+    }
+
+    // 2. Recover missing firstAttempt fields strictly isolated by recVersion
+    const { firstAttemptCorrect, firstAttemptHints } = resolveFirstAttempt(r, r.history, recVersion);
+    if (r.firstAttemptCorrect !== firstAttemptCorrect || r.firstAttemptHints !== firstAttemptHints) {
+      r.firstAttemptCorrect = firstAttemptCorrect;
+      r.firstAttemptHints = firstAttemptHints;
+      modified = true;
     }
     if (typeof r.attempts !== 'number' || r.attempts < 1) {
       r.attempts = r.history.length || (r.selectedAnswer ? 1 : 0);
@@ -641,31 +673,36 @@ export const learningStorage = {
           }
         }
 
-        // Validate or migrate firstAttemptCorrect
-        let firstAttemptCorrect: boolean | null;
-        if (typeof r.firstAttemptCorrect === 'boolean') {
-          firstAttemptCorrect = r.firstAttemptCorrect;
-        } else if (r.firstAttemptCorrect === null) {
-          firstAttemptCorrect = null;
-        } else if (validatedHistory.length > 0) {
-          firstAttemptCorrect = validatedHistory[0].isCorrect;
-        } else if (typeof r.attempts === 'number' && r.attempts > 1) {
-          firstAttemptCorrect = null;
-        } else {
-          firstAttemptCorrect = r.isCorrect;
+        const recVersion = typeof r.questionVersion === 'number' && Number.isInteger(r.questionVersion) && r.questionVersion >= 1 ? r.questionVersion : 1;
+
+        // Normalize unversioned history in backup
+        const explicitVersions = new Set<number>();
+        let hasUnversioned = false;
+        for (const h of validatedHistory) {
+          if (typeof h.version === 'number' && Number.isInteger(h.version) && h.version >= 1) {
+            explicitVersions.add(h.version);
+          } else {
+            hasUnversioned = true;
+          }
+        }
+        if (hasUnversioned) {
+          if (explicitVersions.size === 0 && recVersion === 1) {
+            for (const h of validatedHistory) {
+              if (typeof h.version !== 'number') {
+                h.version = 1;
+              }
+            }
+          } else {
+            for (const h of validatedHistory) {
+              if (typeof h.version !== 'number' && h.version !== undefined) {
+                delete h.version;
+              }
+            }
+          }
         }
 
-        // Validate or migrate firstAttemptHints
-        let firstAttemptHints: number | null;
-        if (typeof r.firstAttemptHints === 'number' && Number.isInteger(r.firstAttemptHints) && r.firstAttemptHints >= 0 && r.firstAttemptHints <= 3) {
-          firstAttemptHints = r.firstAttemptHints;
-        } else if (r.firstAttemptHints === null || firstAttemptCorrect === null) {
-          firstAttemptHints = null;
-        } else if (validatedHistory.length > 0) {
-          firstAttemptHints = validatedHistory[0].hintsUsed;
-        } else {
-          firstAttemptHints = r.hintsUsed;
-        }
+        // Recover or validate firstAttempt fields using shared version-aware logic
+        const { firstAttemptCorrect, firstAttemptHints } = resolveFirstAttempt(r, validatedHistory, recVersion);
 
         validatedRecords[qid] = {
           questionId: qid,

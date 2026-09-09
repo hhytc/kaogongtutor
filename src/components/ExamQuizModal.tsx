@@ -272,13 +272,12 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
   const handleReattempt = (qid: string) => {
     learningStorage.clearCurrentForReattempt(qid);
     const targetQ = EXAM_QUESTIONS.find((q) => q.id === qid);
-    const versionedKey = targetQ ? `${targetQ.id}_v${targetQ.version || 1}` : `${qid}_v1`;
-    learningStorage.clearUnlockedHint(versionedKey);
-    learningStorage.clearUnlockedHint(qid);
+    const qVersion = targetQ?.version || 1;
+    const versionedKey = `${qid}_v${qVersion}`;
+    learningStorage.clearUnlockedHint(qid, qVersion);
     setRecords({ ...learningStorage.getRecords() });
     setUnlockedHints((prev) => {
       const copy = { ...prev };
-      delete copy[qid];
       delete copy[versionedKey];
       return copy;
     });
@@ -640,6 +639,10 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
             filteredQuestions.map((q, idx) => {
               const rec = records[q.id];
               const isCurrent = currentQ && q.id === currentQ.id;
+              const qVersion = q.version || 1;
+              const isVersionMatch = Boolean(rec && (rec.questionVersion || 1) === qVersion);
+              const answered = Boolean(isVersionMatch && rec?.selectedAnswer);
+              const isOldVersion = Boolean(!isVersionMatch && rec?.selectedAnswer);
 
               return (
                 <button
@@ -648,17 +651,25 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                   className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border transition-all ${
                     isCurrent
                       ? 'bg-sky-500/20 border-sky-500 text-sky-300 ring-1 ring-sky-500'
-                      : rec
+                      : answered
                       ? 'bg-slate-900 border-slate-700 text-slate-300'
+                      : isOldVersion
+                      ? 'bg-slate-900/90 border-amber-500/40 text-slate-300'
                       : 'bg-slate-900/60 border-slate-800 text-slate-500'
                   }`}
                 >
                   <span>第{idx + 1}题</span>
-                  {rec && rec.selectedAnswer && (
+                  {answered && (
                     <span
                       className={`w-1.5 h-1.5 rounded-full ${
                         rec.isCorrect ? 'bg-emerald-400' : 'bg-rose-400'
                       }`}
+                    />
+                  )}
+                  {isOldVersion && (
+                    <span
+                      className="w-1.5 h-1.5 rounded-full bg-amber-400/80"
+                      title={`旧版本记录 (v${rec.questionVersion || 1})`}
                     />
                   )}
                 </button>
@@ -683,7 +694,10 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
             filteredQuestions.map((q, idx) => {
               const rec = records[q.id];
               const isCurrent = currentQ && q.id === currentQ.id;
-              const answered = Boolean(rec && rec.selectedAnswer);
+              const qVersion = q.version || 1;
+              const isVersionMatch = Boolean(rec && (rec.questionVersion || 1) === qVersion);
+              const answered = Boolean(isVersionMatch && rec?.selectedAnswer);
+              const isOldVersion = Boolean(!isVersionMatch && rec?.selectedAnswer);
 
               return (
                 <button
@@ -721,6 +735,14 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                             ? '独立答对'
                             : '提示答对'
                           : '已答错'}
+                      </span>
+                    )}
+                    {isOldVersion && (
+                      <span
+                        className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30"
+                        title={`题目已更新至 v${qVersion}，此处为旧版 (v${rec.questionVersion || 1}) 记录`}
+                      >
+                        旧版本记录
                       </span>
                     )}
                   </div>
@@ -1078,6 +1100,10 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                       const varQ = EXAM_QUESTIONS.find((q) => q.id === varId);
                       if (!varQ) return null;
                       const varRec = records[varId];
+                      const varQVersion = varQ.version || 1;
+                      const varVersionMatch = Boolean(varRec && (varRec.questionVersion || 1) === varQVersion);
+                      const varAnswered = Boolean(varVersionMatch && varRec?.selectedAnswer);
+                      const varOldVersion = Boolean(!varVersionMatch && varRec?.selectedAnswer);
 
                       return (
                         <button
@@ -1086,12 +1112,20 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                           className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow-md shadow-indigo-600/20 transition-all cursor-pointer"
                         >
                           <span>变式 {idx + 1}: {varQ.subType}</span>
-                          {varRec && varRec.selectedAnswer && (
+                          {varAnswered && (
                             <span
                               className={`w-1.5 h-1.5 rounded-full ${
                                 varRec.isCorrect ? 'bg-emerald-400' : 'bg-rose-400'
                               }`}
                             />
+                          )}
+                          {varOldVersion && (
+                            <span
+                              className="text-[9px] px-1 py-0.2 rounded bg-amber-500/25 text-amber-200 font-normal"
+                              title={`旧版本记录 (v${varRec.questionVersion || 1})`}
+                            >
+                              旧版
+                            </span>
                           )}
                           <ArrowRight className="w-3.5 h-3.5" />
                         </button>
