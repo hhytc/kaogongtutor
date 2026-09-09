@@ -209,7 +209,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     scene.background = new THREE.Color(0x0a0e1a);
 
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-    camera.position.set(7, 8, 9);
+    camera.position.set(5, 9, 10);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
@@ -221,6 +221,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
+    controls.target.set(0, 0, 0);
     controlsRef.current = controls;
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
@@ -295,11 +296,13 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     }
 
     const a = 2.4; // Edge length
+    const h = a / 2; // Half length (1.2)
     const u = foldProgress; // 0 = flat, 1 = folded
     const foldAngle = u * (Math.PI / 2);
 
     const createFaceMesh = (patternIndex: number, pairIndex: number) => {
       const geom = new THREE.PlaneGeometry(a, a);
+      geom.rotateX(-Math.PI / 2); // Flat horizontal on XZ plane, normal +Y
       const mat = new THREE.MeshStandardMaterial({
         map: faceTextures[patternIndex],
         roughness: 0.25,
@@ -323,271 +326,261 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     };
 
     // -------------------------------------------------------------
-    // Archetype 1: "1-4-1" 标准一四一型
+    // Archetype 1: "1-4-1" 标准一四一型 (经典十字形，占 6 种)
     // -------------------------------------------------------------
     if (netType === '1-4-1') {
-      const baseMesh = createFaceMesh(0, 2);
-      baseMesh.rotation.x = Math.PI / 2;
-      baseMesh.position.set(0, -a / 2, 0);
-      group.add(baseMesh);
+      group.position.set(0, 0, -h * (1 - u));
 
-      // Front Face
+      // Top (0) - Pair 2 (Blue, anchor)
+      const topMesh = createFaceMesh(0, 2);
+      topMesh.position.set(0, h, 0);
+      group.add(topMesh);
+
+      // Front (1) - Pair 0 (Red, South of Top)
       const frontPivot = new THREE.Group();
-      frontPivot.position.set(0, -a / 2, a / 2);
-      const frontMesh = createFaceMesh(1, 0);
-      frontMesh.position.set(0, a / 2, 0);
-      frontPivot.add(frontMesh);
+      frontPivot.position.set(0, h, h);
       frontPivot.rotation.x = foldAngle;
+      const frontMesh = createFaceMesh(1, 0);
+      frontMesh.position.set(0, 0, h);
+      frontPivot.add(frontMesh);
+
+      // Bottom (2) - Pair 2 (Blue, South of Front)
+      const bottomPivot = new THREE.Group();
+      bottomPivot.position.set(0, 0, 2 * h);
+      bottomPivot.rotation.x = foldAngle;
+      const bottomMesh = createFaceMesh(2, 2);
+      bottomMesh.position.set(0, 0, h);
+      bottomPivot.add(bottomMesh);
+      frontPivot.add(bottomPivot);
+
       group.add(frontPivot);
 
-      // Back Face + Top Face
+      // Back (3) - Pair 0 (Red, North of Top)
       const backPivot = new THREE.Group();
-      backPivot.position.set(0, -a / 2, -a / 2);
-      const backMesh = createFaceMesh(3, 0);
-      backMesh.position.set(0, a / 2, 0);
-      backMesh.rotation.y = Math.PI;
-      backPivot.add(backMesh);
+      backPivot.position.set(0, h, -h);
       backPivot.rotation.x = -foldAngle;
-
-      const topPivot = new THREE.Group();
-      topPivot.position.set(0, a, 0);
-      const topMesh = createFaceMesh(2, 2);
-      topMesh.position.set(0, a / 2, 0);
-      topMesh.rotation.x = Math.PI;
-      topPivot.add(topMesh);
-      topPivot.rotation.x = -foldAngle;
-      backPivot.add(topPivot);
-
+      const backMesh = createFaceMesh(3, 0);
+      backMesh.position.set(0, 0, -h);
+      backPivot.add(backMesh);
       group.add(backPivot);
 
-      // Left Face
+      // Left (4) - Pair 1 (Green, West of Top)
       const leftPivot = new THREE.Group();
-      leftPivot.position.set(-a / 2, -a / 2, 0);
+      leftPivot.position.set(-h, h, 0);
+      leftPivot.rotation.z = foldAngle;
       const leftMesh = createFaceMesh(4, 1);
-      leftMesh.position.set(0, a / 2, 0);
-      leftMesh.rotation.y = -Math.PI / 2;
+      leftMesh.position.set(-h, 0, 0);
       leftPivot.add(leftMesh);
-      leftPivot.rotation.z = -foldAngle;
       group.add(leftPivot);
 
-      // Right Face
+      // Right (5) - Pair 1 (Green, East of Top)
       const rightPivot = new THREE.Group();
-      rightPivot.position.set(a / 2, -a / 2, 0);
+      rightPivot.position.set(h, h, 0);
+      rightPivot.rotation.z = -foldAngle;
       const rightMesh = createFaceMesh(5, 1);
-      rightMesh.position.set(0, a / 2, 0);
-      rightMesh.rotation.y = Math.PI / 2;
+      rightMesh.position.set(h, 0, 0);
       rightPivot.add(rightMesh);
-      rightPivot.rotation.z = foldAngle;
       group.add(rightPivot);
 
       if (showClockwiseVertex) {
         const pin = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), new THREE.MeshBasicMaterial({ color: 0xfacc15 }));
-        pin.position.set(a / 2, a, 0.05);
+        pin.position.set(h, 0, 2 * h);
         frontPivot.add(pin);
       }
     }
 
     // -------------------------------------------------------------
-    // Archetype 2: "2-3-1" 楼梯拐角型 (公考常考大杀器)
+    // Archetype 2: "2-3-1" 楼梯拐角型 (公考常考重点，占 3 种)
     // -------------------------------------------------------------
     else if (netType === '2-3-1') {
-      // Middle Row has 3: Left(4), Bottom(0), Right(5)
-      // Top Row has 2: Top(2) attached above Left(4), Back(3) attached above Bottom(0)
-      // Bottom Row has 1: Front(1) attached below Right(5)
+      group.position.set(-h * (1 - u), 0, 0);
 
-      // Base Bottom (0)
-      const baseMesh = createFaceMesh(0, 2);
-      baseMesh.rotation.x = Math.PI / 2;
-      baseMesh.position.set(0, -a / 2, 0);
-      group.add(baseMesh);
+      // Top (0) - Pair 2 (Blue, anchor)
+      const topMesh = createFaceMesh(0, 2);
+      topMesh.position.set(0, h, 0);
+      group.add(topMesh);
 
-      // Back Face (3) - hinged on Base north
-      const backPivot = new THREE.Group();
-      backPivot.position.set(0, -a / 2, -a / 2);
-      const backMesh = createFaceMesh(3, 0);
-      backMesh.position.set(0, a / 2, 0);
-      backMesh.rotation.y = Math.PI;
-      backPivot.add(backMesh);
-      backPivot.rotation.x = -foldAngle;
-      group.add(backPivot);
-
-      // Left Face (4) - hinged on Base west
-      const leftPivot = new THREE.Group();
-      leftPivot.position.set(-a / 2, -a / 2, 0);
-      const leftMesh = createFaceMesh(4, 1);
-      leftMesh.position.set(0, a / 2, 0);
-      leftMesh.rotation.y = -Math.PI / 2;
-      leftPivot.add(leftMesh);
-      leftPivot.rotation.z = -foldAngle;
-
-      // Top Face (2) - hinged on Left north! (In 2D: above Left)
-      const topPivot = new THREE.Group();
-      topPivot.position.set(0, a, 0);
-      const topMesh = createFaceMesh(2, 2);
-      topMesh.position.set(0, a / 2, 0);
-      topMesh.rotation.y = -Math.PI / 2;
-      topPivot.add(topMesh);
-      topPivot.rotation.x = -foldAngle;
-      leftPivot.add(topPivot);
-
-      group.add(leftPivot);
-
-      // Right Face (5) - hinged on Base east
-      const rightPivot = new THREE.Group();
-      rightPivot.position.set(a / 2, -a / 2, 0);
-      const rightMesh = createFaceMesh(5, 1);
-      rightMesh.position.set(0, a / 2, 0);
-      rightMesh.rotation.y = Math.PI / 2;
-      rightPivot.add(rightMesh);
-      rightPivot.rotation.z = foldAngle;
-
-      // Front Face (1) - hinged on Right south! (In 2D: below Right)
+      // Front (1) - Pair 0 (Red, South of Top)
       const frontPivot = new THREE.Group();
-      frontPivot.position.set(0, 0, a / 2);
-      const frontMesh = createFaceMesh(1, 0);
-      frontMesh.position.set(0, a / 2, 0);
-      frontMesh.rotation.y = Math.PI / 2;
-      frontPivot.add(frontMesh);
+      frontPivot.position.set(0, h, h);
       frontPivot.rotation.x = foldAngle;
-      rightPivot.add(frontPivot);
+      const frontMesh = createFaceMesh(1, 0);
+      frontMesh.position.set(0, 0, h);
+      frontPivot.add(frontMesh);
+      group.add(frontPivot);
+
+      // Right (5) - Pair 1 (Green, East of Top)
+      const rightPivot = new THREE.Group();
+      rightPivot.position.set(h, h, 0);
+      rightPivot.rotation.z = -foldAngle;
+      const rightMesh = createFaceMesh(5, 1);
+      rightMesh.position.set(h, 0, 0);
+      rightPivot.add(rightMesh);
+
+      // Bottom (2) - Pair 2 (Blue, attached to Right)
+      const bottomPivot = new THREE.Group();
+      bottomPivot.position.set(2 * h, 0, 0);
+      bottomPivot.rotation.z = -foldAngle;
+      const bottomMesh = createFaceMesh(2, 2);
+      bottomMesh.position.set(h, 0, 0);
+      bottomPivot.add(bottomMesh);
+      rightPivot.add(bottomPivot);
 
       group.add(rightPivot);
 
-      if (showClockwiseVertex) {
-        const pin = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), new THREE.MeshBasicMaterial({ color: 0xfacc15 }));
-        pin.position.set(0, a, 0.05);
-        backPivot.add(pin);
-      }
-    }
-
-    // -------------------------------------------------------------
-    // Archetype 3: "2-2-2" 阶梯台阶型
-    // -------------------------------------------------------------
-    else if (netType === '2-2-2') {
-      // Row 1: [Top(2)] [Back(3)]
-      // Row 2:          [Left(4)] [Bottom(0)]
-      // Row 3:                    [Front(1)] [Right(5)]
-
-      // Base Bottom (0)
-      const baseMesh = createFaceMesh(0, 2);
-      baseMesh.rotation.x = Math.PI / 2;
-      baseMesh.position.set(0, -a / 2, 0);
-      group.add(baseMesh);
-
-      // Left Face (4) - hinged on Base west
-      const leftPivot = new THREE.Group();
-      leftPivot.position.set(-a / 2, -a / 2, 0);
-      const leftMesh = createFaceMesh(4, 1);
-      leftMesh.position.set(0, a / 2, 0);
-      leftMesh.rotation.y = -Math.PI / 2;
-      leftPivot.add(leftMesh);
-      leftPivot.rotation.z = -foldAngle;
-
-      // Back Face (3) - hinged on Left north
+      // Back (3) - Pair 0 (Red, North of Top)
       const backPivot = new THREE.Group();
-      backPivot.position.set(0, a, 0);
-      const backMesh = createFaceMesh(3, 0);
-      backMesh.position.set(0, a / 2, 0);
-      backMesh.rotation.y = Math.PI;
-      backPivot.add(backMesh);
+      backPivot.position.set(0, h, -h);
       backPivot.rotation.x = -foldAngle;
-
-      // Top Face (2) - hinged on Back west
-      const topPivot = new THREE.Group();
-      topPivot.position.set(-a / 2, a / 2, 0);
-      const topMesh = createFaceMesh(2, 2);
-      topMesh.position.set(-a / 2, 0, 0);
-      topPivot.add(topMesh);
-      topPivot.rotation.y = -foldAngle;
-      backPivot.add(topPivot);
-
-      leftPivot.add(backPivot);
-      group.add(leftPivot);
-
-      // Front Face (1) - hinged on Base south
-      const frontPivot = new THREE.Group();
-      frontPivot.position.set(0, -a / 2, a / 2);
-      const frontMesh = createFaceMesh(1, 0);
-      frontMesh.position.set(0, a / 2, 0);
-      frontPivot.add(frontMesh);
-      frontPivot.rotation.x = foldAngle;
-
-      // Right Face (5) - hinged on Front east
-      const rightPivot = new THREE.Group();
-      rightPivot.position.set(a / 2, a / 2, 0);
-      const rightMesh = createFaceMesh(5, 1);
-      rightMesh.position.set(a / 2, 0, 0);
-      rightMesh.rotation.y = Math.PI / 2;
-      rightPivot.add(rightMesh);
-      rightPivot.rotation.y = foldAngle;
-      frontPivot.add(rightPivot);
-
-      group.add(frontPivot);
-    }
-
-    // -------------------------------------------------------------
-    // Archetype 4: "3-3" 两排相错型
-    // -------------------------------------------------------------
-    else if (netType === '3-3') {
-      // Row 1: [Top(2)] [Back(3)] [Left(4)]
-      // Row 2:          [Bottom(0)] [Right(5)] [Front(1)]
-
-      // Base Bottom (0)
-      const baseMesh = createFaceMesh(0, 2);
-      baseMesh.rotation.x = Math.PI / 2;
-      baseMesh.position.set(0, -a / 2, 0);
-      group.add(baseMesh);
-
-      // Back Face (3) - hinged on Base north
-      const backPivot = new THREE.Group();
-      backPivot.position.set(0, -a / 2, -a / 2);
       const backMesh = createFaceMesh(3, 0);
-      backMesh.position.set(0, a / 2, 0);
-      backMesh.rotation.y = Math.PI;
+      backMesh.position.set(0, 0, -h);
       backPivot.add(backMesh);
-      backPivot.rotation.x = -foldAngle;
 
-      // Top Face (2) - hinged on Back west
-      const topPivot = new THREE.Group();
-      topPivot.position.set(-a / 2, a / 2, 0);
-      const topMesh = createFaceMesh(2, 2);
-      topMesh.position.set(-a / 2, 0, 0);
-      topPivot.add(topMesh);
-      topPivot.rotation.y = -foldAngle;
-      backPivot.add(topPivot);
-
-      // Left Face (4) - hinged on Back east
+      // Left (4) - Pair 1 (Green, attached to Back)
       const leftPivot = new THREE.Group();
-      leftPivot.position.set(a / 2, a / 2, 0);
+      leftPivot.position.set(-h, 0, -h);
+      leftPivot.rotation.z = foldAngle;
       const leftMesh = createFaceMesh(4, 1);
-      leftMesh.position.set(a / 2, 0, 0);
-      leftMesh.rotation.y = -Math.PI / 2;
+      leftMesh.position.set(-h, 0, 0);
       leftPivot.add(leftMesh);
-      leftPivot.rotation.y = foldAngle;
       backPivot.add(leftPivot);
 
       group.add(backPivot);
 
-      // Right Face (5) - hinged on Base east
+      if (showClockwiseVertex) {
+        const pin = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), new THREE.MeshBasicMaterial({ color: 0xfacc15 }));
+        pin.position.set(h, 0, 2 * h);
+        frontPivot.add(pin);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Archetype 3: "2-2-2" 阶梯三级台阶型 (占 1 种)
+    // -------------------------------------------------------------
+    else if (netType === '2-2-2') {
+      group.position.set(-h * (1 - u), 0, 0);
+
+      // Top (0) - Pair 2 (Blue, anchor)
+      const topMesh = createFaceMesh(0, 2);
+      topMesh.position.set(0, h, 0);
+      group.add(topMesh);
+
+      // Back (3) - Pair 0 (Red, North of Top)
+      const backPivot = new THREE.Group();
+      backPivot.position.set(0, h, -h);
+      backPivot.rotation.x = -foldAngle;
+      const backMesh = createFaceMesh(3, 0);
+      backMesh.position.set(0, 0, -h);
+      backPivot.add(backMesh);
+
+      // Left (4) - Pair 1 (Green, attached to Back)
+      const leftPivot = new THREE.Group();
+      leftPivot.position.set(-h, 0, -h);
+      leftPivot.rotation.z = foldAngle;
+      const leftMesh = createFaceMesh(4, 1);
+      leftMesh.position.set(-h, 0, 0);
+      leftPivot.add(leftMesh);
+      backPivot.add(leftPivot);
+
+      group.add(backPivot);
+
+      // Right (5) - Pair 1 (Green, East of Top)
       const rightPivot = new THREE.Group();
-      rightPivot.position.set(a / 2, -a / 2, 0);
+      rightPivot.position.set(h, h, 0);
+      rightPivot.rotation.z = -foldAngle;
       const rightMesh = createFaceMesh(5, 1);
-      rightMesh.position.set(0, a / 2, 0);
-      rightMesh.rotation.y = Math.PI / 2;
+      rightMesh.position.set(h, 0, 0);
       rightPivot.add(rightMesh);
-      rightPivot.rotation.z = foldAngle;
 
-      // Front Face (1) - hinged on Right east
+      // Front (1) - Pair 0 (Red, attached to Right)
       const frontPivot = new THREE.Group();
-      frontPivot.position.set(0, a / 2, a / 2);
-      const frontMesh = createFaceMesh(1, 0);
-      frontMesh.position.set(0, a / 2, 0);
-      frontMesh.rotation.y = Math.PI / 2;
-      frontPivot.add(frontMesh);
+      frontPivot.position.set(h, 0, h);
       frontPivot.rotation.x = foldAngle;
-      rightPivot.add(frontPivot);
+      const frontMesh = createFaceMesh(1, 0);
+      frontMesh.position.set(0, 0, h);
+      frontPivot.add(frontMesh);
 
+      // Bottom (2) - Pair 2 (Blue, attached to Front)
+      const bottomPivot = new THREE.Group();
+      bottomPivot.position.set(h, 0, h);
+      bottomPivot.rotation.z = -foldAngle;
+      const bottomMesh = createFaceMesh(2, 2);
+      bottomMesh.position.set(h, 0, 0);
+      bottomPivot.add(bottomMesh);
+      frontPivot.add(bottomPivot);
+
+      rightPivot.add(frontPivot);
       group.add(rightPivot);
+
+      if (showClockwiseVertex) {
+        const pin = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), new THREE.MeshBasicMaterial({ color: 0xfacc15 }));
+        pin.position.set(0, 0, 2 * h);
+        frontPivot.add(pin);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Archetype 4: "3-3" 两排相错型 (占 1 种)
+    // -------------------------------------------------------------
+    else if (netType === '3-3') {
+      group.position.set(-h * (1 - u), 0, -h * (1 - u));
+
+      // Back (3) - Pair 0 (Red, anchor)
+      const backMesh = createFaceMesh(3, 0);
+      backMesh.position.set(0, h, 0);
+      group.add(backMesh);
+
+      // Left (4) - Pair 1 (Green, West of Back)
+      const leftPivot = new THREE.Group();
+      leftPivot.position.set(-h, h, 0);
+      leftPivot.rotation.z = foldAngle;
+      const leftMesh = createFaceMesh(4, 1);
+      leftMesh.position.set(-h, 0, 0);
+      leftPivot.add(leftMesh);
+      group.add(leftPivot);
+
+      // Right (5) - Pair 1 (Green, East of Back)
+      const rightPivot = new THREE.Group();
+      rightPivot.position.set(h, h, 0);
+      rightPivot.rotation.z = -foldAngle;
+      const rightMesh = createFaceMesh(5, 1);
+      rightMesh.position.set(h, 0, 0);
+      rightPivot.add(rightMesh);
+
+      // Top (0) - Pair 2 (Blue, South of Right)
+      const topPivot = new THREE.Group();
+      topPivot.position.set(h, 0, h);
+      topPivot.rotation.x = foldAngle;
+      const topMesh = createFaceMesh(0, 2);
+      topMesh.position.set(0, 0, h);
+      topPivot.add(topMesh);
+
+      // Front (1) - Pair 0 (Red, East of Top)
+      const frontPivot = new THREE.Group();
+      frontPivot.position.set(h, 0, h);
+      frontPivot.rotation.z = -foldAngle;
+      const frontMesh = createFaceMesh(1, 0);
+      frontMesh.position.set(h, 0, 0);
+      frontPivot.add(frontMesh);
+
+      // Bottom (2) - Pair 2 (Blue, East of Front)
+      const bottomPivot = new THREE.Group();
+      bottomPivot.position.set(2 * h, 0, 0);
+      bottomPivot.rotation.z = -foldAngle;
+      const bottomMesh = createFaceMesh(2, 2);
+      bottomMesh.position.set(h, 0, 0);
+      bottomPivot.add(bottomMesh);
+      frontPivot.add(bottomPivot);
+
+      topPivot.add(frontPivot);
+      rightPivot.add(topPivot);
+      group.add(rightPivot);
+
+      if (showClockwiseVertex) {
+        const pin = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), new THREE.MeshBasicMaterial({ color: 0xfacc15 }));
+        pin.position.set(0, 0, 2 * h);
+        topPivot.add(pin);
+      }
     }
   }, [netType, foldProgress, highlightOpposite, showClockwiseVertex, faceTextures]);
 
