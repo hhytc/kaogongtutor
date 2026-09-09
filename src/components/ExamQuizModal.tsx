@@ -187,13 +187,31 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
   const isAnswered = Boolean(isVersionMatch && currentRecord?.selectedAnswer);
   const selectedAnswer = isVersionMatch ? (currentRecord?.selectedAnswer || '') : '';
   const isCorrect = isVersionMatch ? (currentRecord?.isCorrect ?? false) : false;
+  const isMastered = Boolean(isVersionMatch && currentRecord?.isMastered);
   const isExplVisible = currentQ ? (showExplanation[currentQ.id] ?? isAnswered) : false;
+
+  // Retrieve hints level isolated by question version
+  const getHintLevelForQuestion = (q: ExamQuestion | null): number => {
+    if (!q) return 0;
+    const versionedKey = `${q.id}_v${q.version || 1}`;
+    if (unlockedHints[versionedKey] !== undefined) {
+      return unlockedHints[versionedKey];
+    }
+    // If record exists and version does NOT match, do not inherit legacy unversioned hints
+    const rec = records[q.id];
+    if (rec && rec.questionVersion && rec.questionVersion !== (q.version || 1)) {
+      return 0;
+    }
+    return unlockedHints[q.id] ?? 0;
+  };
+
+  const unlockedHintLevel = getHintLevelForQuestion(currentQ);
 
   // Hints used: if already answered, take recorded hints; otherwise take persistent unlocked level (defaults to 0)
   const hintsUsedCount = isAnswered
     ? (currentRecord?.hintsUsed ?? 0)
-    : (currentQ ? (unlockedHints[currentQ.id] ?? 0) : 0);
-  const currentHintsLevel = currentQ ? (unlockedHints[currentQ.id] ?? (isAnswered ? 3 : 0)) : 0;
+    : unlockedHintLevel;
+  const currentHintsLevel = isAnswered ? 3 : unlockedHintLevel;
 
   // Handle track filter change
   const handleTrackChange = (track: TabTrackFilter) => {
@@ -213,7 +231,7 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
     if (!currentQ || isAnswered) return;
 
     const answerCorrect = key === currentQ.correctAnswer;
-    const hintsUsed = unlockedHints[currentQ.id] ?? 0;
+    const hintsUsed = getHintLevelForQuestion(currentQ);
 
     // Do NOT default to relation_error; leave as undefined until candidate explicitly chooses
     learningStorage.saveAttempt(
@@ -240,9 +258,12 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
   // Unlock progressive hint (persisted in learningStorage)
   const handleUnlockHint = (level: number) => {
     if (!currentQ) return;
+    const versionedKey = `${currentQ.id}_v${currentQ.version || 1}`;
+    learningStorage.saveUnlockedHint(versionedKey, level);
     learningStorage.saveUnlockedHint(currentQ.id, level);
     setUnlockedHints((prev) => ({
       ...prev,
+      [versionedKey]: Math.max(prev[versionedKey] || 0, level),
       [currentQ.id]: Math.max(prev[currentQ.id] || 0, level),
     }));
   };
@@ -257,10 +278,15 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
   // Re-attempt question (clears current choice without erasing attempt history or first-attempt data)
   const handleReattempt = (qid: string) => {
     learningStorage.clearCurrentForReattempt(qid);
+    const targetQ = EXAM_QUESTIONS.find((q) => q.id === qid);
+    const versionedKey = targetQ ? `${targetQ.id}_v${targetQ.version || 1}` : `${qid}_v1`;
+    learningStorage.clearUnlockedHint(versionedKey);
+    learningStorage.clearUnlockedHint(qid);
     setRecords({ ...learningStorage.getRecords() });
     setUnlockedHints((prev) => {
       const copy = { ...prev };
       delete copy[qid];
+      delete copy[versionedKey];
       return copy;
     });
     setShowExplanation((prev) => ({ ...prev, [qid]: false }));
@@ -268,7 +294,8 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
 
   // Mark as mastered (removes from review queue without fabricating independent correct history)
   const handleMarkMastered = (qid: string) => {
-    learningStorage.markMastered(qid);
+    const targetQ = EXAM_QUESTIONS.find((q) => q.id === qid);
+    learningStorage.markMastered(qid, targetQ?.version || 1);
     setRecords({ ...learningStorage.getRecords() });
   };
 
@@ -1003,7 +1030,7 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
             )}
 
             {/* Review Queue Mastery Management Card (Independent of isCorrect: accessible whenever question needs review) */}
-            {(activeTrack === 'review' || reviewIdSet.has(currentQ.id) || currentRecord?.isMastered) && (
+            {(activeTrack === 'review' || reviewIdSet.has(currentQ.id) || isMastered) && (
               <div className="bg-slate-900/90 border border-emerald-800/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in duration-300">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
@@ -1011,7 +1038,7 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                     <span>错题回练 · 掌握状态管理</span>
                   </div>
                   <p className="text-xs text-slate-300">
-                    {currentRecord?.isMastered
+                    {isMastered
                       ? '✓ 本题已被标记为掌握，已移出错题回练队列。'
                       : isCorrect
                       ? '🎉 本次重做作答正确！如已完全吃透考点和解题思路，可点击移出错题本：'
@@ -1020,7 +1047,7 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                 </div>
 
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  {currentRecord?.isMastered ? (
+                  {isMastered ? (
                     <span className="text-xs px-3.5 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold flex items-center gap-1.5">
                       <CheckCircle2 className="w-4 h-4" />
                       已掌握 · 不在错题本

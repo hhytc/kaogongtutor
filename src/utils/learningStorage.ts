@@ -18,6 +18,7 @@ export interface AttemptHistoryItem {
   isCorrect: boolean;
   hintsUsed: number;
   timestamp: number;
+  version?: number;
 }
 
 export interface QuestionRecord {
@@ -155,27 +156,36 @@ export const learningStorage = {
   ): QuestionRecord {
     const records = this.getRecords();
     const existing = records[questionId];
-    const isVersionMatch = !existing || !existing.questionVersion || existing.questionVersion === questionVersion;
-
-    // Strictly preserve historical first attempt, never synthesize or overwrite from new attempts
-    const isFirstAttempt = !existing || existing.attempts === 0 || !isVersionMatch;
-    let firstAttemptCorrect: boolean | null;
-    let firstAttemptHints: number | null;
-
-    if (isFirstAttempt) {
-      firstAttemptCorrect = isCorrect;
-      firstAttemptHints = hintsUsed;
-    } else {
-      firstAttemptCorrect = existing.firstAttemptCorrect !== undefined ? existing.firstAttemptCorrect : null;
-      firstAttemptHints = existing.firstAttemptHints !== undefined ? existing.firstAttemptHints : null;
-    }
+    const isVersionMatch = Boolean(existing && (!existing.questionVersion || existing.questionVersion === questionVersion));
 
     const historyItem: AttemptHistoryItem = {
       answer: selectedAnswer,
       isCorrect,
       hintsUsed,
       timestamp: Date.now(),
+      version: questionVersion,
     };
+
+    // Keep ALL history across all versions intact - never overwrite historical attempts
+    const fullHistory = [...(existing?.history || []), historyItem];
+
+    // Filter history specifically for the current questionVersion
+    const currentVersionAttempts = fullHistory.filter((h) => (h.version || 1) === questionVersion);
+    const isFirstAttemptForVersion = currentVersionAttempts.length === 1;
+
+    let firstAttemptCorrect: boolean | null;
+    let firstAttemptHints: number | null;
+
+    if (isFirstAttemptForVersion) {
+      firstAttemptCorrect = isCorrect;
+      firstAttemptHints = hintsUsed;
+    } else if (isVersionMatch) {
+      firstAttemptCorrect = existing.firstAttemptCorrect !== undefined ? existing.firstAttemptCorrect : null;
+      firstAttemptHints = existing.firstAttemptHints !== undefined ? existing.firstAttemptHints : null;
+    } else {
+      firstAttemptCorrect = currentVersionAttempts[0].isCorrect;
+      firstAttemptHints = currentVersionAttempts[0].hintsUsed;
+    }
 
     const updated: QuestionRecord = {
       questionId,
@@ -188,8 +198,8 @@ export const learningStorage = {
       isMastered: isCorrect && isVersionMatch && existing?.isMastered ? true : false,
       errorReason: errorReason !== undefined ? errorReason : (isVersionMatch ? existing?.errorReason : undefined),
       timestamp: Date.now(),
-      attempts: isVersionMatch ? (existing?.attempts || 0) + 1 : 1,
-      history: isVersionMatch ? [...(existing?.history || []), historyItem] : [historyItem],
+      attempts: currentVersionAttempts.length,
+      history: fullHistory,
     };
 
     records[questionId] = updated;
@@ -202,10 +212,13 @@ export const learningStorage = {
   },
 
   // Mark a question as mastered (removes from review queue without rewriting first-attempt history)
-  markMastered(questionId: string): boolean {
+  markMastered(questionId: string, questionVersion?: number): boolean {
     const records = this.getRecords();
     const existing = records[questionId];
     if (existing) {
+      if (questionVersion && existing.questionVersion !== questionVersion) {
+        existing.questionVersion = questionVersion;
+      }
       existing.isMastered = true;
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
@@ -284,14 +297,15 @@ export const learningStorage = {
             stats.uncategorizedCount++;
           }
         } else {
-          // Unknown legacy record (null): evaluate according to actual result rather than falsely penalizing
-          if (r.isCorrect) {
+          // Unknown legacy record (null): evaluate according to actual result
+          if (r.isCorrect && (r.attempts <= 1 || !r.attempts)) {
             if (r.hintsUsed === 0) {
               stats.independentCorrect++;
             } else {
               stats.hintAssistedCorrect++;
             }
           } else {
+            // Either wrong or required multiple attempts (attempts > 1), so not independent correct on first attempt
             stats.wrongCount++;
             if (r.errorReason && stats.errorReasonDistribution[r.errorReason] !== undefined) {
               stats.errorReasonDistribution[r.errorReason]++;
@@ -500,13 +514,30 @@ export const learningStorage = {
         }
       }
 
-      // If all valid, save safely
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(validatedRecords));
-      if (parsed.unlockedHints !== undefined) {
-        localStorage.setItem(HINTS_KEY, JSON.stringify(validatedHints));
-      }
+      // Snapshot previous state for atomic rollback if quota exceeded or write fails
+      const prevStorage = localStorage.getItem(STORAGE_KEY);
+      const prevHints = localStorage.getItem(HINTS_KEY);
 
-      return true;
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(validatedRecords));
+        if (parsed.unlockedHints !== undefined) {
+          localStorage.setItem(HINTS_KEY, JSON.stringify(validatedHints));
+        }
+        return true;
+      } catch (writeErr) {
+        // Strict rollback on storage write error
+        if (prevStorage !== null) {
+          localStorage.setItem(STORAGE_KEY, prevStorage);
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+        }
+        if (prevHints !== null) {
+          localStorage.setItem(HINTS_KEY, prevHints);
+        } else {
+          localStorage.removeItem(HINTS_KEY);
+        }
+        return false;
+      }
     } catch {
       return false;
     }

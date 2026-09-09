@@ -41,7 +41,7 @@ const PATTERNS: FacePattern[] = [
   {
     id: 0,
     letter: 'A',
-    name: 'A面 · 双同心圆 (基准面)',
+    name: 'A面 · 双同心圆',
     color: '#0284c7',
     oppositeId: 2,
     draw: (ctx, s) => {
@@ -82,7 +82,7 @@ const PATTERNS: FacePattern[] = [
   {
     id: 2,
     letter: 'C',
-    name: 'C面 · 金色五角星 (相对面)',
+    name: 'C面 · 金色五角星',
     color: '#f59e0b',
     oppositeId: 0,
     draw: (ctx, s) => {
@@ -281,10 +281,43 @@ const NET_DEFINITIONS: Record<NetType, NetDefinition> = {
   },
 };
 
+const SPATIAL_INTUITION_STORAGE_KEY = 'kaogong_spatial_intuition_progress';
+
+interface SavedSpatialIntuitionProgress {
+  guidedStep: 1 | 2 | 3 | 4 | 5;
+  guidedStep1Found: boolean;
+  guidedStep2Answer: string | null;
+  guidedStep3Answer: string | null;
+  guidedStep4Answer: string | null;
+  step5SubQuestion: 1 | 2;
+  guidedStep5Q1Answer: string | null;
+  step5Q1FirstTryCorrect: boolean | null;
+  guidedStep5Q2Answer: string | null;
+  step5Q2FirstTryCorrect: boolean | null;
+  guidedCompletedSteps: number[];
+}
+
+const getSavedIntuitionProgress = (): SavedSpatialIntuitionProgress | null => {
+  try {
+    const data = localStorage.getItem(SPATIAL_INTUITION_STORAGE_KEY);
+    if (!data) return null;
+    const parsed = JSON.parse(data);
+    if (parsed && typeof parsed === 'object') {
+      return parsed;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
+
 export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
   initialParams = {},
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
+
+  // Load saved intuition progress
+  const savedProgress = useMemo(() => getSavedIntuitionProgress(), []);
 
   // Active net archetype: 1-4-1, 2-3-1, 2-2-2, 3-3
   const [netType, setNetType] = useState<NetType>(() => {
@@ -314,29 +347,64 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
   const [showClockwiseVertex, setShowClockwiseVertex] = useState<boolean>(true);
   const [showCatalog, setShowCatalog] = useState<boolean>(false);
 
-  // Three.js refs
   // Mode: 'guided' (空间直觉阶梯引导) vs 'free' (自由探索与11种构型)
   const [viewMode, setViewMode] = useState<'guided' | 'free'>(() => {
     if (initialParams.mode === 'free') return 'free';
     return 'guided';
   });
 
-  // Guided Ladder states (5 steps)
-  const [guidedStep, setGuidedStep] = useState<1 | 2 | 3 | 4 | 5>(1);
-  const [guidedStep1Found, setGuidedStep1Found] = useState<boolean>(false);
+  // Guided Ladder states (5 steps) with persistence
+  const [guidedStep, setGuidedStep] = useState<1 | 2 | 3 | 4 | 5>(() => savedProgress?.guidedStep || 1);
+  const [guidedStep1Found, setGuidedStep1Found] = useState<boolean>(() => Boolean(savedProgress?.guidedStep1Found));
   const [guidedStep1Feedback, setGuidedStep1Feedback] = useState<{
     type: 'success' | 'hint' | 'error';
     text: string;
   } | null>(null);
-  const [guidedStep2Answer, setGuidedStep2Answer] = useState<string | null>(null);
-  const [guidedStep3Answer, setGuidedStep3Answer] = useState<string | null>(null);
-  const [guidedStep4Answer, setGuidedStep4Answer] = useState<string | null>(null);
-  const [step5SubQuestion, setStep5SubQuestion] = useState<1 | 2>(1);
-  const [guidedStep5Q1Answer, setGuidedStep5Q1Answer] = useState<string | null>(null);
-  const [step5Q1FirstTryCorrect, setStep5Q1FirstTryCorrect] = useState<boolean | null>(null);
-  const [guidedStep5Q2Answer, setGuidedStep5Q2Answer] = useState<string | null>(null);
-  const [step5Q2FirstTryCorrect, setStep5Q2FirstTryCorrect] = useState<boolean | null>(null);
-  const [guidedCompletedSteps, setGuidedCompletedSteps] = useState<number[]>([]);
+  const [guidedStep2Answer, setGuidedStep2Answer] = useState<string | null>(() => savedProgress?.guidedStep2Answer ?? null);
+  const [guidedStep3Answer, setGuidedStep3Answer] = useState<string | null>(() => savedProgress?.guidedStep3Answer ?? null);
+  const [guidedStep4Answer, setGuidedStep4Answer] = useState<string | null>(() => savedProgress?.guidedStep4Answer ?? null);
+  const [step5SubQuestion, setStep5SubQuestion] = useState<1 | 2>(() => savedProgress?.step5SubQuestion || 1);
+  const [guidedStep5Q1Answer, setGuidedStep5Q1Answer] = useState<string | null>(() => savedProgress?.guidedStep5Q1Answer ?? null);
+  const [step5Q1FirstTryCorrect, setStep5Q1FirstTryCorrect] = useState<boolean | null>(() => savedProgress?.step5Q1FirstTryCorrect ?? null);
+  const [guidedStep5Q2Answer, setGuidedStep5Q2Answer] = useState<string | null>(() => savedProgress?.guidedStep5Q2Answer ?? null);
+  const [step5Q2FirstTryCorrect, setStep5Q2FirstTryCorrect] = useState<boolean | null>(() => savedProgress?.step5Q2FirstTryCorrect ?? null);
+  const [guidedCompletedSteps, setGuidedCompletedSteps] = useState<number[]>(() => savedProgress?.guidedCompletedSteps || []);
+
+  // Step 5 anti-peeking: track if model was folded before answering
+  const step5Q1FoldedRef = useRef<boolean>(false);
+  const step5Q2FoldedRef = useRef<boolean>(false);
+
+  // Sync intuition progress to localStorage
+  useEffect(() => {
+    try {
+      const progressData: SavedSpatialIntuitionProgress = {
+        guidedStep,
+        guidedStep1Found,
+        guidedStep2Answer,
+        guidedStep3Answer,
+        guidedStep4Answer,
+        step5SubQuestion,
+        guidedStep5Q1Answer,
+        step5Q1FirstTryCorrect,
+        guidedStep5Q2Answer,
+        step5Q2FirstTryCorrect,
+        guidedCompletedSteps,
+      };
+      localStorage.setItem(SPATIAL_INTUITION_STORAGE_KEY, JSON.stringify(progressData));
+    } catch {}
+  }, [
+    guidedStep,
+    guidedStep1Found,
+    guidedStep2Answer,
+    guidedStep3Answer,
+    guidedStep4Answer,
+    step5SubQuestion,
+    guidedStep5Q1Answer,
+    step5Q1FirstTryCorrect,
+    guidedStep5Q2Answer,
+    step5Q2FirstTryCorrect,
+    guidedCompletedSteps,
+  ]);
 
   // Three.js refs
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -347,13 +415,52 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
   const animFrameIdRef = useRef<number | null>(null);
   const faceMeshesRef = useRef<THREE.Mesh[]>([]);
 
-  // Animation controller ref
-  const foldAnimRef = useRef<number | null>(null);
-  const stopFoldAnimation = () => {
-    if (foldAnimRef.current !== null) {
-      cancelAnimationFrame(foldAnimRef.current);
-      foldAnimRef.current = null;
+  // Unified Animation Controller with timestamp-based delta
+  const foldAnimFrameRef = useRef<number | null>(null);
+
+  const stopAnimation = () => {
+    if (foldAnimFrameRef.current !== null) {
+      cancelAnimationFrame(foldAnimFrameRef.current);
+      foldAnimFrameRef.current = null;
     }
+    setIsPlaying(false);
+  };
+
+  const startAnimation = (targetProgress = 1, durationMs = 2000, startFromCurrent = true) => {
+    stopAnimation();
+    if (viewModeRef.current === 'guided' && guidedStepRef.current === 5) {
+      if (step5SubQuestion === 1 && !guidedStep5Q1Answer) step5Q1FoldedRef.current = true;
+      if (step5SubQuestion === 2 && !guidedStep5Q2Answer) step5Q2FoldedRef.current = true;
+    }
+    setIsPlaying(true);
+    let startVal = foldProgressRef.current;
+    if (!startFromCurrent || (targetProgress >= 1 && startVal >= 0.999)) {
+      startVal = 0;
+      setFoldProgress(0);
+    }
+    const distance = targetProgress - startVal;
+    if (Math.abs(distance) < 0.001) {
+      setIsPlaying(false);
+      return;
+    }
+    const actualDuration = Math.max(150, Math.abs(distance) * durationMs);
+    const startTime = performance.now();
+
+    const tick = (now: number) => {
+      const elapsed = now - startTime;
+      const t = Math.min(1, elapsed / actualDuration);
+      const current = startVal + distance * t;
+      setFoldProgress(current);
+
+      if (t < 1) {
+        foldAnimFrameRef.current = requestAnimationFrame(tick);
+      } else {
+        foldAnimFrameRef.current = null;
+        setIsPlaying(false);
+      }
+    };
+
+    foldAnimFrameRef.current = requestAnimationFrame(tick);
   };
 
   // Pivots ref for 0-allocation folding
@@ -390,33 +497,21 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
 
   // Step-folding controls
   const handleStepFold = (delta: number) => {
-    stopFoldAnimation();
-    setIsPlaying(false);
+    stopAnimation();
+    if (viewModeRef.current === 'guided' && guidedStepRef.current === 5) {
+      if (step5SubQuestion === 1 && !guidedStep5Q1Answer) step5Q1FoldedRef.current = true;
+      if (step5SubQuestion === 2 && !guidedStep5Q2Answer) step5Q2FoldedRef.current = true;
+    }
     setFoldProgress((prev) => Math.max(0, Math.min(1, Math.round((prev + delta) * 100) / 100)));
   };
 
   const handleAnimateToPause = (targetProgress: number = 0.85) => {
-    stopFoldAnimation();
-    setIsPlaying(false);
-    setFoldProgress(0);
-    let p = 0;
-    const anim = () => {
-      p += 0.015;
-      if (p >= targetProgress) {
-        setFoldProgress(targetProgress);
-        foldAnimRef.current = null;
-        return;
-      }
-      setFoldProgress(p);
-      foldAnimRef.current = requestAnimationFrame(anim);
-    };
-    foldAnimRef.current = requestAnimationFrame(anim);
+    startAnimation(targetProgress, 2000, false);
   };
 
   const handleSelectGuidedStep = (step: 1 | 2 | 3 | 4 | 5) => {
-    stopFoldAnimation();
+    stopAnimation();
     setGuidedStep(step);
-    setIsPlaying(false);
     setGuidedStep1Feedback(null);
     if (step === 1) {
       setNetType('1-4-1');
@@ -435,12 +530,17 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
       setAnchorFaceId(0);
       setFoldProgress(0);
     } else if (step === 5) {
+      step5Q1FoldedRef.current = false;
+      step5Q2FoldedRef.current = false;
       setNetType('2-3-1');
       setAnchorFaceId(0);
       setFoldProgress(0);
       setStep5SubQuestion(1);
     }
   };
+
+
+
 
   // Create canvas textures once
   const faceTextures = useMemo(() => {
@@ -477,6 +577,11 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
       return texture;
     });
   }, []);
+
+  const faceTexturesRef = useRef(faceTextures);
+  useEffect(() => {
+    faceTexturesRef.current = faceTextures;
+  }, [faceTextures]);
 
   // Setup Three.js scene
   useEffect(() => {
@@ -631,32 +736,23 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
 
     return () => {
       isMounted = false;
+      stopAnimation();
       window.removeEventListener('resize', handleResize);
       container.removeEventListener('pointerdown', onPointerDown);
       container.removeEventListener('pointerup', onPointerUp);
       container.removeEventListener('pointermove', onPointerMove);
       if (animFrameIdRef.current) cancelAnimationFrame(animFrameIdRef.current);
+      controls.dispose();
+      grid.geometry.dispose();
+      if (Array.isArray(grid.material)) {
+        grid.material.forEach((m) => m.dispose());
+      } else {
+        grid.material.dispose();
+      }
+      faceTexturesRef.current.forEach((tex) => tex.dispose());
       renderer.dispose();
     };
   }, []);
-
-  // Handle auto-play animation
-  useEffect(() => {
-    if (!isPlaying) return;
-    let animId: number;
-    const step = () => {
-      setFoldProgress((prev) => {
-        if (prev >= 1) {
-          setIsPlaying(false);
-          return 1;
-        }
-        return Math.min(prev + 0.008, 1);
-      });
-      animId = requestAnimationFrame(step);
-    };
-    animId = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(animId);
-  }, [isPlaying]);
 
   // Build the folding mechanism based on netType and step
   useEffect(() => {
@@ -703,11 +799,11 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
         // Step 2: focus on Face 0 (A) and Face 2 (C), Face 1 is connector
         guidedDimmedFaces = guidedStep2Answer === 'C' ? [3, 4, 5] : [];
       } else if (guidedStep === 3) {
-        // Step 3: focus on Face 1 (orange edge), Face 5 (sky blue edge), and Face 0 (bridge)
-        guidedDimmedFaces = [2, 3, 4];
+        // Step 3: dim unrelated faces only AFTER answering to avoid pre-selection clue
+        guidedDimmedFaces = guidedStep3Answer !== null ? [2, 3, 4] : [];
       } else if (guidedStep === 4) {
-        // Step 4: focus on Faces 0, 1, 4 meeting at vertex P
-        guidedDimmedFaces = [2, 3, 5];
+        // Step 4: dim unrelated faces only AFTER answering to avoid pre-selection clue
+        guidedDimmedFaces = guidedStep4Answer !== null ? [2, 3, 5] : [];
       } else if (guidedStep === 5) {
         // Step 5: blind test, no dimming
         guidedDimmedFaces = [];
@@ -778,7 +874,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
       // Step 3 edge tracking in Guided Mode:
       if (viewMode === 'guided' && guidedStep === 3) {
         if (patternIndex === 1) {
-          // Orange glowing cylinder along right edge of Face 1 (+X)
+          // Orange glowing cylinder along right edge of Face 1 (+X) (the question target)
           const edgeCyl = new THREE.Mesh(
             new THREE.CylinderGeometry(0.08, 0.08, a, 16),
             new THREE.MeshStandardMaterial({
@@ -791,8 +887,8 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
           edgeCyl.rotation.x = Math.PI / 2;
           edgeCyl.position.set(h, 0.04, 0);
           mesh.add(edgeCyl);
-        } else if (patternIndex === 5) {
-          // Sky blue glowing cylinder along bottom edge of Face 5 (+Z)
+        } else if (patternIndex === 5 && guidedStep3Answer !== null) {
+          // Sky blue glowing cylinder along bottom edge of Face 5 (+Z) ONLY after answering
           const edgeCyl = new THREE.Mesh(
             new THREE.CylinderGeometry(0.08, 0.08, a, 16),
             new THREE.MeshStandardMaterial({
@@ -811,7 +907,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
       // Step 4 vertex tracking in Guided Mode:
       if (viewMode === 'guided' && guidedStep === 4) {
         if (patternIndex === 0) {
-          // Golden glowing sphere at corner (-h, 0, h)
+          // Golden glowing sphere at corner (-h, 0, h) (Vertex P)
           const vertexSphere = new THREE.Mesh(
             new THREE.SphereGeometry(0.18, 24, 24),
             new THREE.MeshStandardMaterial({
@@ -823,16 +919,16 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
           );
           vertexSphere.position.set(-h, 0.08, h);
           mesh.add(vertexSphere);
-        } else if (patternIndex === 1) {
-          // Corner bead on Face 1
+        } else if (patternIndex === 1 && guidedStep4Answer !== null) {
+          // Corner bead on Face 1 ONLY after answering
           const vertexSphere = new THREE.Mesh(
             new THREE.SphereGeometry(0.11, 16, 16),
             new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
           );
           vertexSphere.position.set(-h, 0.08, -h);
           mesh.add(vertexSphere);
-        } else if (patternIndex === 4) {
-          // Corner bead on Face 4
+        } else if (patternIndex === 4 && guidedStep4Answer !== null) {
+          // Corner bead on Face 4 ONLY after answering
           const vertexSphere = new THREE.Mesh(
             new THREE.SphereGeometry(0.11, 16, 16),
             new THREE.MeshBasicMaterial({ color: 0xa855f7 })
@@ -953,6 +1049,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     guidedStep,
     guidedStep2Answer,
     guidedStep3Answer,
+    guidedStep4Answer,
     step5SubQuestion,
     faceTextures,
     highlightOpposite,
@@ -1099,7 +1196,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
             {/* Free Archetype Selector */}
             <div className="flex overflow-x-auto no-scrollbar gap-1.5">
               <button
-                onClick={() => { setNetType('1-4-1'); setFoldProgress(0); }}
+                onClick={() => { stopAnimation(); setNetType('1-4-1'); setFoldProgress(0); }}
                 className={`px-2.5 py-1 rounded-lg text-[11px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer ${
                   netType === '1-4-1'
                     ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400'
@@ -1109,7 +1206,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                 ⭐ 1-4-1型 (经典十字 · 6种)
               </button>
               <button
-                onClick={() => { setNetType('2-3-1'); setFoldProgress(0); }}
+                onClick={() => { stopAnimation(); setNetType('2-3-1'); setFoldProgress(0); }}
                 className={`px-2.5 py-1 rounded-lg text-[11px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer ${
                   netType === '2-3-1'
                     ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400'
@@ -1119,7 +1216,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                 📐 2-3-1型 (楼梯拐角 · 3种)
               </button>
               <button
-                onClick={() => { setNetType('2-2-2'); setFoldProgress(0); }}
+                onClick={() => { stopAnimation(); setNetType('2-2-2'); setFoldProgress(0); }}
                 className={`px-2.5 py-1 rounded-lg text-[11px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer ${
                   netType === '2-2-2'
                     ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400'
@@ -1129,7 +1226,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                 🪜 2-2-2型 (阶梯台阶 · 1种)
               </button>
               <button
-                onClick={() => { setNetType('3-3'); setFoldProgress(0); }}
+                onClick={() => { stopAnimation(); setNetType('3-3'); setFoldProgress(0); }}
                 className={`px-2.5 py-1 rounded-lg text-[11px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer ${
                   netType === '3-3'
                     ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400'
@@ -1144,7 +1241,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
             <div className="max-w-full flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md px-2.5 py-1 rounded-xl border border-slate-700/80 shadow-lg overflow-x-auto no-scrollbar">
               <div className="flex items-center gap-1 text-[11px] font-bold text-amber-400 mr-0.5 flex-shrink-0">
                 <Crown className="w-3.5 h-3.5 text-amber-400" />
-                <span className="hidden sm:inline">基准底面:</span>
+                <span className="hidden sm:inline">基准面:</span>
               </div>
               {PATTERNS.map((p) => {
                 const isAnchor = p.id === anchorFaceId;
@@ -1157,12 +1254,13 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                     title={`选定【${p.name}】为折叠基准面（其余5面折向它）`}
                     className={`flex items-center gap-1 px-1.5 py-0.5 rounded-lg text-[10px] font-medium transition-all flex-shrink-0 cursor-pointer ${
                       isAnchor
-                        ? 'bg-amber-500/25 text-amber-300 ring-1.5 ring-amber-400 shadow-sm font-semibold'
-                        : 'bg-slate-800/80 hover:bg-slate-700/90 text-slate-300'
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-400/50 shadow-sm'
+                        : 'bg-slate-800/80 text-slate-400 hover:text-slate-200 border border-slate-700/50'
                     }`}
                   >
-                    <FaceThumbnail pattern={p} size={16} />
-                    <span>{p.letter}面</span>
+                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: p.color }} />
+                    <span>{p.letter}</span>
+                    {isAnchor && <span className="text-[9px] text-amber-400">★</span>}
                   </button>
                 );
               })}
@@ -1184,91 +1282,106 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
         )}
 
         {/* Bottom Folding Slider & Step Controls */}
-        <div className="absolute bottom-2 left-2 right-2 max-w-xl mx-auto bg-slate-900/95 backdrop-blur-md p-2.5 rounded-xl border border-slate-700/70 shadow-2xl z-10">
-          <div className="flex items-center justify-between gap-2 text-xs mb-1.5">
-            <span className="font-semibold text-slate-200 text-[11px] flex items-center gap-1.5 flex-wrap">
-              <Sparkles className="w-3 h-3 text-indigo-400 flex-shrink-0" />
-              <span>展开型: <strong className="text-indigo-300 font-mono">{netType}</strong></span>
-              <span className="text-slate-600">|</span>
-              <span className="text-amber-300 font-medium flex items-center gap-1">
-                <Crown className="w-3 h-3 text-amber-400" />
-                基准底面: <strong>{PATTERNS[anchorFaceId].letter}面</strong>
-              </span>
-              <span className="text-slate-400 text-[10px]">
-                {foldProgress <= 0.05 ? '【平铺】' : foldProgress >= 0.95 ? '【成盒】' : '【折叠中】'}
-              </span>
-            </span>
-            <span className="font-mono text-indigo-400 font-bold text-xs flex-shrink-0">
-              {(foldProgress * 100).toFixed(0)}%
-            </span>
-          </div>
+        {(() => {
+          const isBlindTesting = viewMode === 'guided' && guidedStep === 5 && (
+            (step5SubQuestion === 1 && !guidedStep5Q1Answer) ||
+            (step5SubQuestion === 2 && !guidedStep5Q2Answer)
+          );
 
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <button
-              onClick={() => setIsPlaying(!isPlaying)}
-              className="p-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/30 transition-colors flex-shrink-0 cursor-pointer"
-              title={isPlaying ? '暂停' : '自动折起'}
-            >
-              {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-            </button>
+          return (
+            <div className="absolute bottom-2 left-2 right-2 sm:left-4 sm:right-4 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-2xl p-2.5 sm:p-3 shadow-2xl z-10 flex flex-col gap-1.5">
+              <div className="flex items-center justify-between gap-2 text-xs mb-1">
+                <span className="font-semibold text-slate-200 text-[11px] flex items-center gap-1.5 flex-wrap">
+                  <Sparkles className="w-3 h-3 text-indigo-400 flex-shrink-0" />
+                  <span>展开型: <strong className="text-indigo-300 font-mono">{netType}</strong></span>
+                  <span className="text-slate-600">|</span>
+                  <span className="text-amber-300 font-medium flex items-center gap-1">
+                    <Crown className="w-3 h-3 text-amber-400" />
+                    基准面: <strong>{PATTERNS[anchorFaceId].letter}面</strong>
+                  </span>
+                  <span className="text-slate-400 text-[10px]">
+                    {foldProgress <= 0.05 ? '【平铺】' : foldProgress >= 0.95 ? '【成盒】' : '【折叠中】'}
+                  </span>
+                </span>
+                <span className="font-mono text-indigo-400 font-bold text-xs flex-shrink-0">
+                  {(foldProgress * 100).toFixed(0)}%
+                </span>
+              </div>
 
-            {/* Step -25% */}
-            <button
-              onClick={() => handleStepFold(-0.25)}
-              className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium transition-colors flex-shrink-0 cursor-pointer"
-              title="按步退折叠（-25%）"
-            >
-              -25%
-            </button>
+              {isBlindTesting ? (
+                <div className="bg-amber-500/15 border border-amber-500/30 rounded-xl px-3 py-2 text-center text-xs text-amber-300 font-medium animate-pulse">
+                  🔒 独立盲测中：折叠控制已暂时锁定。请先在右侧作答，选择答案后即可解锁 3D 折起验证！
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <button
+                    onClick={() => (isPlaying ? stopAnimation() : startAnimation(1, 2000, true))}
+                    className="p-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/30 transition-colors flex-shrink-0 cursor-pointer"
+                    title={isPlaying ? '暂停' : '自动折起'}
+                  >
+                    {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                  </button>
 
-            {/* Step +25% */}
-            <button
-              onClick={() => handleStepFold(0.25)}
-              className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium transition-colors flex-shrink-0 cursor-pointer"
-              title="按步进折叠（+25%）"
-            >
-              +25%
-            </button>
+                  {/* Step -25% */}
+                  <button
+                    onClick={() => handleStepFold(-0.25)}
+                    className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium transition-colors flex-shrink-0 cursor-pointer"
+                    title="按步退折叠（-25%）"
+                  >
+                    -25%
+                  </button>
 
-            {/* Staged 85% Pause for edge contact */}
-            {guidedStep === 3 && (
-              <button
-                onClick={() => handleAnimateToPause(0.85)}
-                className="px-2 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-semibold transition-colors flex-shrink-0 cursor-pointer"
-                title="折叠至 85% 贴合瞬间自动暂停"
-              >
-                贴合暂停
-              </button>
-            )}
+                  {/* Step +25% */}
+                  <button
+                    onClick={() => handleStepFold(0.25)}
+                    className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium transition-colors flex-shrink-0 cursor-pointer"
+                    title="按步进折叠（+25%）"
+                  >
+                    +25%
+                  </button>
 
-            <button
-              onClick={() => { setIsPlaying(false); setFoldProgress(0); }}
-              className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium transition-colors flex-shrink-0 cursor-pointer"
-            >
-              平铺
-            </button>
+                  {/* Staged 85% Pause for edge contact */}
+                  {guidedStep === 3 && (
+                    <button
+                      onClick={() => handleAnimateToPause(0.85)}
+                      className="px-2 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-semibold transition-colors flex-shrink-0 cursor-pointer"
+                      title="折叠至 85% 贴合瞬间自动暂停"
+                    >
+                      贴合暂停
+                    </button>
+                  )}
 
-            <button
-              onClick={() => { setIsPlaying(false); setFoldProgress(1); }}
-              className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium transition-colors flex-shrink-0 cursor-pointer"
-            >
-              成盒
-            </button>
+                  <button
+                    onClick={() => { stopAnimation(); setFoldProgress(0); }}
+                    className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium transition-colors flex-shrink-0 cursor-pointer"
+                  >
+                    平铺
+                  </button>
 
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={foldProgress}
-              onChange={(e) => {
-                setIsPlaying(false);
-                setFoldProgress(parseFloat(e.target.value));
-              }}
-              className="flex-1 accent-indigo-500 h-2 bg-slate-700 rounded-lg cursor-pointer"
-            />
-          </div>
-        </div>
+                  <button
+                    onClick={() => { stopAnimation(); setFoldProgress(1); }}
+                    className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium transition-colors flex-shrink-0 cursor-pointer"
+                  >
+                    成盒
+                  </button>
+
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={foldProgress}
+                    onChange={(e) => {
+                      stopAnimation();
+                      setFoldProgress(parseFloat(e.target.value));
+                    }}
+                    className="flex-1 accent-indigo-500 h-2 bg-slate-700 rounded-lg cursor-pointer"
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         <div className="absolute top-2 right-2 hidden 2xl:flex items-center gap-1 px-2 py-0.5 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-[10px] text-slate-400 rounded-lg">
           <Eye className="w-3 h-3 text-slate-400" />
@@ -1353,7 +1466,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                       <span>🎉 太棒了！成功锁定基准面 A！</span>
                     </div>
                     <p className="text-emerald-200/90 leading-relaxed text-[11px]">
-                      无论纸盒如何翻转闭合，<strong>基准面都是三维世界的原点坐标</strong>。有了这个固定基准，其余 5 个面在脑海里就不会乱飞！
+                      无论纸盒如何翻转闭合，<strong>基准面都是三维空间的固定参照面</strong>。有了这个固定基准，其余 5 个面在脑海里就不会乱飞！
                     </p>
                     <button
                       onClick={() => handleSelectGuidedStep(2)}
@@ -1368,9 +1481,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                     <div className="flex gap-2">
                       <button
                         onClick={() => {
-                          stopFoldAnimation();
-                          setIsPlaying(false);
-                          setFoldProgress(1);
+                          startAnimation(1, 2000, true);
                         }}
                         className="flex-1 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                       >
@@ -1379,8 +1490,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                       </button>
                       <button
                         onClick={() => {
-                          stopFoldAnimation();
-                          setIsPlaying(false);
+                          stopAnimation();
                           setFoldProgress(0);
                         }}
                         className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
@@ -1469,9 +1579,8 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                         <div className="flex gap-2 pt-1">
                           <button
                             onClick={() => {
-                              stopFoldAnimation();
-                              setFoldProgress(0);
-                              setIsPlaying(true);
+                              stopAnimation();
+                              startAnimation(1, 2000, false);
                             }}
                             className="flex-1 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold text-xs border border-emerald-500/30 flex items-center justify-center gap-1 cursor-pointer"
                           >
@@ -1530,9 +1639,9 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                   </p>
                   <div className="grid grid-cols-3 gap-2 pt-1">
                     {[
-                      { key: 'F', label: 'F面 · 天蓝边', desc: '对角半黑面', correct: true },
-                      { key: 'D', label: 'D面 · 黑色方', desc: '深灰实心方块面', correct: false },
-                      { key: 'C', label: 'C面 · 金五星', desc: '金色五角星面', correct: false },
+                      { key: 'F', label: 'F面 · 半黑半白', desc: '对角半黑半白面', correct: true },
+                      { key: 'D', label: 'D面 · 黑色方块', desc: '深灰实心方块面', correct: false },
+                      { key: 'C', label: 'C面 · 金色五星', desc: '金色五角星面', correct: false },
                     ].map((opt) => (
                       <button
                         key={opt.key}
@@ -1569,10 +1678,10 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                       <>
                         <div className="flex items-center gap-1.5 font-bold text-emerald-400">
                           <CheckCircle2 className="w-4 h-4" />
-                          <span>🎉 观察敏锐！B 面橙色边与 F 面天蓝边紧密贴合！</span>
+                          <span>🎉 观察敏锐！B 面橙色边与 F 面对应边紧密贴合！</span>
                         </div>
                         <p className="text-emerald-200/90 text-[11px] leading-relaxed">
-                          <strong>空间轨迹解析</strong>：B 面向前折起 90°，F 面向右向上弯折 90°。两条边缘在棱处严密贴合！点击下方<strong>【贴合前夕 85% 关键帧】</strong>慢放观察这个相遇瞬间！
+                          <strong>空间轨迹解析</strong>：B 面向前折起 90°，F 面向右向上弯折 90°。两条边缘在棱处严密贴合并亮起天蓝色光芒！点击下方<strong>【贴合前夕 85% 关键帧】</strong>慢放观察这个相遇瞬间！
                         </p>
                         <div className="flex gap-2 pt-1">
                           <button
@@ -1598,7 +1707,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                           <span>❌ 边不匹配提示：观察两条边的旋转轨迹！</span>
                         </div>
                         <p className="text-rose-200/90 text-[11px] leading-relaxed">
-                          B 面右侧位于正方体的侧棱位置，而 {guidedStep3Answer} 面的边缘折叠后去了另一侧，无法相交！请注意看右侧的【F面】底部的天蓝色发光边！
+                          B 面右侧位于正方体的侧棱位置，而 {guidedStep3Answer} 面的边缘折叠后去了另一侧，无法相交！请注意看右侧【F面】底部的对应棱边轨迹！
                         </p>
                       </>
                     )}
@@ -1761,7 +1870,8 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                             onClick={() => {
                               setGuidedStep5Q1Answer(opt.key);
                               if (step5Q1FirstTryCorrect === null) {
-                                setStep5Q1FirstTryCorrect(opt.correct);
+                                const isIndep = opt.correct && !step5Q1FoldedBeforeAnswer;
+                                setStep5Q1FirstTryCorrect(isIndep);
                               }
                             }}
                             className={`p-2 rounded-xl border text-left flex items-center gap-2 transition-all cursor-pointer ${
@@ -1799,9 +1909,8 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                             <div className="flex gap-2 pt-1">
                               <button
                                 onClick={() => {
-                                  stopFoldAnimation();
-                                  setFoldProgress(0);
-                                  setIsPlaying(true);
+                                  stopAnimation();
+                                  startAnimation(1, 2000, false);
                                 }}
                                 className="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold text-xs border border-emerald-500/30 flex items-center justify-center gap-1 cursor-pointer"
                               >
@@ -1810,7 +1919,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                               </button>
                               <button
                                 onClick={() => {
-                                  stopFoldAnimation();
+                                  stopAnimation();
                                   setNetType('2-2-2');
                                   setAnchorFaceId(0);
                                   setFoldProgress(0);
@@ -1834,9 +1943,8 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                             </p>
                             <button
                               onClick={() => {
-                                stopFoldAnimation();
-                                setFoldProgress(0);
-                                setIsPlaying(true);
+                                stopAnimation();
+                                startAnimation(1, 2000, false);
                               }}
                               className="w-full py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 font-semibold text-xs border border-rose-500/30 flex items-center justify-center gap-1 cursor-pointer"
                             >
@@ -1880,7 +1988,8 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                             onClick={() => {
                               setGuidedStep5Q2Answer(opt.key);
                               if (step5Q2FirstTryCorrect === null) {
-                                setStep5Q2FirstTryCorrect(opt.correct);
+                                const isIndep = opt.correct && !step5Q2FoldedBeforeAnswer;
+                                setStep5Q2FirstTryCorrect(isIndep);
                               }
                               if (opt.correct) {
                                 setGuidedCompletedSteps((prev) => Array.from(new Set([...prev, 5])));
@@ -1916,14 +2025,26 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                               <span>🏆 完美通关！荣获【空间直觉大师】勋章！</span>
                             </div>
                             <p className="text-emerald-200/90 text-[11px] leading-relaxed">
-                              <strong>空间解析</strong>：在 2-2-2 阶梯图中，A 面与 C 面位于经典的“Z 字形拐角两端”（间隔一个拐弯面），折起后严格平行相对！你已完全掌握了基准面锚定、对立排除、公共边贴合与公共顶点时针法！
+                              <strong>空间解析</strong>：在 2-2-2 阶梯图中，从 A 面(0) 出发向右经由 F 面(5)、向上经由 B 面(1) 拐弯到达 C 面(2)（即 A ➔ F ➔ B ➔ C 跨越 4 面的经典 Z 字形阶梯两端），折起后二者严格平行相对！
                             </p>
+                            <div className="bg-slate-900/80 rounded-xl p-2.5 border border-emerald-500/30 text-[11px] text-emerald-300 space-y-1">
+                              <div className="font-semibold flex items-center gap-1">
+                                <span>🎯 空间直觉梯队评估：</span>
+                                {step5Q1FirstTryCorrect && step5Q2FirstTryCorrect ? (
+                                  <span className="text-amber-300 font-bold">🌟 全独立满分通关</span>
+                                ) : (
+                                  <span className="text-emerald-200">✅ 引导辅助通关</span>
+                                )}
+                              </div>
+                              <p className="text-slate-300 text-[10px] leading-normal">
+                                已全面掌握：①基准面空间参照锚定、②相对面隔一格与Z字两端排除、③公共边空间旋转贴合、④公共顶点三面汇聚时针法。
+                              </p>
+                            </div>
                             <div className="flex gap-2 pt-1">
                               <button
                                 onClick={() => {
-                                  stopFoldAnimation();
-                                  setFoldProgress(0);
-                                  setIsPlaying(true);
+                                  stopAnimation();
+                                  startAnimation(1, 2000, false);
                                 }}
                                 className="px-3 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold text-xs border border-emerald-500/30 flex items-center justify-center gap-1 cursor-pointer"
                               >
@@ -1932,7 +2053,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                               </button>
                               <button
                                 onClick={() => {
-                                  stopFoldAnimation();
+                                  stopAnimation();
                                   setViewMode('free');
                                   setFoldProgress(0);
                                 }}
@@ -1950,13 +2071,12 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                               <span>❌ 提示：在 2-2-2 阶梯型中运用“Z 字两端法”！</span>
                             </div>
                             <p className="text-rose-200/90 text-[11px] leading-relaxed">
-                              从 A 面出发向右经由面 5 拐弯至面 2(C)，位于 Z 字拐角两端的两个面折叠后必定正对！点击“折起验证”亲眼观察。
+                              在 2-2-2 阶梯图中，从 A 面出发向右经由 F 面(5)、向上至 B 面(1) 再向右拐弯至 C 面(2)（形成 A ➔ F ➔ B ➔ C 跨越 4 面的经典 Z 字阶梯路径）。位于两端的 A 与 C 折叠后必定正对！点击“折起验证”亲眼观察。
                             </p>
                             <button
                               onClick={() => {
-                                stopFoldAnimation();
-                                setFoldProgress(0);
-                                setIsPlaying(true);
+                                stopAnimation();
+                                startAnimation(1, 2000, false);
                               }}
                               className="w-full py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 font-semibold text-xs border border-rose-500/30 flex items-center justify-center gap-1 cursor-pointer"
                             >
@@ -2081,8 +2201,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
               <div className="pt-1">
                 <button
                   onClick={() => {
-                    setFoldProgress(0);
-                    setIsPlaying(true);
+                    startAnimation(1, 2000, false);
                   }}
                   className="w-full py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-semibold border border-amber-500/30 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >

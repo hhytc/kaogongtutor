@@ -86,10 +86,16 @@ export function App() {
     });
 
     if (config.tab === 'origami') {
-      if (config.params) setOrigamiParams(config.params);
+      setOrigamiParams({
+        ...(config.mode ? { mode: config.mode } : {}),
+        ...(config.params || {}),
+      });
       setActiveTab('origami');
     } else if (config.tab === 'assembly') {
-      if (config.params) setAssemblyParams(config.params);
+      setAssemblyParams({
+        ...(config.mode ? { mode: config.mode } : {}),
+        ...(config.params || {}),
+      });
       setActiveTab('assembly');
     } else if (config.tab === 'unfold') {
       if (config.params) {
