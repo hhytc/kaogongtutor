@@ -56,49 +56,66 @@ export interface SavedSpatialIntuitionProgress {
   guidedStep2Answer: string | null;
   guidedStep3Answer: string | null;
   guidedStep4Answer: string | null;
-  step5SubQuestion: 1 | 2;
+  step5SubQuestion: 1 | 2 | 3;
   guidedStep5Q1Answer: string | null;
   step5Q1FirstTryCorrect: boolean | null;
   guidedStep5Q2Answer: string | null;
   step5Q2FirstTryCorrect: boolean | null;
+  guidedStep5Q3Answer?: string | null;
+  step5Q3FirstTryCorrect?: boolean | null;
   guidedCompletedSteps: number[];
   netType?: '1-4-1' | '2-3-1' | '2-2-2' | '3-3';
+  anchorFaceId?: number;
+  guidedStep2TargetFaceId?: number;
+  step3CaseIndex?: number;
+  step4CaseIndex?: number;
 }
 
 function isValidSpatialProgress(obj: any): obj is SavedSpatialIntuitionProgress {
   if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return false;
   if (![1, 2, 3, 4, 5].includes(obj.guidedStep)) return false;
-  if (![1, 2].includes(obj.step5SubQuestion)) return false;
+  if (![1, 2, 3].includes(obj.step5SubQuestion)) return false;
   if (typeof obj.guidedStep1Found !== 'boolean') return false;
   if (!Array.isArray(obj.guidedCompletedSteps)) return false;
   for (const s of obj.guidedCompletedSteps) {
     if (typeof s !== 'number' || !Number.isInteger(s) || s < 1 || s > 5) return false;
   }
-  const validStep2Answers = ['B', 'C', 'D', 'E', 'F'];
-  if (obj.guidedStep2Answer !== null && (typeof obj.guidedStep2Answer !== 'string' || !validStep2Answers.includes(obj.guidedStep2Answer))) {
+  const validLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
+  if (obj.guidedStep2Answer !== null && (typeof obj.guidedStep2Answer !== 'string' || !validLetters.includes(obj.guidedStep2Answer))) {
     return false;
   }
-  const validStep3Answers = ['F', 'D', 'C'];
-  if (obj.guidedStep3Answer !== null && (typeof obj.guidedStep3Answer !== 'string' || !validStep3Answers.includes(obj.guidedStep3Answer))) {
+  if (obj.guidedStep3Answer !== null && (typeof obj.guidedStep3Answer !== 'string' || !validLetters.includes(obj.guidedStep3Answer))) {
     return false;
   }
-  const validStep4Answers = ['ABE', 'ACD', 'BCF'];
-  if (obj.guidedStep4Answer !== null && (typeof obj.guidedStep4Answer !== 'string' || !validStep4Answers.includes(obj.guidedStep4Answer))) {
+  if (obj.guidedStep4Answer !== null && typeof obj.guidedStep4Answer !== 'string') {
     return false;
   }
-  const validStep5Q1Answers = ['D', 'C', 'E', 'F'];
-  if (obj.guidedStep5Q1Answer !== null && (typeof obj.guidedStep5Q1Answer !== 'string' || !validStep5Q1Answers.includes(obj.guidedStep5Q1Answer))) {
+  if (obj.guidedStep5Q1Answer !== null && typeof obj.guidedStep5Q1Answer !== 'string') {
     return false;
   }
-  const validStep5Q2Answers = ['C', 'B', 'D', 'E'];
-  if (obj.guidedStep5Q2Answer !== null && (typeof obj.guidedStep5Q2Answer !== 'string' || !validStep5Q2Answers.includes(obj.guidedStep5Q2Answer))) {
+  if (obj.guidedStep5Q2Answer !== null && typeof obj.guidedStep5Q2Answer !== 'string') {
     return false;
   }
-  const boolOrNullFields = ['step5Q1FirstTryCorrect', 'step5Q2FirstTryCorrect'];
+  if (obj.guidedStep5Q3Answer !== undefined && obj.guidedStep5Q3Answer !== null && typeof obj.guidedStep5Q3Answer !== 'string') {
+    return false;
+  }
+  const boolOrNullFields = ['step5Q1FirstTryCorrect', 'step5Q2FirstTryCorrect', 'step5Q3FirstTryCorrect'];
   for (const f of boolOrNullFields) {
-    if (obj[f] !== null && typeof obj[f] !== 'boolean') return false;
+    if (obj[f] !== undefined && obj[f] !== null && typeof obj[f] !== 'boolean') return false;
   }
   if (obj.netType !== undefined && !['1-4-1', '2-3-1', '2-2-2', '3-3'].includes(obj.netType)) {
+    return false;
+  }
+  if (obj.anchorFaceId !== undefined && (typeof obj.anchorFaceId !== 'number' || obj.anchorFaceId < 0 || obj.anchorFaceId > 5)) {
+    return false;
+  }
+  if (obj.guidedStep2TargetFaceId !== undefined && (typeof obj.guidedStep2TargetFaceId !== 'number' || obj.guidedStep2TargetFaceId < 0 || obj.guidedStep2TargetFaceId > 5)) {
+    return false;
+  }
+  if (obj.step3CaseIndex !== undefined && (typeof obj.step3CaseIndex !== 'number' || obj.step3CaseIndex < 0 || obj.step3CaseIndex > 2)) {
+    return false;
+  }
+  if (obj.step4CaseIndex !== undefined && (typeof obj.step4CaseIndex !== 'number' || obj.step4CaseIndex < 0 || obj.step4CaseIndex > 2)) {
     return false;
   }
   return true;

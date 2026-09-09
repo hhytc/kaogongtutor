@@ -282,6 +282,147 @@ const NET_DEFINITIONS: Record<NetType, NetDefinition> = {
   },
 };
 
+interface GuidedStep3Case {
+  id: number;
+  title: string;
+  targetFaceId: number;
+  targetFaceLetter: string;
+  targetEdgeName: string;
+  matchingFaceId: number;
+  matchingFaceLetter: string;
+  matchingEdgeName: string;
+  targetEdge: { axis: 'x' | 'z'; offset: number };
+  matchingEdge: { axis: 'x' | 'z'; offset: number };
+  options: { key: string; name: string; desc: string; correct: boolean }[];
+  explanation: string;
+}
+
+const GUIDED_STEP3_CASES: GuidedStep3Case[] = [
+  {
+    id: 0,
+    title: '案例 1 (经典)：B面右边 ➔ F面底边',
+    targetFaceId: 1,
+    targetFaceLetter: 'B',
+    targetEdgeName: 'B面 · 红色右箭头【右侧边】',
+    matchingFaceId: 5,
+    matchingFaceLetter: 'F',
+    matchingEdgeName: 'F面 · 半黑半白【底侧边】',
+    targetEdge: { axis: 'x', offset: 1 },
+    matchingEdge: { axis: 'z', offset: 1 },
+    options: [
+      { key: 'F', name: 'F面 · 对角半黑半白', desc: '右翼折起90°向内翻卷贴合', correct: true },
+      { key: 'D', name: 'D面 · 黑色实心方', desc: '在最上端折向后方，无法相交', correct: false },
+      { key: 'C', name: 'C面 · 金色五角星', desc: '位于最下端底面，平行相对', correct: false },
+    ],
+    explanation: 'B 面向前折起 90°，F 面向右向上翻折 90°。两条外围边缘在立体盒子的侧棱处严密对接缝合，成为同一条空间公共棱！',
+  },
+  {
+    id: 1,
+    title: '案例 2 (变式)：E面上边 ➔ D面左边',
+    targetFaceId: 4,
+    targetFaceLetter: 'E',
+    targetEdgeName: 'E面 · 紫色大叉【上侧边】',
+    matchingFaceId: 3,
+    matchingFaceLetter: 'D',
+    matchingEdgeName: 'D面 · 黑色实心方【左侧边】',
+    targetEdge: { axis: 'z', offset: -1 },
+    matchingEdge: { axis: 'x', offset: -1 },
+    options: [
+      { key: 'D', name: 'D面 · 黑色实心方', desc: '上方D面向后折起，左侧边贴合', correct: true },
+      { key: 'B', name: 'B面 · 红色右箭头', desc: '在前侧，方向朝下无法碰合', correct: false },
+      { key: 'C', name: 'C面 · 金色五角星', desc: '在最底端，隔着两格', correct: false },
+    ],
+    explanation: 'E 面向左折起 90°，D 面向后折起 90°。展开图上看似分开的外围直角边缘，在左后侧棱严密对接汇合！',
+  },
+  {
+    id: 2,
+    title: '案例 3 (变式)：C面右边 ➔ F面右边',
+    targetFaceId: 2,
+    targetFaceLetter: 'C',
+    targetEdgeName: 'C面 · 金色五角星【右侧边】',
+    matchingFaceId: 5,
+    matchingFaceLetter: 'F',
+    matchingEdgeName: 'F面 · 半黑半白【右侧边】',
+    targetEdge: { axis: 'x', offset: 1 },
+    matchingEdge: { axis: 'x', offset: 1 },
+    options: [
+      { key: 'F', name: 'F面 · 对角半黑半白', desc: '右翼向右向下翻折贴合底面', correct: true },
+      { key: 'A', name: 'A面 · 双同心圆', desc: '基准面，与C平行正对不接触', correct: false },
+      { key: 'E', name: 'E面 · 紫色大叉', desc: '在左翼，与右侧边互不接触', correct: false },
+    ],
+    explanation: 'C 面顺次折到底面，F 面从右侧翻折包覆。两条边缘在右底侧棱精准对接重合！',
+  },
+];
+
+interface GuidedStep4Case {
+  id: number;
+  vertexName: string;
+  title: string;
+  faces: number[];
+  mainVertexFaceId: number;
+  mainVertexPos: [number, number];
+  beadPositions: { faceId: number; pos: [number, number]; color: number }[];
+  options: { key: string; label: string; correct: boolean; desc: string }[];
+  explanation: string;
+}
+
+const GUIDED_STEP4_CASES: GuidedStep4Case[] = [
+  {
+    id: 0,
+    vertexName: '顶点 P (左前)',
+    title: '顶点 P：A面角隅 (左前)',
+    faces: [0, 1, 4],
+    mainVertexFaceId: 0,
+    mainVertexPos: [-1, 1],
+    beadPositions: [
+      { faceId: 1, pos: [-1, -1], color: 0x38bdf8 },
+      { faceId: 4, pos: [1, 1], color: 0xa855f7 },
+    ],
+    options: [
+      { key: 'A-B-E', label: 'A面 + B面 + E面', correct: true, desc: '基准底面 + 前面 + 左面' },
+      { key: 'A-B-F', label: 'A面 + B面 + F面', correct: false, desc: 'F在右侧，无法到达左前角' },
+      { key: 'A-C-E', label: 'A面 + C面 + E面', correct: false, desc: 'A与C是相对面，永不共顶点' },
+    ],
+    explanation: '顶点 P 位于 A 面的左前角。折成立体盒后，A(基准)、B(前)、E(左) 三个相邻面在此顶点紧密汇聚！围绕顶点 P 顺时针看为 A ➔ E ➔ B，平面与立体时针方向保持不变！',
+  },
+  {
+    id: 1,
+    vertexName: '顶点 Q (右前)',
+    title: '顶点 Q：A面角隅 (右前)',
+    faces: [0, 1, 5],
+    mainVertexFaceId: 0,
+    mainVertexPos: [1, 1],
+    beadPositions: [
+      { faceId: 1, pos: [1, -1], color: 0x38bdf8 },
+      { faceId: 5, pos: [-1, 1], color: 0x10b981 },
+    ],
+    options: [
+      { key: 'A-B-F', label: 'A面 + B面 + F面', correct: true, desc: '基准底面 + 前面 + 右面' },
+      { key: 'A-B-D', label: 'A面 + B面 + D面', correct: false, desc: 'B与D是相对面，永不共点' },
+      { key: 'B-C-E', label: 'B面 + C面 + E面', correct: false, desc: 'E在左侧，无法到达右前角' },
+    ],
+    explanation: '顶点 Q 位于 A 面的右前角。折成立体盒后，A(基准)、B(前)、F(右) 三个面在此顶点紧密汇聚！围绕顶点 Q 顺时针看为 A ➔ B ➔ F。',
+  },
+  {
+    id: 2,
+    vertexName: '顶点 R (左后)',
+    title: '顶点 R：A面角隅 (左后)',
+    faces: [0, 3, 4],
+    mainVertexFaceId: 0,
+    mainVertexPos: [-1, -1],
+    beadPositions: [
+      { faceId: 3, pos: [-1, 1], color: 0x64748b },
+      { faceId: 4, pos: [1, -1], color: 0xa855f7 },
+    ],
+    options: [
+      { key: 'A-D-E', label: 'A面 + D面 + E面', correct: true, desc: '基准底面 + 后面 + 左面' },
+      { key: 'A-B-E', label: 'A面 + B面 + E面', correct: false, desc: 'B在前侧，此为顶点 P' },
+      { key: 'C-D-F', label: 'C面 + D面 + F面', correct: false, desc: '在底面右后远端' },
+    ],
+    explanation: '顶点 R 位于 A 面的左后角。折成立体盒后，A(基准)、D(后)、E(左) 三个面在此顶点紧密相交！围绕顶点 R 顺时针看为 A ➔ D ➔ E。',
+  },
+];
+
 export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
   initialParams = {},
 }) => {
@@ -298,11 +439,13 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
 
   const initialViewMode: 'guided' | 'free' = isFreeRequested ? 'free' : 'guided';
   const initialGuidedStep: 1 | 2 | 3 | 4 | 5 = savedProgress?.guidedStep || 1;
-  const initialStep5SubQ: 1 | 2 = savedProgress?.step5SubQuestion || 1;
+  const initialStep5SubQ: 1 | 2 | 3 = savedProgress?.step5SubQuestion || 1;
 
   const deriveGuidedNetType = (step: number, subQ: number): NetType => {
     if (step === 5) {
-      return subQ === 2 ? '2-2-2' : '2-3-1';
+      if (subQ === 3) return '3-3';
+      if (subQ === 2) return '2-2-2';
+      return '2-3-1';
     }
     return '1-4-1';
   };
@@ -327,7 +470,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     if (typeof initialParams.anchorFace === 'number' && initialParams.anchorFace >= 0 && initialParams.anchorFace <= 5) {
       return initialParams.anchorFace;
     }
-    return 0;
+    return savedProgress?.anchorFaceId ?? 0;
   });
   const [hoveredFaceId, setHoveredFaceId] = useState<number | null>(null);
 
@@ -343,24 +486,33 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
 
   // Guided Ladder states (5 steps) with persistence
   const [guidedStep, setGuidedStep] = useState<1 | 2 | 3 | 4 | 5>(initialGuidedStep);
+  const [guidedStep1Phase, setGuidedStep1Phase] = useState<'pick' | 'verify'>('pick');
   const [guidedStep1Found, setGuidedStep1Found] = useState<boolean>(() => Boolean(savedProgress?.guidedStep1Found));
   const [guidedStep1Feedback, setGuidedStep1Feedback] = useState<{
     type: 'success' | 'hint' | 'error';
     text: string;
   } | null>(null);
+  const [guidedStep2TargetFaceId, setGuidedStep2TargetFaceId] = useState<number>(() => {
+    return savedProgress?.guidedStep2TargetFaceId ?? savedProgress?.anchorFaceId ?? 0;
+  });
   const [guidedStep2Answer, setGuidedStep2Answer] = useState<string | null>(() => savedProgress?.guidedStep2Answer ?? null);
+  const [step3CaseIndex, setStep3CaseIndex] = useState<number>(() => savedProgress?.step3CaseIndex ?? 0);
   const [guidedStep3Answer, setGuidedStep3Answer] = useState<string | null>(() => savedProgress?.guidedStep3Answer ?? null);
+  const [step4CaseIndex, setStep4CaseIndex] = useState<number>(() => savedProgress?.step4CaseIndex ?? 0);
   const [guidedStep4Answer, setGuidedStep4Answer] = useState<string | null>(() => savedProgress?.guidedStep4Answer ?? null);
-  const [step5SubQuestion, setStep5SubQuestion] = useState<1 | 2>(initialStep5SubQ);
+  const [step5SubQuestion, setStep5SubQuestion] = useState<1 | 2 | 3>(initialStep5SubQ);
   const [guidedStep5Q1Answer, setGuidedStep5Q1Answer] = useState<string | null>(() => savedProgress?.guidedStep5Q1Answer ?? null);
   const [step5Q1FirstTryCorrect, setStep5Q1FirstTryCorrect] = useState<boolean | null>(() => savedProgress?.step5Q1FirstTryCorrect ?? null);
   const [guidedStep5Q2Answer, setGuidedStep5Q2Answer] = useState<string | null>(() => savedProgress?.guidedStep5Q2Answer ?? null);
   const [step5Q2FirstTryCorrect, setStep5Q2FirstTryCorrect] = useState<boolean | null>(() => savedProgress?.step5Q2FirstTryCorrect ?? null);
+  const [guidedStep5Q3Answer, setGuidedStep5Q3Answer] = useState<string | null>(() => savedProgress?.guidedStep5Q3Answer ?? null);
+  const [step5Q3FirstTryCorrect, setStep5Q3FirstTryCorrect] = useState<boolean | null>(() => savedProgress?.step5Q3FirstTryCorrect ?? null);
   const [guidedCompletedSteps, setGuidedCompletedSteps] = useState<number[]>(() => savedProgress?.guidedCompletedSteps || []);
 
   // Step 5 anti-peeking: track if model was folded before answering
   const step5Q1FoldedRef = useRef<boolean>(false);
   const step5Q2FoldedRef = useRef<boolean>(false);
+  const step5Q3FoldedRef = useRef<boolean>(false);
 
   // Sync intuition progress to learningStorage
   useEffect(() => {
@@ -375,8 +527,14 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
       step5Q1FirstTryCorrect,
       guidedStep5Q2Answer,
       step5Q2FirstTryCorrect,
+      guidedStep5Q3Answer,
+      step5Q3FirstTryCorrect,
       guidedCompletedSteps,
       netType,
+      anchorFaceId,
+      guidedStep2TargetFaceId,
+      step3CaseIndex,
+      step4CaseIndex,
     };
     learningStorage.saveSpatialIntuitionProgress(progressData);
   }, [
@@ -390,8 +548,14 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     step5Q1FirstTryCorrect,
     guidedStep5Q2Answer,
     step5Q2FirstTryCorrect,
+    guidedStep5Q3Answer,
+    step5Q3FirstTryCorrect,
     guidedCompletedSteps,
     netType,
+    anchorFaceId,
+    guidedStep2TargetFaceId,
+    step3CaseIndex,
+    step4CaseIndex,
   ]);
 
   // Three.js refs
@@ -419,6 +583,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     if (viewModeRef.current === 'guided' && guidedStepRef.current === 5) {
       if (step5SubQuestion === 1 && !guidedStep5Q1Answer) step5Q1FoldedRef.current = true;
       if (step5SubQuestion === 2 && !guidedStep5Q2Answer) step5Q2FoldedRef.current = true;
+      if (step5SubQuestion === 3 && !guidedStep5Q3Answer) step5Q3FoldedRef.current = true;
     }
     setIsPlaying(true);
     let startVal = foldProgressRef.current;
@@ -458,12 +623,16 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
   const viewModeRef = useRef(viewMode);
   const guidedStepRef = useRef(guidedStep);
   const foldProgressRef = useRef(foldProgress);
+  const anchorFaceIdRef = useRef(anchorFaceId);
+  const guidedStep1PhaseRef = useRef(guidedStep1Phase);
 
   useEffect(() => {
     viewModeRef.current = viewMode;
     guidedStepRef.current = guidedStep;
     foldProgressRef.current = foldProgress;
-  }, [viewMode, guidedStep, foldProgress]);
+    anchorFaceIdRef.current = anchorFaceId;
+    guidedStep1PhaseRef.current = guidedStep1Phase;
+  }, [viewMode, guidedStep, foldProgress, anchorFaceId, guidedStep1Phase]);
 
   // Camera presets
   const setCameraView = (view: 'top' | 'front' | 'iso' | 'reset') => {
@@ -489,6 +658,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     if (viewModeRef.current === 'guided' && guidedStepRef.current === 5) {
       if (step5SubQuestion === 1 && !guidedStep5Q1Answer) step5Q1FoldedRef.current = true;
       if (step5SubQuestion === 2 && !guidedStep5Q2Answer) step5Q2FoldedRef.current = true;
+      if (step5SubQuestion === 3 && !guidedStep5Q3Answer) step5Q3FoldedRef.current = true;
     }
     setFoldProgress((prev) => Math.max(0, Math.min(1, Math.round((prev + delta) * 100) / 100)));
   };
@@ -501,12 +671,16 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     stopAnimation();
     setGuidedStep(step);
     setGuidedStep1Feedback(null);
-    setAnchorFaceId(0);
     setFoldProgress(0);
-    if (step === 5) {
+    if (step === 1) {
+      setGuidedStep1Phase('pick');
+    } else if (step === 2) {
+      setGuidedStep2TargetFaceId(anchorFaceId);
+    } else if (step === 5) {
       step5Q1FoldedRef.current = false;
       step5Q2FoldedRef.current = false;
-      setNetType(step5SubQuestion === 2 ? '2-2-2' : '2-3-1');
+      step5Q3FoldedRef.current = false;
+      setNetType(step5SubQuestion === 3 ? '3-3' : step5SubQuestion === 2 ? '2-2-2' : '2-3-1');
     } else {
       setNetType('1-4-1');
     }
@@ -518,22 +692,29 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
       stopAnimation();
       learningStorage.clearSpatialIntuitionProgress();
       setGuidedStep(1);
+      setGuidedStep1Phase('pick');
       setGuidedStep1Found(false);
       setGuidedStep1Feedback(null);
+      setGuidedStep2TargetFaceId(0);
       setGuidedStep2Answer(null);
+      setStep3CaseIndex(0);
       setGuidedStep3Answer(null);
+      setStep4CaseIndex(0);
       setGuidedStep4Answer(null);
       setStep5SubQuestion(1);
       setGuidedStep5Q1Answer(null);
       setStep5Q1FirstTryCorrect(null);
       setGuidedStep5Q2Answer(null);
       setStep5Q2FirstTryCorrect(null);
+      setGuidedStep5Q3Answer(null);
+      setStep5Q3FirstTryCorrect(null);
       setGuidedCompletedSteps([]);
       setAnchorFaceId(0);
       setFoldProgress(0);
       setNetType('1-4-1');
       step5Q1FoldedRef.current = false;
       step5Q2FoldedRef.current = false;
+      step5Q3FoldedRef.current = false;
     }
   };
   const faceTextures = useMemo(() => {
@@ -653,25 +834,31 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
             const curProgress = foldProgressRef.current;
 
             if (curMode === 'guided' && curStep === 1) {
-              if (fid === 0) {
-                if (curProgress >= 0.75) {
-                  setGuidedStep1Found(true);
-                  setGuidedStep1Feedback({
-                    type: 'success',
-                    text: '🎉 太棒了！你在折叠后的立体盒子上成功定位到了基准面 A！',
-                  });
-                  setGuidedCompletedSteps((prev) => Array.from(new Set([...prev, 1])));
+              if (guidedStep1PhaseRef.current === 'pick') {
+                // In picking phase, clicking any face selects it as the base anchor face!
+                setAnchorFaceId(fid);
+              } else {
+                // In verification phase, clicking is identifying the anchor face on the 3D box!
+                if (fid === anchorFaceIdRef.current) {
+                  if (curProgress >= 0.75) {
+                    setGuidedStep1Found(true);
+                    setGuidedStep1Feedback({
+                      type: 'success',
+                      text: `🎉 太棒了！你在折叠后的立体盒子上成功定位到了基准面【${PATTERNS[fid].name}】！`,
+                    });
+                    setGuidedCompletedSteps((prev) => Array.from(new Set([...prev, 1])));
+                  } else {
+                    setGuidedStep1Feedback({
+                      type: 'hint',
+                      text: `💡 请先拉动折叠滑块（或点击下方折叠按钮）将纸盒折起到 75% 以上，再在立体盒子上点击【${PATTERNS[anchorFaceIdRef.current].letter}面】确认！`,
+                    });
+                  }
                 } else {
                   setGuidedStep1Feedback({
-                    type: 'hint',
-                    text: '💡 请先拉动折叠滑块（或点下方“自动折成3D盒子”）将纸盒折起到 75% 以上，再在立体盒子上点击 A 面确认！',
+                    type: 'error',
+                    text: `你点击的是【${PATTERNS[fid].name}】，请旋转视角寻找你设定的基准面【${PATTERNS[anchorFaceIdRef.current].name}】！`,
                   });
                 }
-              } else {
-                setGuidedStep1Feedback({
-                  type: 'error',
-                  text: `你点击的是 ${PATTERNS[fid].letter} 面，请旋转视角寻找带有【双同心圆】标记的基准面 A！`,
-                });
               }
             } else {
               setAnchorFaceId(fid);
@@ -786,17 +973,27 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     let guidedDimmedFaces: number[] = [];
     if (viewMode === 'guided') {
       if (guidedStep === 1) {
-        // Step 1: focus only on anchor face 0 (A)
-        guidedDimmedFaces = [1, 2, 3, 4, 5];
+        // Step 1: In picking phase, do NOT dim any faces so user can observe and pick freely!
+        // In verification phase, keep all visible for realistic visual search
+        guidedDimmedFaces = [];
       } else if (guidedStep === 2) {
-        // Step 2: focus on Face 0 (A) and Face 2 (C), Face 1 is connector
-        guidedDimmedFaces = guidedStep2Answer === 'C' ? [3, 4, 5] : [];
+        // Step 2: focus on Target face and its opposite face only after correct answer
+        const correctOpp = PATTERNS[guidedStep2TargetFaceId].oppositeId;
+        guidedDimmedFaces = guidedStep2Answer === PATTERNS[correctOpp].letter
+          ? [0, 1, 2, 3, 4, 5].filter((f) => f !== guidedStep2TargetFaceId && f !== correctOpp)
+          : [];
       } else if (guidedStep === 3) {
         // Step 3: dim unrelated faces only AFTER answering to avoid pre-selection clue
-        guidedDimmedFaces = guidedStep3Answer !== null ? [2, 3, 4] : [];
+        const curC = GUIDED_STEP3_CASES[step3CaseIndex];
+        guidedDimmedFaces = guidedStep3Answer !== null
+          ? [0, 1, 2, 3, 4, 5].filter((f) => f !== curC.targetFaceId && f !== curC.matchingFaceId)
+          : [];
       } else if (guidedStep === 4) {
         // Step 4: dim unrelated faces only AFTER answering to avoid pre-selection clue
-        guidedDimmedFaces = guidedStep4Answer !== null ? [2, 3, 5] : [];
+        const curC = GUIDED_STEP4_CASES[step4CaseIndex];
+        guidedDimmedFaces = guidedStep4Answer !== null
+          ? [0, 1, 2, 3, 4, 5].filter((f) => !curC.faces.includes(f))
+          : [];
       } else if (guidedStep === 5) {
         // Step 5: blind test, no dimming
         guidedDimmedFaces = [];
@@ -866,8 +1063,9 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
 
       // Step 3 edge tracking in Guided Mode:
       if (viewMode === 'guided' && guidedStep === 3) {
-        if (patternIndex === 1) {
-          // Orange glowing cylinder along right edge of Face 1 (+X) (the question target)
+        const curCase = GUIDED_STEP3_CASES[step3CaseIndex];
+        if (patternIndex === curCase.targetFaceId) {
+          // Orange glowing cylinder along target edge
           const edgeCyl = new THREE.Mesh(
             new THREE.CylinderGeometry(0.08, 0.08, a, 16),
             new THREE.MeshStandardMaterial({
@@ -877,11 +1075,16 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
               roughness: 0.2,
             })
           );
-          edgeCyl.rotation.x = Math.PI / 2;
-          edgeCyl.position.set(h, 0.04, 0);
+          if (curCase.targetEdge.axis === 'x') {
+            edgeCyl.rotation.x = Math.PI / 2;
+            edgeCyl.position.set(curCase.targetEdge.offset * h, 0.04, 0);
+          } else {
+            edgeCyl.rotation.z = Math.PI / 2;
+            edgeCyl.position.set(0, 0.04, curCase.targetEdge.offset * h);
+          }
           mesh.add(edgeCyl);
-        } else if (patternIndex === 5 && guidedStep3Answer !== null) {
-          // Sky blue glowing cylinder along bottom edge of Face 5 (+Z) ONLY after answering
+        } else if (patternIndex === curCase.matchingFaceId && guidedStep3Answer !== null) {
+          // Sky blue glowing cylinder along matching edge ONLY after answering
           const edgeCyl = new THREE.Mesh(
             new THREE.CylinderGeometry(0.08, 0.08, a, 16),
             new THREE.MeshStandardMaterial({
@@ -891,16 +1094,22 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
               roughness: 0.2,
             })
           );
-          edgeCyl.rotation.z = Math.PI / 2;
-          edgeCyl.position.set(0, 0.04, h);
+          if (curCase.matchingEdge.axis === 'x') {
+            edgeCyl.rotation.x = Math.PI / 2;
+            edgeCyl.position.set(curCase.matchingEdge.offset * h, 0.04, 0);
+          } else {
+            edgeCyl.rotation.z = Math.PI / 2;
+            edgeCyl.position.set(0, 0.04, curCase.matchingEdge.offset * h);
+          }
           mesh.add(edgeCyl);
         }
       }
 
       // Step 4 vertex tracking in Guided Mode:
       if (viewMode === 'guided' && guidedStep === 4) {
-        if (patternIndex === 0) {
-          // Golden glowing sphere at corner (-h, 0, h) (Vertex P)
+        const curCase = GUIDED_STEP4_CASES[step4CaseIndex];
+        if (patternIndex === curCase.mainVertexFaceId) {
+          // Golden glowing sphere at corner of main face (e.g. Vertex P/Q/R)
           const vertexSphere = new THREE.Mesh(
             new THREE.SphereGeometry(0.18, 24, 24),
             new THREE.MeshStandardMaterial({
@@ -910,24 +1119,20 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
               roughness: 0.2,
             })
           );
-          vertexSphere.position.set(-h, 0.08, h);
+          const [vx, vz] = curCase.mainVertexPos;
+          vertexSphere.position.set(vx * h, 0.08, vz * h);
           mesh.add(vertexSphere);
-        } else if (patternIndex === 1 && guidedStep4Answer !== null) {
-          // Corner bead on Face 1 ONLY after answering
-          const vertexSphere = new THREE.Mesh(
-            new THREE.SphereGeometry(0.11, 16, 16),
-            new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
-          );
-          vertexSphere.position.set(-h, 0.08, -h);
-          mesh.add(vertexSphere);
-        } else if (patternIndex === 4 && guidedStep4Answer !== null) {
-          // Corner bead on Face 4 ONLY after answering
-          const vertexSphere = new THREE.Mesh(
-            new THREE.SphereGeometry(0.11, 16, 16),
-            new THREE.MeshBasicMaterial({ color: 0xa855f7 })
-          );
-          vertexSphere.position.set(h, 0.08, h);
-          mesh.add(vertexSphere);
+        } else if (guidedStep4Answer !== null) {
+          const bead = curCase.beadPositions.find((b) => b.faceId === patternIndex);
+          if (bead) {
+            const vertexSphere = new THREE.Mesh(
+              new THREE.SphereGeometry(0.11, 16, 16),
+              new THREE.MeshBasicMaterial({ color: bead.color })
+            );
+            const [bx, bz] = bead.pos;
+            vertexSphere.position.set(bx * h, 0.08, bz * h);
+            mesh.add(vertexSphere);
+          }
         }
       }
 
@@ -1040,8 +1245,11 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     anchorFaceId,
     viewMode,
     guidedStep,
+    guidedStep2TargetFaceId,
     guidedStep2Answer,
+    step3CaseIndex,
     guidedStep3Answer,
+    step4CaseIndex,
     guidedStep4Answer,
     step5SubQuestion,
     faceTextures,
@@ -1283,7 +1491,8 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
         {(() => {
           const isBlindTesting = viewMode === 'guided' && guidedStep === 5 && (
             (step5SubQuestion === 1 && !guidedStep5Q1Answer) ||
-            (step5SubQuestion === 2 && !guidedStep5Q2Answer)
+            (step5SubQuestion === 2 && !guidedStep5Q2Answer) ||
+            (step5SubQuestion === 3 && !guidedStep5Q3Answer)
           );
 
           return (
@@ -1420,7 +1629,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
               </p>
             </div>
 
-            {/* STEP 1: 认一个面 */}
+            {/* STEP 1: 认基准面 */}
             {guidedStep === 1 && (
               <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3.5">
                 <div className="space-y-1">
@@ -1433,56 +1642,27 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                   </p>
                 </div>
 
-                <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs text-slate-300">
-                  <div className="font-semibold text-amber-300 flex items-center gap-1">
-                    <Crown className="w-3.5 h-3.5 text-amber-400" />
-                    <span>目标指示：锁定【A面 · 双同心圆 (基准面)】</span>
-                  </div>
-                  <p className="text-slate-400 text-[11px] leading-relaxed">
-                    看左侧画布：我们已将【A面】固定为基准面（其余面已自动淡化）。
-                    请点击下方按钮<strong>将纸盒折起到 75% 以上</strong>，然后在 3D 盒子上<strong>找到并点击【A面】</strong>！
-                  </p>
-                </div>
-
-                {guidedStep1Feedback && (
-                  <div
-                    className={`p-3 rounded-xl border text-xs space-y-1 animate-in fade-in ${
-                      guidedStep1Feedback.type === 'success'
-                        ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300'
-                        : guidedStep1Feedback.type === 'hint'
-                        ? 'bg-amber-950/40 border-amber-500/50 text-amber-300'
-                        : 'bg-rose-950/40 border-rose-500/50 text-rose-300'
-                    }`}
-                  >
-                    <div className="flex items-center gap-1.5 font-bold">
-                      {guidedStep1Feedback.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
-                      {guidedStep1Feedback.type === 'hint' && <HelpCircle className="w-4 h-4 text-amber-400" />}
-                      {guidedStep1Feedback.type === 'error' && <AlertOctagon className="w-4 h-4 text-rose-400" />}
-                      <span>{guidedStep1Feedback.text}</span>
-                    </div>
-                  </div>
-                )}
-
                 {guidedStep1Found ? (
-                  <div className="bg-emerald-950/40 border border-emerald-500/50 p-3 rounded-xl space-y-2 text-xs text-emerald-300 animate-in fade-in">
+                  <div className="bg-emerald-950/40 border border-emerald-500/50 p-3.5 rounded-xl space-y-2.5 text-xs text-emerald-300 animate-in fade-in">
                     <div className="flex items-center gap-1.5 font-bold text-emerald-400">
                       <CheckCircle2 className="w-4 h-4" />
-                      <span>🎉 太棒了！成功锁定基准面 A！</span>
+                      <span>🎉 太棒了！在 3D 盒子上成功找回基准面【{PATTERNS[anchorFaceId].name}】！</span>
                     </div>
                     <p className="text-emerald-200/90 leading-relaxed text-[11px]">
-                      无论纸盒如何翻转闭合，<strong>基准面都是三维空间的固定参照面</strong>。有了这个固定基准，其余 5 个面在脑海里就不会乱飞！
+                      无论纸盒如何翻转闭合，<strong>基准面都是三维空间的固定参照底面</strong>。有了这个固定基准，其余 5 个面在脑海里就不会乱飞！
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2 pt-1">
                       <button
                         onClick={() => {
                           setGuidedStep1Found(false);
+                          setGuidedStep1Phase('pick');
                           setGuidedStep1Feedback(null);
                           setFoldProgress(0);
                         }}
-                        className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-slate-100 text-xs font-medium transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                        className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-amber-300 text-xs font-medium transition-colors flex items-center justify-center gap-1 cursor-pointer"
                       >
                         <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
-                        <span>重新体验第 1 阶</span>
+                        <span>换个基准面试试 (举一反三)</span>
                       </button>
                       <button
                         onClick={() => handleSelectGuidedStep(2)}
@@ -1494,398 +1674,713 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-2">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          startAnimation(1, 2000, true);
-                        }}
-                        className="flex-1 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-                      >
-                        <Play className="w-3.5 h-3.5" />
-                        <span>自动折成 3D 盒子</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          stopAnimation();
-                          setFoldProgress(0);
-                        }}
-                        className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
-                      >
-                        平铺展开
-                      </button>
-                    </div>
-                    <p className="text-[11px] text-slate-500 text-center">
-                      操作指引：纸盒折起后，用鼠标或手指旋转 3D 视角，点击带有【双同心圆】的 A 面
-                    </p>
+                  <div className="space-y-3">
+                    {guidedStep1Phase === 'pick' ? (
+                      /* Phase A: Pick any anchor face freely */
+                      <div className="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 space-y-3 text-xs">
+                        <div className="font-semibold text-amber-300 flex items-center justify-between">
+                          <span className="flex items-center gap-1">
+                            <Crown className="w-4 h-4 text-amber-400" />
+                            <span>阶段一：自主选定一个面为【基准面】</span>
+                          </span>
+                          <span className="text-[11px] text-slate-400 font-normal">
+                            当前选定：<strong className="text-amber-300">{PATTERNS[anchorFaceId].letter}面</strong>
+                          </span>
+                        </div>
+                        <p className="text-slate-400 text-[11px] leading-relaxed">
+                          平铺状态下，6 个面均可作为折叠基准面。点击下方面卡（或直接在 3D 画布中点击任意面）选定：
+                        </p>
+                        <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 pt-0.5">
+                          {PATTERNS.map((p) => {
+                            const isSelected = p.id === anchorFaceId;
+                            return (
+                              <button
+                                key={p.id}
+                                onClick={() => setAnchorFaceId(p.id)}
+                                className={`py-1.5 px-1 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
+                                  isSelected
+                                    ? 'bg-amber-500/25 border-amber-400 text-amber-200 ring-2 ring-amber-400/50 font-bold'
+                                    : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-500'
+                                }`}
+                              >
+                                <FaceThumbnail pattern={p} size={24} />
+                                <span className="text-[10px]">{p.letter}面</span>
+                                {isSelected && <span className="text-[9px] text-amber-400 font-bold">★基准</span>}
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <button
+                          onClick={() => {
+                            setGuidedStep1Phase('verify');
+                            setGuidedStep1Feedback(null);
+                            startAnimation(1, 2000, true);
+                          }}
+                          className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-indigo-600 hover:from-amber-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-950 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                        >
+                          <Play className="w-3.5 h-3.5" />
+                          <span>锁定【{PATTERNS[anchorFaceId].name}】并开始折叠挑战 ➔</span>
+                        </button>
+                      </div>
+                    ) : (
+                      /* Phase B: Verification on folded 3D cube */
+                      <div className="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 space-y-3 text-xs">
+                        <div className="font-semibold text-amber-300 flex items-center justify-between">
+                          <span className="flex items-center gap-1">
+                            <MousePointerClick className="w-4 h-4 text-amber-400" />
+                            <span>阶段二：在 3D 盒子上找回【{PATTERNS[anchorFaceId].name}】</span>
+                          </span>
+                        </div>
+                        <p className="text-slate-400 text-[11px] leading-relaxed">
+                          纸盒已折起！请旋转 3D 视角，在立体盒子的表面<strong>找到并点击你锁定的基准面【{PATTERNS[anchorFaceId].letter}面】</strong>！
+                        </p>
+
+                        {guidedStep1Feedback && (
+                          <div
+                            className={`p-2.5 rounded-xl border text-xs space-y-1 animate-in fade-in ${
+                              guidedStep1Feedback.type === 'success'
+                                ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300'
+                                : guidedStep1Feedback.type === 'hint'
+                                ? 'bg-amber-950/40 border-amber-500/50 text-amber-300'
+                                : 'bg-rose-950/40 border-rose-500/50 text-rose-300'
+                            }`}
+                          >
+                            <div className="flex items-center gap-1.5 font-bold">
+                              {guidedStep1Feedback.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
+                              {guidedStep1Feedback.type === 'hint' && <HelpCircle className="w-4 h-4 text-amber-400" />}
+                              {guidedStep1Feedback.type === 'error' && <AlertOctagon className="w-4 h-4 text-rose-400" />}
+                              <span>{guidedStep1Feedback.text}</span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Backup direct click options for touch/mobile accessibility */}
+                        <div className="space-y-1 pt-1 border-t border-slate-800">
+                          <span className="text-[10px] text-slate-500">若 3D 触控不便，也可直接在此备用辨认：</span>
+                          <div className="grid grid-cols-6 gap-1">
+                            {PATTERNS.map((p) => (
+                              <button
+                                key={p.id}
+                                onClick={() => {
+                                  if (p.id === anchorFaceId) {
+                                    setGuidedStep1Found(true);
+                                    setGuidedStep1Feedback({
+                                      type: 'success',
+                                      text: `🎉 太棒了！成功定位并找回了基准面【${p.name}】！`,
+                                    });
+                                    setGuidedCompletedSteps((prev) => Array.from(new Set([...prev, 1])));
+                                  } else {
+                                    setGuidedStep1Feedback({
+                                      type: 'error',
+                                      text: `你选中的是【${p.name}】，请寻找你刚才选定的基准面【${PATTERNS[anchorFaceId].name}】！`,
+                                    });
+                                  }
+                                }}
+                                className="py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 hover:border-slate-500 text-[10px] font-medium transition-colors cursor-pointer"
+                              >
+                                {p.letter}面
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="flex gap-2 pt-1">
+                          <button
+                            onClick={() => {
+                              stopAnimation();
+                              setGuidedStep1Phase('pick');
+                              setFoldProgress(0);
+                              setGuidedStep1Feedback(null);
+                            }}
+                            className="w-full py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-medium transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                          >
+                            <RotateCcw className="w-3.5 h-3.5" />
+                            <span>展开并换选其他基准面</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             )}
 
             {/* STEP 2: 找相对面与相邻面 */}
-            {guidedStep === 2 && (
-              <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3.5">
-                <div className="space-y-1">
-                  <div className="text-xs font-bold text-sky-400 flex items-center gap-1.5">
-                    <Compass className="w-4 h-4 text-sky-400" />
-                    <span>第 2 阶任务：辨析相对面与相邻面（空间对立规律）</span>
-                  </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    💡 <strong>概念解析</strong>：
-                    <br />
-                    • <strong>相邻面</strong>：空间中共用一条折痕（棱），折起后垂直挨着。
-                    <br />
-                    • <strong>相对面</strong>：空间中平行相对，<strong>绝不共用任何棱或顶点</strong>！在展开图中通常<strong>“隔一个面”</strong>。
-                  </p>
-                </div>
+            {guidedStep === 2 && (() => {
+              const targetPattern = PATTERNS[guidedStep2TargetFaceId] || PATTERNS[0];
+              const OPPOSITE_MAP: Record<number, number> = { 0: 2, 2: 0, 1: 3, 3: 1, 4: 5, 5: 4 };
+              const correctOppositeId = OPPOSITE_MAP[guidedStep2TargetFaceId] ?? 2;
+              const correctOppositePattern = PATTERNS[correctOppositeId];
+              const isCorrect = guidedStep2Answer === correctOppositePattern.letter;
 
-                <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
-                  <span className="font-bold text-amber-300 block">
-                    ❓ 探究提问：哪个面折起后会成为【A面】的相对面？
-                  </span>
-                  <p className="text-slate-400 text-[11px]">
-                    请在展开图中观察其余 5 个面，先猜一猜哪一个面折起后会与 A 面正对（平行且互不接触）：
-                  </p>
-                  <div className="grid grid-cols-5 gap-1.5 pt-1">
-                    {PATTERNS.filter((p) => p.id !== 0).map((p) => {
-                      const isSelected = guidedStep2Answer === p.letter;
-                      const isCorrect = p.letter === 'C';
-                      return (
-                        <button
-                          key={p.id}
-                          onClick={() => {
-                            setGuidedStep2Answer(p.letter);
-                            if (p.letter === 'C') {
-                              setGuidedCompletedSteps((prev) => Array.from(new Set([...prev, 2])));
-                            }
-                          }}
-                          className={`py-2 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
-                            isSelected
-                              ? isCorrect
-                                ? 'bg-emerald-500/25 border-emerald-400 text-emerald-200 ring-2 ring-emerald-400/50 font-bold'
-                                : 'bg-rose-500/25 border-rose-400 text-rose-200 ring-2 ring-rose-400/50 font-bold'
-                              : 'bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500'
-                          }`}
-                        >
-                          <FaceThumbnail pattern={p} size={24} />
-                          <span className="text-[11px]">{p.letter}面</span>
-                        </button>
-                      );
-                    })}
+              return (
+                <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3.5">
+                  <div className="space-y-1">
+                    <div className="text-xs font-bold text-sky-400 flex items-center gap-1.5">
+                      <Compass className="w-4 h-4 text-sky-400" />
+                      <span>第 2 阶任务：辨析相对面与相邻面（空间对立规律 · 举一反三）</span>
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      💡 <strong>概念解析</strong>：
+                      <br />
+                      • <strong>相邻面</strong>：空间中共用一条折痕（棱），折起后垂直挨着。
+                      <br />
+                      • <strong>相对面</strong>：空间中平行相对，<strong>绝不共用任何棱或顶点</strong>！在展开图中通常<strong>“隔一个面”</strong>或呈<strong>“Z 字两端”</strong>。
+                    </p>
                   </div>
-                </div>
 
-                {guidedStep2Answer && (
-                  <div
-                    className={`p-3 rounded-xl border text-xs space-y-2 animate-in fade-in ${
-                      guidedStep2Answer === 'C'
-                        ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300'
-                        : 'bg-rose-950/40 border-rose-500/50 text-rose-300'
-                    }`}
-                  >
-                    {guidedStep2Answer === 'C' ? (
-                      <>
-                        <div className="flex items-center gap-1.5 font-bold text-emerald-400">
-                          <CheckCircle2 className="w-4 h-4" />
-                          <span>🎉 回答完全正确！A 面与 C 面互为相对面！</span>
-                        </div>
-                        <p className="text-emerald-200/90 text-[11px] leading-relaxed">
-                          <strong>空间验证</strong>：A 面与 C 面之间隔着 B 面。折起后，A 面与 C 面在空间中严格平行相对，永不共用棱或顶点！公考中若看到 A 面与 C 面同时出现在立体图的相邻视野里，直接秒杀排除！
-                        </p>
-                        <div className="flex gap-2 pt-1">
+                  {/* Dynamic target face selector pills */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-slate-400">选择要探究的目标面：</span>
+                      <span className="text-[11px] text-sky-400 font-medium">六面皆可验证 · 拓扑永恒</span>
+                    </div>
+                    <div className="grid grid-cols-6 gap-1.5">
+                      {PATTERNS.map((p) => {
+                        const isCurrentTarget = p.id === guidedStep2TargetFaceId;
+                        return (
+                          <button
+                            key={p.id}
+                            onClick={() => {
+                              setGuidedStep2TargetFaceId(p.id);
+                              setGuidedStep2Answer(null);
+                              stopAnimation();
+                              setFoldProgress(0);
+                            }}
+                            className={`py-1.5 px-1 rounded-xl border flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                              isCurrentTarget
+                                ? 'bg-sky-500/20 border-sky-400 text-sky-200 ring-2 ring-sky-400/40 font-bold'
+                                : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                            }`}
+                          >
+                            <FaceThumbnail pattern={p} size={22} />
+                            <span className="text-[10px]">{p.letter}面</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                    <span className="font-bold text-amber-300 block">
+                      ❓ 探究提问：哪个面折起后会成为【{targetPattern.name}】的相对面？
+                    </span>
+                    <p className="text-slate-400 text-[11px]">
+                      请在展开图中观察其余 5 个面，先在脑海中推演哪一个面折起后会与【{targetPattern.letter}面】正对（平行且互不接触）：
+                    </p>
+                    <div className="grid grid-cols-5 gap-1.5 pt-1">
+                      {PATTERNS.filter((p) => p.id !== guidedStep2TargetFaceId).map((p) => {
+                        const isSelected = guidedStep2Answer === p.letter;
+                        const optionIsCorrect = p.id === correctOppositeId;
+                        return (
+                          <button
+                            key={p.id}
+                            onClick={() => {
+                              setGuidedStep2Answer(p.letter);
+                              if (optionIsCorrect) {
+                                setGuidedCompletedSteps((prev) => Array.from(new Set([...prev, 2])));
+                              }
+                            }}
+                            className={`py-2 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
+                              isSelected
+                                ? optionIsCorrect
+                                  ? 'bg-emerald-500/25 border-emerald-400 text-emerald-200 ring-2 ring-emerald-400/50 font-bold'
+                                  : 'bg-rose-500/25 border-rose-400 text-rose-200 ring-2 ring-rose-400/50 font-bold'
+                                : 'bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500'
+                            }`}
+                          >
+                            <FaceThumbnail pattern={p} size={24} />
+                            <span className="text-[11px]">{p.letter}面</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {guidedStep2Answer && (
+                    <div
+                      className={`p-3 rounded-xl border text-xs space-y-2 animate-in fade-in ${
+                        isCorrect
+                          ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300'
+                          : 'bg-rose-950/40 border-rose-500/50 text-rose-300'
+                      }`}
+                    >
+                      {isCorrect ? (
+                        <>
+                          <div className="flex items-center gap-1.5 font-bold text-emerald-400">
+                            <CheckCircle2 className="w-4 h-4" />
+                            <span>🎉 回答完全正确！【{targetPattern.name}】与【{correctOppositePattern.name}】互为相对面！</span>
+                          </div>
+                          <p className="text-emerald-200/90 text-[11px] leading-relaxed">
+                            <strong>空间验证</strong>：{targetPattern.letter} 面与 {correctOppositePattern.letter} 面在空间中严格平行相对，永不共用棱或顶点！
+                            <br />
+                            💡 <strong>公考秒杀核心直觉</strong>：在正方体展开图中，相对面相隔一格或在 Z 字两端。公考中若看到二者同时出现在立体图相邻视野里，直接秒杀排除！
+                          </p>
+                          <div className="bg-sky-950/40 border border-sky-500/30 rounded-lg p-2 text-[11px] text-sky-300">
+                            🔬 <strong>空间拓扑规律</strong>：无论你选择哪一个面作为基准，六面之间的相对空间拓扑关系（A对C、B对D、E对F）永恒不变！点击上方其他字母试一试！
+                          </div>
+                          <div className="flex gap-2 pt-1">
+                            <button
+                              onClick={() => {
+                                stopAnimation();
+                                startAnimation(1, 2000, false);
+                              }}
+                              className="flex-1 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold text-xs border border-emerald-500/30 flex items-center justify-center gap-1 cursor-pointer"
+                            >
+                              <Play className="w-3.5 h-3.5" />
+                              <span>折叠动画验证</span>
+                            </button>
+                            <button
+                              onClick={() => {
+                                const nextTargetId = (guidedStep2TargetFaceId + 1) % 6;
+                                setGuidedStep2TargetFaceId(nextTargetId);
+                                setGuidedStep2Answer(null);
+                                stopAnimation();
+                                setFoldProgress(0);
+                              }}
+                              className="py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium text-xs border border-slate-700 flex items-center justify-center gap-1 cursor-pointer"
+                            >
+                              <RotateCcw className="w-3.5 h-3.5" />
+                              <span>换个目标面再试</span>
+                            </button>
+                            <button
+                              onClick={() => handleSelectGuidedStep(3)}
+                              className="flex-1 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition-all flex items-center justify-center gap-1 cursor-pointer"
+                            >
+                              <span>进入第 3 阶</span>
+                              <ChevronRight className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex items-center gap-1.5 font-bold text-rose-400">
+                            <AlertOctagon className="w-4 h-4" />
+                            <span>❌ 错误提示：选中的【{guidedStep2Answer}面】是【相邻面】！</span>
+                          </div>
+                          <p className="text-rose-200/90 text-[11px] leading-relaxed">
+                            你选的 {guidedStep2Answer} 面与 {targetPattern.name} 之间在空间中共用棱，折起 90° 后垂直相交，绝非相对面！
+                            <br />
+                            💡 <strong>启发指引</strong>：相对面绝不相连，展开图中通常<strong>“隔一个面”</strong>。试着找与 {targetPattern.letter} 面相隔一格的那个面！
+                          </p>
                           <button
                             onClick={() => {
                               stopAnimation();
                               startAnimation(1, 2000, false);
                             }}
-                            className="flex-1 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold text-xs border border-emerald-500/30 flex items-center justify-center gap-1 cursor-pointer"
+                            className="w-full py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 font-semibold text-xs border border-rose-500/30 flex items-center justify-center gap-1 cursor-pointer"
                           >
                             <Play className="w-3.5 h-3.5" />
-                            <span>折叠动画验证</span>
+                            <span>折起验证观察</span>
                           </button>
-                          <button
-                            onClick={() => handleSelectGuidedStep(3)}
-                            className="flex-1 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition-all flex items-center justify-center gap-1 cursor-pointer"
-                          >
-                            <span>进入第 3 阶</span>
-                            <ChevronRight className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="flex items-center gap-1.5 font-bold text-rose-400">
-                          <AlertOctagon className="w-4 h-4" />
-                          <span>❌ 错误提示：选中的 {guidedStep2Answer} 面是【相邻面】！</span>
-                        </div>
-                        <p className="text-rose-200/90 text-[11px] leading-relaxed">
-                          你选的 {guidedStep2Answer} 面与 A 面之间有折线相连（共用一条边），折起 90° 后它们在空间中是垂直相交的相邻面，绝非相对面！
-                          <br />
-                          💡 <strong>启发指引</strong>：在经典 1-4-1 展开图中，相对面必须<strong>相隔一个面</strong>，试着找跟 A 面隔一格的那个面！
-                        </p>
-                      </>
-                    )}
-                  </div>
-                )}
+                        </>
+                      )}
+                    </div>
+                  )}
 
-                <div className="pt-2 border-t border-slate-800 flex justify-between items-center">
-                  <button
-                    onClick={() => handleSelectGuidedStep(1)}
-                    className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                    <span>返回第 1 阶：认基准面</span>
-                  </button>
+                  <div className="pt-2 border-t border-slate-800 flex justify-between items-center">
+                    <button
+                      onClick={() => handleSelectGuidedStep(1)}
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                      <span>返回第 1 阶：认基准面</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* STEP 3: 跟踪公共边 */}
-            {guidedStep === 3 && (
-              <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3.5">
-                <div className="space-y-1">
-                  <div className="text-xs font-bold text-sky-400 flex items-center gap-1.5">
-                    <Compass className="w-4 h-4 text-sky-400" />
-                    <span>第 3 阶任务：跟踪一条公共边（边缘旋转贴合）</span>
-                  </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    💡 <strong>核心直觉</strong>：展开图外围看似分离的两条边，折叠成立方体后会<strong>严密贴合并成为同一条空间棱（公共边）</strong>！这是考查图形旋转指向的最核心知识点。
-                  </p>
-                </div>
+            {guidedStep === 3 && (() => {
+              const currCase = GUIDED_STEP3_CASES[step3CaseIndex] || GUIDED_STEP3_CASES[0];
+              const isCaseAnswered = guidedStep3Answer !== null;
+              const isCorrect = guidedStep3Answer === currCase.matchingFaceLetter;
 
-                <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-orange-500 ring-2 ring-orange-400 animate-pulse" />
-                    <span className="font-bold text-amber-300">
-                      ❓ 探究提问：盯住【B面】边缘的发光橙色边！
-                    </span>
+              return (
+                <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3.5">
+                  <div className="space-y-1">
+                    <div className="text-xs font-bold text-sky-400 flex items-center gap-1.5">
+                      <Compass className="w-4 h-4 text-sky-400" />
+                      <span>第 3 阶任务：跟踪公共边（边缘旋转贴合 · 举一反三）</span>
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      💡 <strong>核心直觉</strong>：展开图外围看似分离的两条边，折叠成立方体后会<strong>严密贴合并成为同一条空间棱（公共边）</strong>！这是考查图形旋转指向的最核心知识点。
+                    </p>
                   </div>
-                  <p className="text-slate-400 text-[11px] leading-relaxed">
-                    当展开图折成立体盒时，展开图外围的哪条边会旋转贴合过来，与这条橙色边在空间中重合？
-                  </p>
-                  <div className="grid grid-cols-3 gap-2 pt-1">
-                    {[
-                      { key: 'F', label: 'F面 · 半黑半白', desc: '对角半黑半白面', correct: true },
-                      { key: 'D', label: 'D面 · 黑色方块', desc: '深灰实心方块面', correct: false },
-                      { key: 'C', label: 'C面 · 金色五星', desc: '金色五角星面', correct: false },
-                    ].map((opt) => (
-                      <button
-                        key={opt.key}
-                        onClick={() => {
-                          setGuidedStep3Answer(opt.key);
-                          if (opt.correct) {
-                            setGuidedCompletedSteps((prev) => Array.from(new Set([...prev, 3])));
-                          }
-                        }}
-                        className={`p-2.5 rounded-xl border text-left flex flex-col gap-1 transition-all cursor-pointer ${
-                          guidedStep3Answer === opt.key
-                            ? opt.correct
-                              ? 'bg-emerald-500/25 border-emerald-400 text-emerald-200 ring-2 ring-emerald-400/50'
-                              : 'bg-rose-500/25 border-rose-400 text-rose-200 ring-2 ring-rose-400/50'
-                            : 'bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500'
-                        }`}
-                      >
-                        <span className="font-bold text-xs">{opt.label}</span>
-                        <span className="text-[10px] text-slate-400">{opt.desc}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
 
-                {guidedStep3Answer && (
-                  <div
-                    className={`p-3 rounded-xl border text-xs space-y-2 animate-in fade-in ${
-                      guidedStep3Answer === 'F'
-                        ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300'
-                        : 'bg-rose-950/40 border-rose-500/50 text-rose-300'
-                    }`}
-                  >
-                    {guidedStep3Answer === 'F' ? (
-                      <>
-                        <div className="flex items-center gap-1.5 font-bold text-emerald-400">
-                          <CheckCircle2 className="w-4 h-4" />
-                          <span>🎉 观察敏锐！B 面橙色边与 F 面对应边紧密贴合！</span>
-                        </div>
-                        <p className="text-emerald-200/90 text-[11px] leading-relaxed">
-                          <strong>空间轨迹解析</strong>：B 面向前折起 90°，F 面向右向上弯折 90°。两条边缘在棱处严密贴合并亮起天蓝色光芒！点击下方<strong>【贴合前夕 85% 关键帧】</strong>慢放观察这个相遇瞬间！
-                        </p>
-                        <div className="flex gap-2 pt-1">
+                  {/* Case pills */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-slate-400">选择公共边探究案例：</span>
+                      <span className="text-[11px] text-amber-400 font-medium">3组典型边贴合</span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {GUIDED_STEP3_CASES.map((c, idx) => (
+                        <button
+                          key={c.id}
+                          onClick={() => {
+                            setStep3CaseIndex(idx);
+                            setGuidedStep3Answer(null);
+                            stopAnimation();
+                            setFoldProgress(0);
+                          }}
+                          className={`py-1.5 px-2 rounded-xl border text-center transition-all cursor-pointer ${
+                            step3CaseIndex === idx
+                              ? 'bg-sky-500/20 border-sky-400 text-sky-200 ring-2 ring-sky-400/40 font-bold'
+                              : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                          }`}
+                        >
+                          <span className="text-xs block font-bold">案例 {idx + 1}</span>
+                          <span className="text-[10px] text-slate-400 truncate block">{c.targetFaceLetter} ➔ {c.matchingFaceLetter}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Question */}
+                  <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-orange-500 ring-2 ring-orange-400 animate-pulse" />
+                      <span className="font-bold text-amber-300">
+                        ❓ 探究提问：盯住【{currCase.targetEdgeName}】！
+                      </span>
+                    </div>
+                    <p className="text-slate-400 text-[11px] leading-relaxed">
+                      当展开图折成立体盒时，展开图外围的哪条边会旋转贴合过来，与这条橙色边在空间中重合？
+                    </p>
+                    <div className="grid grid-cols-3 gap-2 pt-1">
+                      {currCase.options.map((opt) => (
+                        <button
+                          key={opt.key}
+                          onClick={() => {
+                            setGuidedStep3Answer(opt.key);
+                            if (opt.correct) {
+                              setGuidedCompletedSteps((prev) => Array.from(new Set([...prev, 3])));
+                            }
+                          }}
+                          className={`p-2.5 rounded-xl border text-left flex flex-col gap-1 transition-all cursor-pointer ${
+                            guidedStep3Answer === opt.key
+                              ? opt.correct
+                                ? 'bg-emerald-500/25 border-emerald-400 text-emerald-200 ring-2 ring-emerald-400/50'
+                                : 'bg-rose-500/25 border-rose-400 text-rose-200 ring-2 ring-rose-400/50'
+                              : 'bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500'
+                          }`}
+                        >
+                          <span className="font-bold text-xs">{opt.name}</span>
+                          <span className="text-[10px] text-slate-400">{opt.desc}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Feedback */}
+                  {isCaseAnswered && (
+                    <div
+                      className={`p-3 rounded-xl border text-xs space-y-2 animate-in fade-in ${
+                        isCorrect
+                          ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300'
+                          : 'bg-rose-950/40 border-rose-500/50 text-rose-300'
+                      }`}
+                    >
+                      {isCorrect ? (
+                        <>
+                          <div className="flex items-center gap-1.5 font-bold text-emerald-400">
+                            <CheckCircle2 className="w-4 h-4" />
+                            <span>🎉 观察敏锐！【{currCase.targetFaceLetter}面】与【{currCase.matchingFaceLetter}面】对应边紧密贴合！</span>
+                          </div>
+                          <p className="text-emerald-200/90 text-[11px] leading-relaxed">
+                            <strong>空间轨迹解析</strong>：{currCase.explanation}
+                          </p>
+                          <div className="flex gap-2 pt-1">
+                            <button
+                              onClick={() => handleAnimateToPause(0.85)}
+                              className="flex-1 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-semibold text-xs border border-amber-500/30 flex items-center justify-center gap-1 cursor-pointer"
+                            >
+                              <Play className="w-3.5 h-3.5 text-amber-400" />
+                              <span>85% 贴合瞬间慢放暂停</span>
+                            </button>
+                            <button
+                              onClick={() => {
+                                const nextIdx = (step3CaseIndex + 1) % GUIDED_STEP3_CASES.length;
+                                setStep3CaseIndex(nextIdx);
+                                setGuidedStep3Answer(null);
+                                stopAnimation();
+                                setFoldProgress(0);
+                              }}
+                              className="py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium text-xs border border-slate-700 flex items-center justify-center gap-1 cursor-pointer"
+                            >
+                              <RotateCcw className="w-3.5 h-3.5" />
+                              <span>换案例再试</span>
+                            </button>
+                            <button
+                              onClick={() => handleSelectGuidedStep(4)}
+                              className="flex-1 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition-all flex items-center justify-center gap-1 cursor-pointer"
+                            >
+                              <span>进入第 4 阶</span>
+                              <ChevronRight className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex items-center gap-1.5 font-bold text-rose-400">
+                            <AlertOctagon className="w-4 h-4" />
+                            <span>❌ 边不匹配提示：观察两条边的旋转轨迹！</span>
+                          </div>
+                          <p className="text-rose-200/90 text-[11px] leading-relaxed">
+                            所选面的边缘折叠后去了其他方位，无法与发光橙色边重合。请注意观察【{currCase.matchingFaceLetter}面】在折起过程中的贴合运动轨迹！
+                          </p>
                           <button
-                            onClick={() => handleAnimateToPause(0.85)}
-                            className="flex-1 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-semibold text-xs border border-amber-500/30 flex items-center justify-center gap-1 cursor-pointer"
+                            onClick={() => {
+                              stopAnimation();
+                              startAnimation(1, 2000, false);
+                            }}
+                            className="w-full py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 font-semibold text-xs border border-rose-500/30 flex items-center justify-center gap-1 cursor-pointer"
                           >
-                            <Play className="w-3.5 h-3.5 text-amber-400" />
-                            <span>85% 贴合瞬间慢放暂停</span>
+                            <Play className="w-3.5 h-3.5" />
+                            <span>折起验证观察</span>
                           </button>
-                          <button
-                            onClick={() => handleSelectGuidedStep(4)}
-                            className="flex-1 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition-all flex items-center justify-center gap-1 cursor-pointer"
-                          >
-                            <span>进入第 4 阶</span>
-                            <ChevronRight className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="flex items-center gap-1.5 font-bold text-rose-400">
-                          <AlertOctagon className="w-4 h-4" />
-                          <span>❌ 边不匹配提示：观察两条边的旋转轨迹！</span>
-                        </div>
-                        <p className="text-rose-200/90 text-[11px] leading-relaxed">
-                          B 面右侧位于正方体的侧棱位置，而 {guidedStep3Answer} 面的边缘折叠后去了另一侧，无法相交！请注意看右侧【F面】底部的对应棱边轨迹！
-                        </p>
-                      </>
-                    )}
-                  </div>
-                )}
+                        </>
+                      )}
+                    </div>
+                  )}
 
-                <div className="pt-2 border-t border-slate-800 flex justify-between items-center">
-                  <button
-                    onClick={() => handleSelectGuidedStep(2)}
-                    className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                    <span>返回第 2 阶：辨相对面</span>
-                  </button>
+                  {/* Navigation */}
+                  <div className="pt-2 border-t border-slate-800 flex justify-between items-center">
+                    <button
+                      onClick={() => handleSelectGuidedStep(2)}
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                      <span>返回第 2 阶：辨相对面</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* STEP 4: 跟踪公共顶点 */}
-            {guidedStep === 4 && (
-              <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3.5">
-                <div className="space-y-1">
-                  <div className="text-xs font-bold text-sky-400 flex items-center gap-1.5">
-                    <Compass className="w-4 h-4 text-sky-400" />
-                    <span>第 4 阶任务：跟踪公共顶点（三面汇聚与时针法）</span>
-                  </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    💡 <strong>核心直觉</strong>：展开图上看似分开的 3 个直角，折叠后会汇聚成同一个<strong>空间三维顶点（公共顶点）</strong>！围绕顶点的三个面，时针旋转方向在平面与立体中保持不变！
-                  </p>
-                </div>
+            {guidedStep === 4 && (() => {
+              const currCase = GUIDED_STEP4_CASES[step4CaseIndex] || GUIDED_STEP4_CASES[0];
+              const isCaseAnswered = guidedStep4Answer !== null;
+              const isCorrect = currCase.options.find((o) => o.key === guidedStep4Answer)?.correct ?? false;
 
-                <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-amber-400 ring-2 ring-amber-300 animate-pulse" />
-                    <span className="font-bold text-amber-300">
-                      ❓ 探究提问：观察金色发光球【顶点 P】所在交角！
-                    </span>
+              return (
+                <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3.5">
+                  <div className="space-y-1">
+                    <div className="text-xs font-bold text-sky-400 flex items-center gap-1.5">
+                      <Compass className="w-4 h-4 text-sky-400" />
+                      <span>第 4 阶任务：跟踪公共顶点（三面汇聚与时针法 · 举一反三）</span>
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      💡 <strong>核心直觉</strong>：展开图上看似分开的 3 个直角，折叠后会汇聚成同一个<strong>空间三维顶点（公共顶点）</strong>！围绕顶点的三个面，时针旋转方向在平面与立体中保持不变！
+                    </p>
                   </div>
-                  <p className="text-slate-400 text-[11px] leading-relaxed">
-                    折成立方体盒子后，共有哪三个面在这个金色光球顶点 P 处紧密汇聚相交？
-                  </p>
-                  <div className="space-y-1.5 pt-1">
-                    {[
-                      { key: 'ABE', label: 'A面 (双同心圆) + B面 (红色右箭头) + E面 (紫色对角大叉)', correct: true },
-                      { key: 'ACD', label: 'A面 (双同心圆) + C面 (金色五角星) + D面 (黑色实心方)', correct: false },
-                      { key: 'BCF', label: 'B面 (红色右箭头) + C面 (金色五角星) + F面 (对角半黑半白)', correct: false },
-                    ].map((opt) => (
-                      <button
-                        key={opt.key}
-                        onClick={() => {
-                          setGuidedStep4Answer(opt.key);
-                          if (opt.correct) {
-                            setGuidedCompletedSteps((prev) => Array.from(new Set([...prev, 4])));
-                          }
-                        }}
-                        className={`w-full p-2.5 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
-                          guidedStep4Answer === opt.key
-                            ? opt.correct
-                              ? 'bg-emerald-500/25 border-emerald-400 text-emerald-200 ring-2 ring-emerald-400/50 font-bold'
-                              : 'bg-rose-500/25 border-rose-400 text-rose-200 ring-2 ring-rose-400/50 font-bold'
-                            : 'bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500'
-                        }`}
-                      >
-                        <span className="text-xs">{opt.label}</span>
-                        {guidedStep4Answer === opt.key && (
-                          <span className="text-[11px]">{opt.correct ? '✓ 正确' : '✗ 错误'}</span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
 
-                {guidedStep4Answer && (
-                  <div
-                    className={`p-3 rounded-xl border text-xs space-y-2 animate-in fade-in ${
-                      guidedStep4Answer === 'ABE'
-                        ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300'
-                        : 'bg-rose-950/40 border-rose-500/50 text-rose-300'
-                    }`}
-                  >
-                    {guidedStep4Answer === 'ABE' ? (
-                      <>
-                        <div className="flex items-center gap-1.5 font-bold text-emerald-400">
-                          <CheckCircle2 className="w-4 h-4" />
-                          <span>🎉 完全正确！A、B、E 三面汇聚于顶点 P！</span>
-                        </div>
-                        <p className="text-emerald-200/90 text-[11px] leading-relaxed">
-                          <strong>公考时针法秒杀绝技</strong>：在 3D 盒子上以顶点 P 为中心画圆，三个面的时针顺序为【A面 ➔ B面 ➔ E面】。如果在考题选项中变成了相反时针顺序，直接秒杀排除！
-                        </p>
+                  {/* Vertex selector pills */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-slate-400">选择要探究的公共顶点：</span>
+                      <span className="text-[11px] text-amber-400 font-medium">3组典型顶点汇聚</span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {GUIDED_STEP4_CASES.map((c, idx) => (
                         <button
-                          onClick={() => handleSelectGuidedStep(5)}
-                          className="w-full py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow transition-all flex items-center justify-center gap-1 cursor-pointer"
+                          key={c.id}
+                          onClick={() => {
+                            setStep4CaseIndex(idx);
+                            setGuidedStep4Answer(null);
+                            stopAnimation();
+                            setFoldProgress(0);
+                          }}
+                          className={`py-1.5 px-2 rounded-xl border text-center transition-all cursor-pointer ${
+                            step4CaseIndex === idx
+                              ? 'bg-amber-500/20 border-amber-400 text-amber-200 ring-2 ring-amber-400/40 font-bold'
+                              : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                          }`}
                         >
-                          <span>进入第 5 阶：变式盲测通关挑战！</span>
-                          <ChevronRight className="w-4 h-4" />
+                          <span className="text-xs block font-bold">{c.vertexName}</span>
                         </button>
-                      </>
-                    ) : (
-                      <>
-                        <div className="flex items-center gap-1.5 font-bold text-rose-400">
-                          <AlertOctagon className="w-4 h-4" />
-                          <span>❌ 错误提示：注意看交角处的直接邻接面！</span>
-                        </div>
-                        <p className="text-rose-200/90 text-[11px] leading-relaxed">
-                          顶点 P 位于 A 面的角隅处，直接连接了相邻的 B 面和 E 面。C 面和 D 面离此顶点较远，无法在此顶点汇合！
-                        </p>
-                      </>
-                    )}
+                      ))}
+                    </div>
                   </div>
-                )}
 
-                <div className="pt-2 border-t border-slate-800 flex justify-between items-center">
-                  <button
-                    onClick={() => handleSelectGuidedStep(3)}
-                    className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                    <span>返回第 3 阶：公共边</span>
-                  </button>
+                  {/* Question */}
+                  <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-amber-400 ring-2 ring-amber-300 animate-pulse" />
+                      <span className="font-bold text-amber-300">
+                        ❓ 探究提问：观察金色发光球【{currCase.title}】所在交角！
+                      </span>
+                    </div>
+                    <p className="text-slate-400 text-[11px] leading-relaxed">
+                      折成立体盒后，展开图上的哪三个面会在金色光球处紧密汇聚相交？
+                    </p>
+                    <div className="space-y-1.5 pt-1">
+                      {currCase.options.map((opt) => (
+                        <button
+                          key={opt.key}
+                          onClick={() => {
+                            setGuidedStep4Answer(opt.key);
+                            if (opt.correct) {
+                              setGuidedCompletedSteps((prev) => Array.from(new Set([...prev, 4])));
+                            }
+                          }}
+                          className={`w-full p-2.5 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                            guidedStep4Answer === opt.key
+                              ? opt.correct
+                                ? 'bg-emerald-500/25 border-emerald-400 text-emerald-200 ring-2 ring-emerald-400/50 font-bold'
+                                : 'bg-rose-500/25 border-rose-400 text-rose-200 ring-2 ring-rose-400/50 font-bold'
+                              : 'bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500'
+                          }`}
+                        >
+                          <div>
+                            <span className="text-xs font-medium block">{opt.label}</span>
+                            <span className="text-[10px] text-slate-400">{opt.desc}</span>
+                          </div>
+                          {guidedStep4Answer === opt.key && (
+                            <span className="text-[11px] font-bold">{opt.correct ? '✓ 正确' : '✗ 错误'}</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Feedback */}
+                  {isCaseAnswered && (
+                    <div
+                      className={`p-3 rounded-xl border text-xs space-y-2 animate-in fade-in ${
+                        isCorrect
+                          ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300'
+                          : 'bg-rose-950/40 border-rose-500/50 text-rose-300'
+                      }`}
+                    >
+                      {isCorrect ? (
+                        <>
+                          <div className="flex items-center gap-1.5 font-bold text-emerald-400">
+                            <CheckCircle2 className="w-4 h-4" />
+                            <span>🎉 完全正确！</span>
+                          </div>
+                          <p className="text-emerald-200/90 text-[11px] leading-relaxed">
+                            {currCase.explanation}
+                          </p>
+                          <div className="flex gap-2 pt-1">
+                            <button
+                              onClick={() => {
+                                stopAnimation();
+                                startAnimation(1, 2000, false);
+                              }}
+                              className="flex-1 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold text-xs border border-emerald-500/30 flex items-center justify-center gap-1 cursor-pointer"
+                            >
+                              <Play className="w-3.5 h-3.5" />
+                              <span>折叠动画验证</span>
+                            </button>
+                            <button
+                              onClick={() => {
+                                const nextIdx = (step4CaseIndex + 1) % GUIDED_STEP4_CASES.length;
+                                setStep4CaseIndex(nextIdx);
+                                setGuidedStep4Answer(null);
+                                stopAnimation();
+                                setFoldProgress(0);
+                              }}
+                              className="py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium text-xs border border-slate-700 flex items-center justify-center gap-1 cursor-pointer"
+                            >
+                              <RotateCcw className="w-3.5 h-3.5" />
+                              <span>换个顶点再试</span>
+                            </button>
+                            <button
+                              onClick={() => handleSelectGuidedStep(5)}
+                              className="flex-1 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow transition-all flex items-center justify-center gap-1 cursor-pointer"
+                            >
+                              <span>进入第 5 阶：变式盲测</span>
+                              <ChevronRight className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex items-center gap-1.5 font-bold text-rose-400">
+                            <AlertOctagon className="w-4 h-4" />
+                            <span>❌ 错误提示：注意看交角处的直接邻接面！</span>
+                          </div>
+                          <p className="text-rose-200/90 text-[11px] leading-relaxed">
+                            所选组合中包含相对面（相对面永不共顶点）或距离该顶点较远的面。请看展开图上直接与该金色交角紧邻的 3 个面！
+                          </p>
+                          <button
+                            onClick={() => {
+                              stopAnimation();
+                              startAnimation(1, 2000, false);
+                            }}
+                            className="w-full py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 font-semibold text-xs border border-rose-500/30 flex items-center justify-center gap-1 cursor-pointer"
+                          >
+                            <Play className="w-3.5 h-3.5" />
+                            <span>折起验证观察</span>
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Navigation */}
+                  <div className="pt-2 border-t border-slate-800 flex justify-between items-center">
+                    <button
+                      onClick={() => handleSelectGuidedStep(3)}
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                      <span>返回第 3 阶：公共边</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
-            {/* STEP 5: 变式盲测 (2道无辅助变式挑战) */}
+            {/* STEP 5: 变式盲测 (3道全构型无辅助变式挑战) */}
             {guidedStep === 5 && (
               <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3.5">
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <div className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
                       <Sparkles className="w-4 h-4 text-amber-400" />
-                      <span>第 5 阶任务：无辅助变式挑战 ({step5SubQuestion} / 2)</span>
+                      <span>第 5 阶任务：无辅助变式盲测 ({step5SubQuestion} / 3)</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span
                         className={`w-2 h-2 rounded-full ${
-                          step5SubQuestion === 1 ? 'bg-amber-400 ring-2 ring-amber-400/40' : 'bg-emerald-400'
+                          step5SubQuestion === 1
+                            ? 'bg-amber-400 ring-2 ring-amber-400/40'
+                            : guidedStep5Q1Answer === 'D'
+                            ? 'bg-emerald-400'
+                            : 'bg-slate-700'
                         }`}
                       />
                       <span
                         className={`w-2 h-2 rounded-full ${
-                          step5SubQuestion === 2 ? 'bg-amber-400 ring-2 ring-amber-400/40' : 'bg-slate-700'
+                          step5SubQuestion === 2
+                            ? 'bg-amber-400 ring-2 ring-amber-400/40'
+                            : guidedStep5Q2Answer === 'C'
+                            ? 'bg-emerald-400'
+                            : 'bg-slate-700'
+                        }`}
+                      />
+                      <span
+                        className={`w-2 h-2 rounded-full ${
+                          step5SubQuestion === 3
+                            ? 'bg-amber-400 ring-2 ring-amber-400/40'
+                            : guidedStep5Q3Answer === 'F'
+                            ? 'bg-emerald-400'
+                            : 'bg-slate-700'
                         }`}
                       />
                     </div>
                   </div>
                   <p className="text-xs text-slate-300 leading-relaxed">
-                    💡 <strong>终极考验</strong>：已撤掉所有线框辅助高亮与颜色提示。先自主预测，再折起验证，检验空间推演直觉！
+                    💡 <strong>终极考验</strong>：已撤掉所有线框辅助高亮与颜色提示。先自主预测，再折起验证，检验跨构型空间推演直觉！
                   </p>
                 </div>
 
-                {step5SubQuestion === 1 ? (
+                {step5SubQuestion === 1 && (
                   /* Question 1: Net 2-3-1 */
                   <div className="space-y-3">
                     <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
@@ -1974,7 +2469,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                                 }}
                                 className="flex-1 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition-all flex items-center justify-center gap-1 cursor-pointer"
                               >
-                                <span>进入变式挑战 2 (2-2-2 阶梯型)</span>
+                                <span>进入挑战 2 (2-2-2 双阶梯型)</span>
                                 <ChevronRight className="w-3.5 h-3.5" />
                               </button>
                             </div>
@@ -2003,7 +2498,9 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                       </div>
                     )}
                   </div>
-                ) : (
+                )}
+
+                {step5SubQuestion === 2 && (
                   /* Question 2: Net 2-2-2 */
                   <div className="space-y-3">
                     <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
@@ -2038,9 +2535,6 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                                 const isIndep = opt.correct && !step5Q2FoldedRef.current;
                                 setStep5Q2FirstTryCorrect(isIndep);
                               }
-                              if (opt.correct) {
-                                setGuidedCompletedSteps((prev) => Array.from(new Set([...prev, 5])));
-                              }
                             }}
                             className={`p-2 rounded-xl border text-left flex items-center gap-2 transition-all cursor-pointer ${
                               guidedStep5Q2Answer === opt.key
@@ -2069,65 +2563,34 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                           <>
                             <div className="flex items-center gap-1.5 font-bold text-emerald-400">
                               <CheckCircle2 className="w-4 h-4" />
-                              <span>🎉 完成两道相对面变式挑战！</span>
+                              <span>🎉 判断精准！A 面与 C 面互为相对面！</span>
                             </div>
                             <p className="text-emerald-200/90 text-[11px] leading-relaxed">
                               <strong>空间解析</strong>：在 2-2-2 阶梯图中，从 A 面(0) 出发向右经由 F 面(5)、向上经由 B 面(1) 拐弯到达 C 面(2)（形成跨越 4 面的经典 Z 字形阶梯两端），折起后二者严格平行相对！
                             </p>
-                            <div className="bg-slate-900/80 rounded-xl p-2.5 border border-emerald-500/30 text-[11px] text-emerald-300 space-y-1.5">
-                              <div className="font-semibold flex items-center justify-between">
-                                <span>🎯 相对面变式检验：</span>
-                                {step5Q1FirstTryCorrect && step5Q2FirstTryCorrect ? (
-                                  <span className="text-amber-300 font-bold">🌟 变式全独立攻克</span>
-                                ) : (
-                                  <span className="text-emerald-200">💡 引导辅助完成</span>
-                                )}
-                              </div>
-                              <div className="text-slate-300 text-[10px] space-y-0.5 border-t border-slate-800/80 pt-1.5">
-                                <div className="font-medium text-slate-400 mb-1">已检验掌握能力：</div>
-                                <div className="flex items-center gap-1.5">
-                                  <span className={guidedCompletedSteps.includes(1) ? 'text-emerald-400' : 'text-slate-500'}>
-                                    {guidedCompletedSteps.includes(1) ? '✓' : '○'} ① 基准面空间参照锚定
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                  <span className="text-emerald-400">
-                                    ✓ ② 相对面隔一格与Z字两端（含 2-3-1 与 2-2-2 变式）
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                  <span className={guidedCompletedSteps.includes(3) ? 'text-emerald-400' : 'text-slate-500'}>
-                                    {guidedCompletedSteps.includes(3) ? '✓' : '○'} ③ 公共边空间旋转贴合
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                  <span className={guidedCompletedSteps.includes(4) ? 'text-emerald-400' : 'text-slate-500'}>
-                                    {guidedCompletedSteps.includes(4) ? '✓' : '○'} ④ 三面公共顶点识别
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
                             <div className="flex gap-2 pt-1">
                               <button
                                 onClick={() => {
                                   stopAnimation();
                                   startAnimation(1, 2000, false);
                                 }}
-                                className="px-3 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold text-xs border border-emerald-500/30 flex items-center justify-center gap-1 cursor-pointer"
+                                className="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold text-xs border border-emerald-500/30 flex items-center justify-center gap-1 cursor-pointer"
                               >
                                 <Play className="w-3.5 h-3.5" />
-                                <span>折叠验证</span>
+                                <span>折起验证</span>
                               </button>
                               <button
                                 onClick={() => {
                                   stopAnimation();
-                                  setViewMode('free');
+                                  setNetType('3-3');
+                                  setAnchorFaceId(3);
                                   setFoldProgress(0);
+                                  setStep5SubQuestion(3);
                                 }}
-                                className="flex-1 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 text-white font-bold text-xs shadow-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                                className="flex-1 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition-all flex items-center justify-center gap-1 cursor-pointer"
                               >
-                                <Sparkles className="w-4 h-4 text-amber-300" />
-                                <span>自由探索 11 种合法构型</span>
+                                <span>进入挑战 3 (3-3 两行错位型)</span>
+                                <ChevronRight className="w-3.5 h-3.5" />
                               </button>
                             </div>
                           </>
@@ -2157,14 +2620,203 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
                   </div>
                 )}
 
+                {step5SubQuestion === 3 && (
+                  /* Question 3: Net 3-3 */
+                  <div className="space-y-3">
+                    <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-amber-300">
+                          ❓ 挑战 3：在难度最高的【3-3 两行错位型】展开图中，【E面 (紫色对角大叉)】的相对面是？
+                        </span>
+                        {step5Q3FirstTryCorrect !== null && (
+                          <span
+                            className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                              step5Q3FirstTryCorrect
+                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                                : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                            }`}
+                          >
+                            {step5Q3FirstTryCorrect ? '🌟 独立答对' : '💡 需提示'}
+                          </span>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        {[
+                          { key: 'F', name: 'F面 · 对角半黑半白', correct: true },
+                          { key: 'A', name: 'A面 · 双同心圆', correct: false },
+                          { key: 'B', name: 'B面 · 红色右箭头', correct: false },
+                          { key: 'D', name: 'D面 · 黑色实心方', correct: false },
+                        ].map((opt) => (
+                          <button
+                            key={opt.key}
+                            onClick={() => {
+                              setGuidedStep5Q3Answer(opt.key);
+                              if (step5Q3FirstTryCorrect === null) {
+                                const isIndep = opt.correct && !step5Q3FoldedRef.current;
+                                setStep5Q3FirstTryCorrect(isIndep);
+                              }
+                              if (opt.correct) {
+                                setGuidedCompletedSteps((prev) => Array.from(new Set([...prev, 5])));
+                              }
+                            }}
+                            className={`p-2 rounded-xl border text-left flex items-center gap-2 transition-all cursor-pointer ${
+                              guidedStep5Q3Answer === opt.key
+                                ? opt.correct
+                                  ? 'bg-emerald-500/25 border-emerald-400 text-emerald-200 ring-2 ring-emerald-400/50 font-bold'
+                                  : 'bg-rose-500/25 border-rose-400 text-rose-200 ring-2 ring-rose-400/50 font-bold'
+                                : 'bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500'
+                            }`}
+                          >
+                            <FaceThumbnail pattern={PATTERNS.find((p) => p.letter === opt.key)!} size={28} />
+                            <span className="text-xs">{opt.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {guidedStep5Q3Answer && (
+                      <div
+                        className={`p-3 rounded-xl border text-xs space-y-2 animate-in fade-in ${
+                          guidedStep5Q3Answer === 'F'
+                            ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300'
+                            : 'bg-rose-950/40 border-rose-500/50 text-rose-300'
+                        }`}
+                      >
+                        {guidedStep5Q3Answer === 'F' ? (
+                          <>
+                            <div className="flex items-center gap-1.5 font-bold text-emerald-400">
+                              <CheckCircle2 className="w-4 h-4" />
+                              <span>🎉 攻克终极变式！3 道变式全通关！</span>
+                            </div>
+                            <p className="text-emerald-200/90 text-[11px] leading-relaxed">
+                              <strong>空间解析</strong>：在 3-3 两行错位图中，E面(4) 和 F面(5) 分别位于第一行的两端。折叠时 E 面向左折起、F 面翻折至相对底面，二者在空间中严格平行正对！至此，你已掌握所有 11 种正方体展开图的核心空间推演法则！
+                            </p>
+                            <div className="bg-slate-900/80 rounded-xl p-2.5 border border-emerald-500/30 text-[11px] text-emerald-300 space-y-1.5">
+                              <div className="font-semibold flex items-center justify-between">
+                                <span>🎯 空间直觉阶梯通关认证：</span>
+                                {step5Q1FirstTryCorrect && step5Q2FirstTryCorrect && step5Q3FirstTryCorrect ? (
+                                  <span className="text-amber-300 font-bold">🌟 变式全独立攻克 (金牌空间直觉)</span>
+                                ) : (
+                                  <span className="text-emerald-200 font-medium">✨ 空间推演优秀 (扎实掌握)</span>
+                                )}
+                              </div>
+                              <div className="text-slate-300 text-[10px] space-y-0.5 border-t border-slate-800/80 pt-1.5">
+                                <div className="font-medium text-slate-400 mb-1">已掌握 5 阶核心空间认知：</div>
+                                <div className="flex items-center gap-1.5 text-emerald-400">
+                                  <span>✓ ① 任意基准面参照锚定（A~F面随心指定）</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 text-emerald-400">
+                                  <span>✓ ② 相对面空间对立与拓扑守恒（隔一格与Z字两端）</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 text-emerald-400">
+                                  <span>✓ ③ 公共边空间旋转贴合轨迹跟踪</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 text-emerald-400">
+                                  <span>✓ ④ 公共顶点三面汇聚与时针一致性</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 text-emerald-400">
+                                  <span>✓ ⑤ 跨构型变式无辅助盲测（2-3-1 / 2-2-2 / 3-3 全通关）</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex gap-2 pt-1">
+                              <button
+                                onClick={() => {
+                                  stopAnimation();
+                                  startAnimation(1, 2000, false);
+                                }}
+                                className="px-3 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold text-xs border border-emerald-500/30 flex items-center justify-center gap-1 cursor-pointer"
+                              >
+                                <Play className="w-3.5 h-3.5" />
+                                <span>折叠验证</span>
+                              </button>
+                              <button
+                                onClick={() => {
+                                  stopAnimation();
+                                  setStep5SubQuestion(1);
+                                  setGuidedStep5Q1Answer(null);
+                                  setGuidedStep5Q2Answer(null);
+                                  setGuidedStep5Q3Answer(null);
+                                  setStep5Q1FirstTryCorrect(null);
+                                  setStep5Q2FirstTryCorrect(null);
+                                  setStep5Q3FirstTryCorrect(null);
+                                  step5Q1FoldedRef.current = false;
+                                  step5Q2FoldedRef.current = false;
+                                  step5Q3FoldedRef.current = false;
+                                  setNetType('2-3-1');
+                                  setAnchorFaceId(0);
+                                  setFoldProgress(0);
+                                }}
+                                className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium text-xs border border-slate-700 flex items-center justify-center gap-1 cursor-pointer"
+                              >
+                                <RotateCcw className="w-3.5 h-3.5" />
+                                <span>重新挑战</span>
+                              </button>
+                              <button
+                                onClick={() => {
+                                  stopAnimation();
+                                  setViewMode('free');
+                                  setFoldProgress(0);
+                                }}
+                                className="flex-1 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 text-white font-bold text-xs shadow-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                              >
+                                <Sparkles className="w-4 h-4 text-amber-300" />
+                                <span>自由探索 11 种构型</span>
+                              </button>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="flex items-center gap-1.5 font-bold text-rose-400">
+                              <AlertOctagon className="w-4 h-4" />
+                              <span>❌ 提示：在 3-3 错位型中观察第一行两端走向！</span>
+                            </div>
+                            <p className="text-rose-200/90 text-[11px] leading-relaxed">
+                              第一行包含 E(左)、D(中)、F(右)。折叠时左右两端立起并合围，E 面与 F 面在空间中正好成为相对正对的两面！点击“折起验证”亲眼观察。
+                            </p>
+                            <button
+                              onClick={() => {
+                                stopAnimation();
+                                startAnimation(1, 2000, false);
+                              }}
+                              className="w-full py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 font-semibold text-xs border border-rose-500/30 flex items-center justify-center gap-1 cursor-pointer"
+                            >
+                              <Play className="w-3.5 h-3.5" />
+                              <span>折起验证观察</span>
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Subquestion navigation / Step 4 navigation */}
                 <div className="pt-2 border-t border-slate-800 flex justify-between items-center">
-                  <button
-                    onClick={() => handleSelectGuidedStep(4)}
-                    className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                    <span>返回第 4 阶：公共顶点</span>
-                  </button>
+                  {step5SubQuestion > 1 ? (
+                    <button
+                      onClick={() => {
+                        stopAnimation();
+                        const prevQ = (step5SubQuestion - 1) as 1 | 2;
+                        setStep5SubQuestion(prevQ);
+                        setNetType(prevQ === 1 ? '2-3-1' : '2-2-2');
+                        setAnchorFaceId(0);
+                        setFoldProgress(0);
+                      }}
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                      <span>返回挑战 {step5SubQuestion - 1}</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleSelectGuidedStep(4)}
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                      <span>返回第 4 阶：公共顶点</span>
+                    </button>
+                  )}
                 </div>
               </div>
             )}
