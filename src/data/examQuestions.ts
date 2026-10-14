@@ -10,27 +10,46 @@ export interface ExamQuestion {
   unitName: string;
   questionRole: 'example' | 'variant';
   variantIds?: string[];
-  category: 'unfold' | 'revolution' | 'cross_section' | 'origami' | 'assembly' | 'engineering' | 'tools';
+  category: 'unfold' | 'revolution' | 'cross_section' | 'origami' | 'assembly' | 'views' | 'paper_folding' | 'engineering' | 'tools';
   subType: string;
   questionText: string;
   diagramType?: 'origami-q7' | 'assembly-q8' | 'work-grid' | 'ratio-bar';
   diagramProps?: Record<string, any>;
-  options: { key: string; text: string }[];
+  stemImages?: string[];
+  options: { key: string; text: string; imageUrl?: string }[];
   correctAnswer: string;
-  difficulty: '易' | '中' | '难';
-  stepHints: {
-    relation: string;       // Level 1: 关系提示（抓核心数量关系/拓扑性质）
-    representation: string; // Level 2: 表征图解（展开图/工作格/条形图）
-    formula: string;        // Level 3: 列式提示（算式填空）
+  difficulty?: '易' | '中' | '难';
+  knowledgePoints?: string[];
+  stepHints?: {
+    relation?: string;       // Level 1: 关系提示（抓核心数量关系/拓扑性质）
+    representation?: string; // Level 2: 表征图解（展开图/工作格/条形图）
+    formula?: string;        // Level 3: 列式提示（算式填空）
   };
-  commonTraps: string;
-  fastTrick: string; // 核心解题规律
+  commonTraps?: string;
+  fastTrick?: string; // 核心解题规律
   detailedAnalysis: string;
-  mathFormula: string;
+  analysisImages?: string[];
+  mathFormula?: string;
   simulatorConfig?: {
     tab: 'unfold' | 'revolution' | 'cross_section' | 'origami' | 'assembly';
     mode?: string;
     params?: Record<string, number | string | boolean>;
+    label?: string;
+    isExact?: boolean;
+  };
+  meta?: {
+    sourceRepo?: string;
+    upstreamRevision?: string;
+    sourcePath?: string;
+    qid?: string;
+    year?: string;
+    region?: string;
+    paper?: string;
+    sourceUrl?: string;
+    answerStatus?: 'official' | 'recalled' | 'editorial' | string;
+    appearances?: { year: string; paper: string; questionNumber?: string; sourceUrl: string }[];
+    point?: string;
+    isRealExam?: boolean;
   };
 }
 

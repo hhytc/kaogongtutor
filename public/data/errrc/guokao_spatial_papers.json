@@ -1,0 +1,630 @@
+{
+  "purpose": "read-only cross-check of inventory spatial questions against public full-paper recall PDFs",
+  "checkedDate": "2026-10-14",
+  "paperCount": 15,
+  "inventorySpatialIdCount": 29,
+  "appearanceCount": 45,
+  "allInventorySpatialIdsMapped": true,
+  "missingInventoryIds": [],
+  "extraIds": [],
+  "papers": [
+    {
+      "year": 2022,
+      "paper": "行政执法卷",
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729910",
+      "checked": true,
+      "sourceKind": "公开考生回忆版PDF；非官方原卷",
+      "sha256": "f1d6e59c0801bf889d9e1e6eeed17ed70fa0563e31e48d174f7507f7d16197ca"
+    },
+    {
+      "year": 2022,
+      "paper": "地市卷",
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%B8%82%E5%9C%B0%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729914",
+      "checked": true,
+      "sourceKind": "公开考生回忆版PDF；非官方原卷",
+      "sha256": "d2163103f582aadabc7279c9c4d84ceaa99102c994d365bcec824b7d75389ae0"
+    },
+    {
+      "year": 2022,
+      "paper": "副省卷",
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729918",
+      "checked": true,
+      "sourceKind": "公开考生回忆版PDF；非官方原卷",
+      "sha256": "fe2d48dce89d7e26e2f064469fe7acf1995a295bb1657b5c3eea1a5a3ab864e7"
+    },
+    {
+      "year": 2023,
+      "paper": "行政执法卷",
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2023%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733730137",
+      "checked": true,
+      "sourceKind": "公开考生回忆版PDF；非官方原卷",
+      "sha256": "5f5b47aadc4967d902cac34da82867152e7d002413d1d403995de57763f0e118"
+    },
+    {
+      "year": 2023,
+      "paper": "地市卷",
+      "sourceUrl": "https://exam2.gwyks.cn/papermain/downloadPDF?id=3382449&type=2",
+      "checked": true,
+      "sourceKind": "公开网友回忆版PDF；非官方原卷",
+      "sha256": "568fdf97cc9bd21ff4c236b7c108c03b3f70dbd71d8b0bdef185a967fd0d1273"
+    },
+    {
+      "year": 2023,
+      "paper": "副省卷",
+      "sourceUrl": "https://exam2.gwyks.cn/papermain/downloadPDF?id=3382316&type=2",
+      "checked": true,
+      "sourceKind": "公开网友回忆版PDF；非官方原卷",
+      "sha256": "a96a394e4b77d8d3a79bca3c68ea3387375bcb7fe7012cc0e1df02b368a789ee"
+    },
+    {
+      "year": 2024,
+      "paper": "行政执法卷",
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2024%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733730291",
+      "checked": true,
+      "sourceKind": "公开考生回忆版PDF；非官方原卷",
+      "sha256": "0bfa634061b31cac85cfa9ecdbb7b5f07c5591018ef2feee72ed399b5ee656df"
+    },
+    {
+      "year": 2024,
+      "paper": "地市卷",
+      "sourceUrl": "https://gz163rsw.com/Uploads/202409/66dd6e15f0e02.pdf",
+      "checked": true,
+      "sourceKind": "公开考生回忆版PDF；非官方原卷",
+      "sha256": "499a4a52b203b10f041a6fc3527a0b8ded0316a35424e17d7753d30f9390c4b1"
+    },
+    {
+      "year": 2024,
+      "paper": "副省卷",
+      "sourceUrl": "https://static.32xueyuan.com/zq/u/cms/www/202410/09100412q9dd.pdf",
+      "checked": true,
+      "sourceKind": "公开考生回忆版PDF；非官方原卷",
+      "sha256": "cfba748ba190ad81b20c0c62a539757aaa4422566126ecbb00c80901df149dcc"
+    },
+    {
+      "year": 2025,
+      "paper": "行政执法卷",
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730493",
+      "checked": true,
+      "sourceKind": "公开考生回忆/估分版PDF；非官方原卷",
+      "sha256": "5804e98d868eecf746597e1963167818ec498e42edb6c4eb736923fe16edb23d"
+    },
+    {
+      "year": 2025,
+      "paper": "地市卷",
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%9C%B0%E5%B8%82%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730489",
+      "checked": true,
+      "sourceKind": "公开考生回忆/估分版PDF；非官方原卷",
+      "sha256": "2a4385a9250001ab2199bef6460143321f6654807e8a8e2e2bc7f5092405133f"
+    },
+    {
+      "year": 2025,
+      "paper": "副省卷",
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730497",
+      "checked": true,
+      "sourceKind": "公开考生回忆/估分版PDF；非官方原卷",
+      "sha256": "ea51a2179e91d5910ca8cd29887831f6b5fd955339678a665397b256b3ac259d"
+    },
+    {
+      "year": 2026,
+      "paper": "行政执法卷",
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2026%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1764503955",
+      "checked": true,
+      "sourceKind": "公开考生回忆版PDF；非官方原卷",
+      "numberingNote": "PDF版面印刷序号65-67；各题后来源标签标作行政执法080-082，故questionNumber取来源题号，printedNumber另列。",
+      "sha256": "09aeded00e48efd1b410406589a79a963142fac6d0c3e5dd74d2d22d23aa6d4a"
+    },
+    {
+      "year": 2026,
+      "paper": "地市卷",
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2026%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%9C%B0%E5%B8%82%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89-%E4%BC%B0%E5%88%86.pdf?time=1764726045",
+      "checked": true,
+      "sourceKind": "公开考生回忆/估分版PDF；非官方原卷",
+      "sha256": "2c9899056f4b265a5f74fd1effc1354a4b6b6c31a7418ff7adf2e41a365975de"
+    },
+    {
+      "year": 2026,
+      "paper": "副省卷",
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2026%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89-%E4%BC%B0%E5%88%86.pdf?time=1764726077",
+      "checked": true,
+      "sourceKind": "公开考生回忆/估分版PDF；非官方原卷",
+      "sha256": "3316b0032f727c37c838b912f02339ab8beeef8a2d2dae4e94376a09e8d5ae0d"
+    }
+  ],
+  "appearances": [
+    {
+      "id": "errrc:4637401",
+      "year": 2022,
+      "paper": "行政执法卷",
+      "questionNumber": 75,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729910",
+      "checked": true,
+      "note": "与地市卷q76同题",
+      "inventoryPoint": "图形推理 / 空间重构-六面体折叠（画边法比较相邻面找异项）",
+      "localQuestionTitle": "4637401 空间重构-六面体折叠（画边法比较相邻面找异项）"
+    },
+    {
+      "id": "errrc:4637364",
+      "year": 2022,
+      "paper": "行政执法卷",
+      "questionNumber": 76,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729910",
+      "checked": true,
+      "inventoryPoint": "图形推理 / 截面图（立体图形剖切）",
+      "localQuestionTitle": "4637364 截面图（立体图形剖切）"
+    },
+    {
+      "id": "errrc:4637338",
+      "year": 2022,
+      "paper": "行政执法卷",
+      "questionNumber": 77,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729910",
+      "checked": true,
+      "note": "该拼合题三卷相同",
+      "inventoryPoint": "图形推理 / 图形推理-立体拼合（多正方体组合拆分·分层计数+凹凸一致）",
+      "localQuestionTitle": "4637338 图形推理-立体拼合（多正方体组合拆分·分层计数+凹凸一致）"
+    },
+    {
+      "id": "errrc:4637564",
+      "year": 2022,
+      "paper": "地市卷",
+      "questionNumber": 75,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%B8%82%E5%9C%B0%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729914",
+      "checked": true,
+      "note": "与副省卷q81同题",
+      "inventoryPoint": "图形推理 / 截面图-剖切面与空心立体的相交判断",
+      "localQuestionTitle": "4637564 截面图-剖切面与空心立体的相交判断"
+    },
+    {
+      "id": "errrc:4637401",
+      "year": 2022,
+      "paper": "地市卷",
+      "questionNumber": 76,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%B8%82%E5%9C%B0%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729914",
+      "checked": true,
+      "note": "与行政执法卷q75同题",
+      "inventoryPoint": "图形推理 / 空间重构-六面体折叠（画边法比较相邻面找异项）",
+      "localQuestionTitle": "4637401 空间重构-六面体折叠（画边法比较相邻面找异项）"
+    },
+    {
+      "id": "errrc:4637338",
+      "year": 2022,
+      "paper": "地市卷",
+      "questionNumber": 77,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%B8%82%E5%9C%B0%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729914",
+      "checked": true,
+      "note": "该拼合题三卷相同",
+      "inventoryPoint": "图形推理 / 图形推理-立体拼合（多正方体组合拆分·分层计数+凹凸一致）",
+      "localQuestionTitle": "4637338 图形推理-立体拼合（多正方体组合拆分·分层计数+凹凸一致）"
+    },
+    {
+      "id": "errrc:4639349",
+      "year": 2022,
+      "paper": "副省卷",
+      "questionNumber": 80,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729918",
+      "checked": true,
+      "inventoryPoint": "图形推理 / 空间重构-六面体折叠（公共边法）",
+      "localQuestionTitle": "4639349 空间重构-六面体折叠（公共边法）"
+    },
+    {
+      "id": "errrc:4637564",
+      "year": 2022,
+      "paper": "副省卷",
+      "questionNumber": 81,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729918",
+      "checked": true,
+      "note": "与地市卷q75同题",
+      "inventoryPoint": "图形推理 / 截面图-剖切面与空心立体的相交判断",
+      "localQuestionTitle": "4637564 截面图-剖切面与空心立体的相交判断"
+    },
+    {
+      "id": "errrc:4637338",
+      "year": 2022,
+      "paper": "副省卷",
+      "questionNumber": 82,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729918",
+      "checked": true,
+      "note": "该拼合题三卷相同",
+      "inventoryPoint": "图形推理 / 图形推理-立体拼合（多正方体组合拆分·分层计数+凹凸一致）",
+      "localQuestionTitle": "4637338 图形推理-立体拼合（多正方体组合拆分·分层计数+凹凸一致）"
+    },
+    {
+      "id": "errrc:5445822",
+      "year": 2023,
+      "paper": "行政执法卷",
+      "questionNumber": 75,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2023%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733730137",
+      "checked": true,
+      "note": "与地市卷q75同题",
+      "inventoryPoint": "图形推理 / 空间折叠-折纸投影面积计算（翻折覆盖与重叠容斥）",
+      "localQuestionTitle": "5445822 空间折叠-折纸投影面积计算（翻折覆盖与重叠容斥）"
+    },
+    {
+      "id": "errrc:5445823",
+      "year": 2023,
+      "paper": "行政执法卷",
+      "questionNumber": 76,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2023%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733730137",
+      "checked": true,
+      "inventoryPoint": "图形推理 / 三视图-立体图形视图判断（选非题）",
+      "localQuestionTitle": "5445823 三视图-立体图形视图判断（选非题）"
+    },
+    {
+      "id": "errrc:5445798",
+      "year": 2023,
+      "paper": "行政执法卷",
+      "questionNumber": 77,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2023%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733730137",
+      "checked": true,
+      "note": "与地市卷q77同题",
+      "inventoryPoint": "图形推理 / 立体拼合（多面体切割重组、旋转归位）",
+      "localQuestionTitle": "5445798 立体拼合（多面体切割重组、旋转归位）"
+    },
+    {
+      "id": "errrc:5445822",
+      "year": 2023,
+      "paper": "地市卷",
+      "questionNumber": 75,
+      "sourceUrl": "https://exam2.gwyks.cn/papermain/downloadPDF?id=3382449&type=2",
+      "checked": true,
+      "note": "与行政执法卷q75同题",
+      "inventoryPoint": "图形推理 / 空间折叠-折纸投影面积计算（翻折覆盖与重叠容斥）",
+      "localQuestionTitle": "5445822 空间折叠-折纸投影面积计算（翻折覆盖与重叠容斥）"
+    },
+    {
+      "id": "errrc:5445843",
+      "year": 2023,
+      "paper": "地市卷",
+      "questionNumber": 76,
+      "sourceUrl": "https://exam2.gwyks.cn/papermain/downloadPDF?id=3382449&type=2",
+      "checked": true,
+      "note": "与副省卷q80同题",
+      "inventoryPoint": "图形推理 / 截面图-圆柱组合体挖空截面的可截性判断（选非题）",
+      "localQuestionTitle": "5445843 截面图-圆柱组合体挖空截面的可截性判断（选非题）"
+    },
+    {
+      "id": "errrc:5445798",
+      "year": 2023,
+      "paper": "地市卷",
+      "questionNumber": 77,
+      "sourceUrl": "https://exam2.gwyks.cn/papermain/downloadPDF?id=3382449&type=2",
+      "checked": true,
+      "note": "与行政执法卷q77同题",
+      "inventoryPoint": "图形推理 / 立体拼合（多面体切割重组、旋转归位）",
+      "localQuestionTitle": "5445798 立体拼合（多面体切割重组、旋转归位）"
+    },
+    {
+      "id": "errrc:5445843",
+      "year": 2023,
+      "paper": "副省卷",
+      "questionNumber": 80,
+      "sourceUrl": "https://exam2.gwyks.cn/papermain/downloadPDF?id=3382316&type=2",
+      "checked": true,
+      "note": "与地市卷q76同题",
+      "inventoryPoint": "图形推理 / 截面图-圆柱组合体挖空截面的可截性判断（选非题）",
+      "localQuestionTitle": "5445843 截面图-圆柱组合体挖空截面的可截性判断（选非题）"
+    },
+    {
+      "id": "errrc:5445923",
+      "year": 2023,
+      "paper": "副省卷",
+      "questionNumber": 81,
+      "sourceUrl": "https://exam2.gwyks.cn/papermain/downloadPDF?id=3382316&type=2",
+      "checked": true,
+      "inventoryPoint": "图形推理 / 空间重构-六面体折叠（公共点/公共边定位相邻面）",
+      "localQuestionTitle": "5445923 空间重构-六面体折叠（公共点-公共边定位相邻面）"
+    },
+    {
+      "id": "errrc:5445914",
+      "year": 2023,
+      "paper": "副省卷",
+      "questionNumber": 82,
+      "sourceUrl": "https://exam2.gwyks.cn/papermain/downloadPDF?id=3382316&type=2",
+      "checked": true,
+      "inventoryPoint": "图形推理 / 立体拼合（整体切割复原/剩余空间凹凸互补）",
+      "localQuestionTitle": "5445914 立体拼合（整体切割复原-剩余空间凹凸互补）"
+    },
+    {
+      "id": "errrc:5893669",
+      "year": 2024,
+      "paper": "行政执法卷",
+      "questionNumber": 75,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2024%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733730291",
+      "checked": true,
+      "inventoryPoint": "图形推理 / 立体拼合（多块拼合-凹凸互补+灰色块颜色对应）",
+      "localQuestionTitle": "5893669 立体拼合（多块拼合-凹凸互补+灰色块颜色对应）"
+    },
+    {
+      "id": "errrc:5893661",
+      "year": 2024,
+      "paper": "行政执法卷",
+      "questionNumber": 76,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2024%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733730291",
+      "checked": true,
+      "note": "与地市卷q76同题",
+      "inventoryPoint": "图形推理 / 空间重构-外表面展开图（面一一对应/无中生有面排除）",
+      "localQuestionTitle": "5893661 空间重构-外表面展开图（面一一对应-无中生有面排除）"
+    },
+    {
+      "id": "errrc:5893673",
+      "year": 2024,
+      "paper": "行政执法卷",
+      "questionNumber": 77,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2024%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733730291",
+      "checked": true,
+      "note": "与副省卷q81同题",
+      "inventoryPoint": "图形推理 / 截面图-三点定面立体切割",
+      "localQuestionTitle": "5893673 截面图-三点定面立体切割"
+    },
+    {
+      "id": "errrc:5894887",
+      "year": 2024,
+      "paper": "地市卷",
+      "questionNumber": 74,
+      "sourceUrl": "https://gz163rsw.com/Uploads/202409/66dd6e15f0e02.pdf",
+      "checked": true,
+      "note": "与副省卷q80同题",
+      "inventoryPoint": "图形推理 / 立体拼合（多面体组合·凹凸互补）",
+      "localQuestionTitle": "5894887 立体拼合（多面体组合·凹凸互补）"
+    },
+    {
+      "id": "errrc:5893661",
+      "year": 2024,
+      "paper": "地市卷",
+      "questionNumber": 76,
+      "sourceUrl": "https://gz163rsw.com/Uploads/202409/66dd6e15f0e02.pdf",
+      "checked": true,
+      "note": "与行政执法卷q76同题",
+      "inventoryPoint": "图形推理 / 空间重构-外表面展开图（面一一对应/无中生有面排除）",
+      "localQuestionTitle": "5893661 空间重构-外表面展开图（面一一对应-无中生有面排除）"
+    },
+    {
+      "id": "errrc:5894980",
+      "year": 2024,
+      "paper": "地市卷",
+      "questionNumber": 77,
+      "sourceUrl": "https://gz163rsw.com/Uploads/202409/66dd6e15f0e02.pdf",
+      "checked": true,
+      "note": "该地市卷独有三点定面截面题；同年其他卷另有不同图形",
+      "inventoryPoint": "图形推理 / 截面图-立体切割（三点定面确定截面）",
+      "localQuestionTitle": "5894980 截面图-立体切割（三点定面确定截面）"
+    },
+    {
+      "id": "errrc:5894887",
+      "year": 2024,
+      "paper": "副省卷",
+      "questionNumber": 80,
+      "sourceUrl": "https://static.32xueyuan.com/zq/u/cms/www/202410/09100412q9dd.pdf",
+      "checked": true,
+      "note": "与地市卷q74同题",
+      "inventoryPoint": "图形推理 / 立体拼合（多面体组合·凹凸互补）",
+      "localQuestionTitle": "5894887 立体拼合（多面体组合·凹凸互补）"
+    },
+    {
+      "id": "errrc:5893673",
+      "year": 2024,
+      "paper": "副省卷",
+      "questionNumber": 81,
+      "sourceUrl": "https://static.32xueyuan.com/zq/u/cms/www/202410/09100412q9dd.pdf",
+      "checked": true,
+      "note": "与行政执法卷q77同题",
+      "inventoryPoint": "图形推理 / 截面图-三点定面立体切割",
+      "localQuestionTitle": "5893673 截面图-三点定面立体切割"
+    },
+    {
+      "id": "errrc:5895236",
+      "year": 2024,
+      "paper": "副省卷",
+      "questionNumber": 82,
+      "sourceUrl": "https://static.32xueyuan.com/zq/u/cms/www/202410/09100412q9dd.pdf",
+      "checked": true,
+      "note": "该副省卷独有长方体外表面展开图题；与行政执法/地市的q76不是同题",
+      "inventoryPoint": "图形推理 / 空间重构-长方体外表面展开图（相邻面公共边与灰块位置对应）",
+      "localQuestionTitle": "5895236 空间重构-长方体外表面展开图（相邻面公共边与灰块位置对应）"
+    },
+    {
+      "id": "errrc:19283859",
+      "year": 2025,
+      "paper": "行政执法卷",
+      "questionNumber": 80,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730493",
+      "checked": true,
+      "note": "与地市卷q81同题",
+      "inventoryPoint": "图形推理 / 截面图（立体切割——三点定面）",
+      "localQuestionTitle": "19283859 截面图（立体切割——三点定面）"
+    },
+    {
+      "id": "errrc:19283877",
+      "year": 2025,
+      "paper": "行政执法卷",
+      "questionNumber": 81,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730493",
+      "checked": true,
+      "inventoryPoint": "图形推理 / 立体拼合（多组件拼合·选非题）",
+      "localQuestionTitle": "19283877 立体拼合（多组件拼合·选非题）"
+    },
+    {
+      "id": "errrc:19283845",
+      "year": 2025,
+      "paper": "行政执法卷",
+      "questionNumber": 82,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730493",
+      "checked": true,
+      "inventoryPoint": "图形推理 / 空间重构-六面体展开图折叠一致性（特征面字母朝向+相邻面关系）",
+      "localQuestionTitle": "19283845 空间重构-六面体展开图折叠一致性（特征面字母朝向+相邻面关系）"
+    },
+    {
+      "id": "errrc:19283952",
+      "year": 2025,
+      "paper": "地市卷",
+      "questionNumber": 80,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%9C%B0%E5%B8%82%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730489",
+      "checked": true,
+      "note": "与副省卷q86同题",
+      "inventoryPoint": "图形推理 / 空间重构-外表面展开图（公共边法）",
+      "localQuestionTitle": "19283952 空间重构-外表面展开图（公共边法）"
+    },
+    {
+      "id": "errrc:19283859",
+      "year": 2025,
+      "paper": "地市卷",
+      "questionNumber": 81,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%9C%B0%E5%B8%82%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730489",
+      "checked": true,
+      "note": "与行政执法卷q80同题",
+      "inventoryPoint": "图形推理 / 截面图（立体切割——三点定面）",
+      "localQuestionTitle": "19283859 截面图（立体切割——三点定面）"
+    },
+    {
+      "id": "errrc:19283916",
+      "year": 2025,
+      "paper": "地市卷",
+      "questionNumber": 82,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%9C%B0%E5%B8%82%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730489",
+      "checked": true,
+      "note": "与副省卷q85同题",
+      "inventoryPoint": "图形推理 / 立体拼合（组件互补拼合+灰色块颜色对位）",
+      "localQuestionTitle": "19283916 立体拼合（组件互补拼合+灰色块颜色对位）"
+    },
+    {
+      "id": "errrc:19283916",
+      "year": 2025,
+      "paper": "副省卷",
+      "questionNumber": 85,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730497",
+      "checked": true,
+      "note": "与地市卷q82同题",
+      "inventoryPoint": "图形推理 / 立体拼合（组件互补拼合+灰色块颜色对位）",
+      "localQuestionTitle": "19283916 立体拼合（组件互补拼合+灰色块颜色对位）"
+    },
+    {
+      "id": "errrc:19283952",
+      "year": 2025,
+      "paper": "副省卷",
+      "questionNumber": 86,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730497",
+      "checked": true,
+      "note": "与地市卷q80同题",
+      "inventoryPoint": "图形推理 / 空间重构-外表面展开图（公共边法）",
+      "localQuestionTitle": "19283952 空间重构-外表面展开图（公共边法）"
+    },
+    {
+      "id": "errrc:19283965",
+      "year": 2025,
+      "paper": "副省卷",
+      "questionNumber": 87,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730497",
+      "checked": true,
+      "inventoryPoint": "图形推理 / 图形推理-截面图（立体切割·三点定面）",
+      "localQuestionTitle": "19283965 图形推理-截面图（立体切割·三点定面）"
+    },
+    {
+      "id": "errrc:19526333",
+      "year": 2026,
+      "paper": "行政执法卷",
+      "questionNumber": 80,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2026%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1764503955",
+      "checked": true,
+      "printedNumber": 65,
+      "note": "PDF版面序号65；题后来源标签为行政执法080",
+      "inventoryPoint": "图形推理 / 截面图（立体切割—三点定面）",
+      "localQuestionTitle": "19526333 截面图（立体切割—三点定面）"
+    },
+    {
+      "id": "errrc:19526329",
+      "year": 2026,
+      "paper": "行政执法卷",
+      "questionNumber": 81,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2026%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1764503955",
+      "checked": true,
+      "printedNumber": 66,
+      "note": "与副省卷q87同一题干；PDF版面序号66，来源标签为行政执法081",
+      "inventoryPoint": "图形推理 / 空间重构-展开图与立体图对应（特征面描边标号匹配公共边）",
+      "localQuestionTitle": "19526329 空间重构-展开图与立体图对应（特征面描边标号匹配公共边）"
+    },
+    {
+      "id": "errrc:19526323",
+      "year": 2026,
+      "paper": "行政执法卷",
+      "questionNumber": 82,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2026%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1764503955",
+      "checked": true,
+      "printedNumber": 67,
+      "note": "与地市卷q82同题；PDF版面序号67",
+      "inventoryPoint": "图形推理 / 立体拼合（多块组合·选非型）",
+      "localQuestionTitle": "19526323 立体拼合（多块组合·选非型）"
+    },
+    {
+      "id": "errrc:19526397",
+      "year": 2026,
+      "paper": "地市卷",
+      "questionNumber": 80,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2026%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%9C%B0%E5%B8%82%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89-%E4%BC%B0%E5%88%86.pdf?time=1764726045",
+      "checked": true,
+      "note": "与副省卷q86同题",
+      "inventoryPoint": "图形推理 / 空间重构-三视图（含黑白方块的视图投影判定）",
+      "localQuestionTitle": "19526397 空间重构-三视图（含黑白方块的视图投影判定）"
+    },
+    {
+      "id": "errrc:19526393",
+      "year": 2026,
+      "paper": "地市卷",
+      "questionNumber": 81,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2026%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%9C%B0%E5%B8%82%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89-%E4%BC%B0%E5%88%86.pdf?time=1764726045",
+      "checked": true,
+      "note": "给定单个纸盒展开图、判断两个纸盒能否组成的长方体；与q87逆向問法的题不同",
+      "inventoryPoint": "图形推理 / 空间重构-六面体展开图折叠（相对面排除＋相邻面公共点细节判定）",
+      "localQuestionTitle": "19526393 空间重构-六面体展开图折叠（相对面排除＋相邻面公共点细节判定）"
+    },
+    {
+      "id": "errrc:19526323",
+      "year": 2026,
+      "paper": "地市卷",
+      "questionNumber": 82,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2026%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%9C%B0%E5%B8%82%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89-%E4%BC%B0%E5%88%86.pdf?time=1764726045",
+      "checked": true,
+      "note": "与行政执法卷q82同题",
+      "inventoryPoint": "图形推理 / 立体拼合（多块组合·选非型）",
+      "localQuestionTitle": "19526323 立体拼合（多块组合·选非型）"
+    },
+    {
+      "id": "errrc:19526397",
+      "year": 2026,
+      "paper": "副省卷",
+      "questionNumber": 86,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2026%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89-%E4%BC%B0%E5%88%86.pdf?time=1764726077",
+      "checked": true,
+      "note": "与地市卷q80同题",
+      "inventoryPoint": "图形推理 / 空间重构-三视图（含黑白方块的视图投影判定）",
+      "localQuestionTitle": "19526397 空间重构-三视图（含黑白方块的视图投影判定）"
+    },
+    {
+      "id": "errrc:19526329",
+      "year": 2026,
+      "paper": "副省卷",
+      "questionNumber": 87,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2026%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89-%E4%BC%B0%E5%88%86.pdf?time=1764726077",
+      "checked": true,
+      "note": "与行政执法卷q81同一题干",
+      "inventoryPoint": "图形推理 / 空间重构-展开图与立体图对应（特征面描边标号匹配公共边）",
+      "localQuestionTitle": "19526329 空间重构-展开图与立体图对应（特征面描边标号匹配公共边）"
+    },
+    {
+      "id": "errrc:19526428",
+      "year": 2026,
+      "paper": "副省卷",
+      "questionNumber": 88,
+      "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2026%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89-%E4%BC%B0%E5%88%86.pdf?time=1764726077",
+      "checked": true,
+      "inventoryPoint": "图形推理 / 立体拼合（多块拼合·选非题）",
+      "localQuestionTitle": "19526428 立体拼合（多块拼合·选非题）"
+    }
+  ],
+  "notes": [
+    "The 15 paper sources are public candidate-recall or estimate versions, not official original booklets. Full-paper coverage does not mean a deduplicated database is equivalent to all 15 official papers.",
+    "Question-number labels can differ between recall editions. For the 2026 administrative-enforcement full PDF, the three spatial items are printed as layout numbers 65-67 while embedded source labels say 080-082; appearances use the source labels and retain printedNumber.",
+    "2024 sources were selected to match the inventory wording: the city PDF and deputy PDF are alternate public recall editions. The 2024 deputy items are q80 composition, q81 section, q82 cuboid-net; the Star recall edition uses different ordering/wording, so do not merge those q numbers across editions.",
+    "2023 q77 city/admin solid-composition item and deputy q82 solid-composition item have similar wording but visibly different figures; they are counted separately. Do not treat a text-only cross-paper label as proof that figures/options are the same."
+  ],
+  "inventorySpatialIdsMapped": 29
+}

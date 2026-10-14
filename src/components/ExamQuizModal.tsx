@@ -16,8 +16,17 @@ import {
   Compass,
   AlertCircle,
   X,
+  Image as ImageIcon,
+  Loader2,
 } from 'lucide-react';
-import { EXAM_QUESTIONS, type ExamQuestion } from '../data/examQuestions';
+import type { ExamQuestion } from '../data/examQuestions';
+import {
+  QUESTION_MANIFEST,
+  GLOBAL_QUESTION_VERSIONS,
+  type QuestionManifestItem,
+  getManifestItem,
+} from '../data/questionManifest';
+import { questionLoader } from '../utils/questionLoader';
 import {
   learningStorage,
   type ErrorReason,
@@ -28,6 +37,10 @@ import {
 import { MathView } from './MathView';
 import { WorkGridVisualizer } from './WorkGridVisualizer';
 import { RatioBarVisualizer } from './RatioBarVisualizer';
+import { SpatialTrainingHub } from './SpatialTrainingHub';
+import { isRecentNationalSpatialExam, type SpatialCategory } from '../data/spatialTopics';
+import { ImageLightbox } from './ImageLightbox';
+import { TimedSpatialTest } from './TimedSpatialTest';
 
 interface ExamQuizModalProps {
   onLoadIntoSimulator: (
@@ -118,12 +131,32 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
   // Active track filter: all, geometry, engineering, tools, review
   const [activeTrack, setActiveTrack] = useState<TabTrackFilter>('all');
   const [geometryCategory, setGeometryCategory] = useState<string>('all');
+  const [, setLoadedVersion] = useState<number>(0);
+  const [showTimedSpatialTest, setShowTimedSpatialTest] = useState(false);
+  const [timedTestCategory, setTimedTestCategory] = useState<SpatialCategory | undefined>();
+  const [loadFailure, setLoadFailure] = useState<{ id: string; retry: number; message: string } | null>(null);
+  const [questionRetryVersion, setQuestionRetryVersion] = useState(0);
+  const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
+  const questionPanelRef = useRef<HTMLDivElement>(null);
+
+  // Subscribe to question loader updates (when packs load in background)
+  useEffect(() => {
+    const unsub = questionLoader.subscribe(() => setLoadedVersion((v) => v + 1));
+    return unsub;
+  }, []);
 
   // Active question ID
   const [activeQuestionId, setActiveQuestionId] = useState<string>(() => {
     if (initialQuestionId) return initialQuestionId;
-    return learningStorage.getActiveQuestionId(EXAM_QUESTIONS[0].id);
+    return learningStorage.getActiveQuestionId(QUESTION_MANIFEST[0].id);
   });
+
+  // Automatically load topic pack when entering a geometry subcategory
+  useEffect(() => {
+    if (activeTrack === 'geometry' && geometryCategory !== 'all') {
+      questionLoader.loadForCategory(geometryCategory);
+    }
+  }, [activeTrack, geometryCategory]);
 
   // Hints unlocked per question, persisted in learningStorage
   const [unlockedHints, setUnlockedHints] = useState<Record<string, number>>(() =>
@@ -142,9 +175,12 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
   if (initialQuestionId && initialQuestionId !== prevInitialId) {
     setPrevInitialId(initialQuestionId);
     setActiveQuestionId(initialQuestionId);
-    const targetQ = EXAM_QUESTIONS.find((q) => q.id === initialQuestionId);
-    if (targetQ && targetQ.track) {
-      setActiveTrack(targetQ.track);
+    const targetManifest = getManifestItem(initialQuestionId);
+    if (targetManifest && targetManifest.track) {
+      setActiveTrack(targetManifest.track);
+      if (targetManifest.track === 'geometry' && targetManifest.category) {
+        setGeometryCategory(targetManifest.category);
+      }
     }
   }
 
@@ -153,54 +189,86 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
     learningStorage.setActiveQuestionId(activeQuestionId);
   }, [activeQuestionId]);
 
-  // Compute stats
-  const currentQuestionVersions = useMemo(() => {
-    return Object.fromEntries(EXAM_QUESTIONS.map((q) => [q.id, q.version || 1]));
-  }, []);
+  // Compute stats and review queue with global question versions
   const stats: LearningStats = learningStorage.getStats();
-  const reviewIds = learningStorage.getQuestionsNeedingReview(currentQuestionVersions);
+  const reviewIds = learningStorage.getQuestionsNeedingReview(GLOBAL_QUESTION_VERSIONS);
   const reviewIdSet = new Set(reviewIds);
 
-  // Filter questions based on active track
-  const filteredQuestions = EXAM_QUESTIONS.filter((q) => {
-    if (activeTrack === 'review') {
-      return reviewIdSet.has(q.id);
-    }
-    if (activeTrack === 'geometry') {
-      if (q.track !== 'geometry') return false;
-      if (geometryCategory !== 'all') return q.category === geometryCategory;
+  // Filter questions based on active track from global question manifest
+  const filteredManifest = useMemo(() => {
+    return QUESTION_MANIFEST.filter((q) => {
+      if (activeTrack === 'review') {
+        return reviewIdSet.has(q.id);
+      }
+      if (activeTrack === 'geometry') {
+        if (q.track !== 'geometry') return false;
+        if (geometryCategory !== 'all') return q.category === geometryCategory;
+        return true;
+      }
+      if (activeTrack === 'engineering') {
+        return q.track === 'engineering';
+      }
+      if (activeTrack === 'tools') {
+        return q.track === 'tools';
+      }
       return true;
-    }
-    if (activeTrack === 'engineering') {
-      return q.track === 'engineering';
-    }
-    if (activeTrack === 'tools') {
-      return q.track === 'tools';
-    }
-    return true;
-  });
+    });
+  }, [activeTrack, geometryCategory, reviewIdSet]);
 
   // Ensure current question belongs to filtered questions
-  const currentInFiltered = filteredQuestions.find((q) => q.id === activeQuestionId);
-  const currentQ: ExamQuestion | null = currentInFiltered || (filteredQuestions.length > 0 ? filteredQuestions[0] : null);
+  const currentInFiltered = filteredManifest.find((q) => q.id === activeQuestionId);
+  const effectiveActiveId = currentInFiltered ? currentInFiltered.id : (filteredManifest.length > 0 ? filteredManifest[0].id : null);
+  const currentManifest = effectiveActiveId ? getManifestItem(effectiveActiveId) || null : null;
+  const currentQ: ExamQuestion | null = effectiveActiveId ? questionLoader.getQuestionSync(effectiveActiveId) : null;
+  const questionLoadError = loadFailure?.id === effectiveActiveId && loadFailure?.retry === questionRetryVersion ? loadFailure.message : '';
+
+  // Load the selected question and expose a retry action when a static pack cannot be fetched.
+  useEffect(() => {
+    if (!effectiveActiveId) return;
+    let mounted = true;
+    questionLoader.ensureQuestionLoaded(effectiveActiveId).then((question) => {
+      if (mounted && !question) {
+        setLoadFailure({ id: effectiveActiveId, retry: questionRetryVersion, message: questionLoader.getQuestionLoadError(effectiveActiveId) || '题目数据包中没有找到这道题。' });
+      }
+    }).catch((error: unknown) => {
+      if (mounted) setLoadFailure({ id: effectiveActiveId, retry: questionRetryVersion, message: error instanceof Error ? error.message : '题目载入失败。' });
+    });
+    return () => { mounted = false; };
+  }, [effectiveActiveId, questionRetryVersion]);
+
+  useEffect(() => {
+    questionPanelRef.current?.scrollTo({ top: 0 });
+  }, [effectiveActiveId]);
 
   // Current record
-  const currentRecord = currentQ ? records[currentQ.id] : null;
-  const isVersionMatch = Boolean(currentRecord && (!currentQ?.version || (currentRecord.questionVersion || 1) === (currentQ.version || 1)));
+  const currentRecord = effectiveActiveId ? records[effectiveActiveId] : null;
+  const currentVersion = currentQ?.version ?? currentManifest?.version ?? 1;
+  const isVersionMatch = Boolean(currentRecord && (currentRecord.questionVersion || 1) === currentVersion);
   const isAnswered = Boolean(isVersionMatch && currentRecord?.selectedAnswer);
   const selectedAnswer = isVersionMatch ? (currentRecord?.selectedAnswer || '') : '';
   const isCorrect = isVersionMatch ? (currentRecord?.isCorrect ?? false) : false;
   const isMastered = Boolean(isVersionMatch && currentRecord?.isMastered);
-  const isExplVisible = currentQ ? (showExplanation[currentQ.id] ?? isAnswered) : false;
+  const isExplVisible = effectiveActiveId ? (showExplanation[effectiveActiveId] ?? isAnswered) : false;
+
+  const handleSelectQuestion = (questionId: string) => {
+    const target = getManifestItem(questionId);
+    if (target) {
+      setActiveTrack(target.track);
+      if (target.track === 'geometry' && target.category) setGeometryCategory(target.category);
+    }
+    setActiveQuestionId(questionId);
+  };
 
   // Retrieve hints level strictly isolated by question version
-  const getHintLevelForQuestion = (q: ExamQuestion | null): number => {
-    if (!q) return 0;
-    const versionedKey = `${q.id}_v${q.version || 1}`;
+  const getHintLevelForQuestion = (q: ExamQuestion | null, m?: QuestionManifestItem | null): number => {
+    const qid = q?.id || m?.id;
+    if (!qid) return 0;
+    const version = q?.version || m?.version || 1;
+    const versionedKey = `${qid}_v${version}`;
     return unlockedHints[versionedKey] ?? 0;
   };
 
-  const unlockedHintLevel = getHintLevelForQuestion(currentQ);
+  const unlockedHintLevel = getHintLevelForQuestion(currentQ, currentManifest);
 
   // Hints used: if already answered, take recorded hints; otherwise take persistent unlocked level (defaults to 0)
   const hintsUsedCount = isAnswered
@@ -211,7 +279,8 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
   // Handle track filter change
   const handleTrackChange = (track: TabTrackFilter) => {
     setActiveTrack(track);
-    const qList = EXAM_QUESTIONS.filter((q) => {
+    if (track === 'geometry') setGeometryCategory('all');
+    const qList = QUESTION_MANIFEST.filter((q) => {
       if (track === 'review') return reviewIdSet.has(q.id);
       if (track === 'all') return true;
       return q.track === track;
@@ -219,6 +288,32 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
     if (qList.length > 0) {
       setActiveQuestionId(qList[0].id);
     }
+  };
+
+  const spatialTopicCounts = useMemo(() => {
+    const curated = QUESTION_MANIFEST.filter((item) => isRecentNationalSpatialExam(item) || item.packId === 'spatial_training');
+    return (['origami', 'assembly', 'cross_section', 'views', 'paper_folding'] as SpatialCategory[]).map((category) => {
+      const questions = curated.filter((item) => item.category === category);
+      return {
+        category,
+        total: questions.length,
+        realExam: questions.filter(isRecentNationalSpatialExam).length,
+        original: questions.filter((item) => item.packId === 'spatial_training').length,
+      };
+    });
+  }, []);
+
+  const handleSpatialPractice = (category: SpatialCategory) => {
+    setActiveTrack('geometry');
+    setGeometryCategory(category);
+    const match = QUESTION_MANIFEST.find((item) => item.packId === 'spatial_training' && item.category === category)
+      || QUESTION_MANIFEST.find((item) => item.track === 'geometry' && item.category === category);
+    if (match) setActiveQuestionId(match.id);
+  };
+
+  const handleSpatialTest = (category: SpatialCategory) => {
+    setTimedTestCategory(category);
+    setShowTimedSpatialTest(true);
   };
 
   // Handle option selection
@@ -271,8 +366,8 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
   // Re-attempt question (clears current choice without erasing attempt history or first-attempt data)
   const handleReattempt = (qid: string) => {
     learningStorage.clearCurrentForReattempt(qid);
-    const targetQ = EXAM_QUESTIONS.find((q) => q.id === qid);
-    const qVersion = targetQ?.version || 1;
+    const targetQ = questionLoader.getQuestionSync(qid);
+    const qVersion = targetQ?.version || getManifestItem(qid)?.version || 1;
     const versionedKey = `${qid}_v${qVersion}`;
     learningStorage.clearUnlockedHint(qid, qVersion);
     setRecords({ ...learningStorage.getRecords() });
@@ -286,8 +381,8 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
 
   // Mark as mastered (removes from review queue without fabricating independent correct history)
   const handleMarkMastered = (qid: string) => {
-    const targetQ = EXAM_QUESTIONS.find((q) => q.id === qid);
-    learningStorage.markMastered(qid, targetQ?.version || 1);
+    const targetQ = questionLoader.getQuestionSync(qid);
+    learningStorage.markMastered(qid, targetQ?.version || getManifestItem(qid)?.version || 1);
     setRecords({ ...learningStorage.getRecords() });
   };
 
@@ -338,12 +433,39 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
   // Parent example for variants
   const parentExample =
     currentQ && currentQ.questionRole === 'variant'
-      ? EXAM_QUESTIONS.find((q) => q.variantIds?.includes(currentQ.id))
+      ? questionLoader.getAllLoadedQuestions().find((q) => q.variantIds?.includes(currentQ.id))
       : null;
 
   // Render question diagrams
   const renderDiagram = () => {
     if (!currentQ) return null;
+
+    if (currentQ.stemImages && currentQ.stemImages.length > 0) {
+      return (
+        <div className="my-3 flex flex-col items-center gap-3 p-3 sm:p-4 bg-slate-900/90 rounded-2xl border border-slate-800">
+          <div className="text-[11px] text-slate-400 font-medium self-start flex items-center gap-1.5">
+            <ImageIcon className="w-3.5 h-3.5 text-sky-400" />
+            <span>题干图例</span>
+          </div>
+          {currentQ.stemImages.map((imgSrc, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setLightbox({ src: imgSrc, alt: `题干图 ${i + 1}` })}
+              aria-label={`放大查看题干图 ${i + 1}`}
+              className="max-w-full overflow-hidden rounded-xl bg-white p-2 shadow-md focus:outline-none focus:ring-2 focus:ring-sky-400"
+            >
+              <img
+                src={imgSrc}
+                alt={`题干图 ${i + 1}`}
+                className="max-h-72 sm:max-h-96 w-auto max-w-full object-contain mx-auto"
+                loading="lazy"
+              />
+            </button>
+          ))}
+        </div>
+      );
+    }
 
     if (currentQ.diagramType === 'work-grid') {
       return (
@@ -549,7 +671,7 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                   : 'bg-slate-800/80 text-slate-400 hover:text-slate-200'
               }`}
             >
-              全部 ({EXAM_QUESTIONS.length})
+              全部 ({QUESTION_MANIFEST.length})
             </button>
             <button
               onClick={() => handleTrackChange('geometry')}
@@ -559,7 +681,7 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                   : 'bg-slate-800/80 text-slate-400 hover:text-slate-200'
               }`}
             >
-              几何 (10)
+              空间 ({QUESTION_MANIFEST.filter((q) => q.track === 'geometry').length})
             </button>
             <button
               onClick={() => handleTrackChange('engineering')}
@@ -569,7 +691,7 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                   : 'bg-slate-800/80 text-slate-400 hover:text-slate-200'
               }`}
             >
-              工程 (3)
+              工程 ({QUESTION_MANIFEST.filter((q) => q.track === 'engineering').length})
             </button>
             <button
               onClick={() => handleTrackChange('tools')}
@@ -579,7 +701,7 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                   : 'bg-slate-800/80 text-slate-400 hover:text-slate-200'
               }`}
             >
-              工具 (2)
+              工具 ({QUESTION_MANIFEST.filter((q) => q.track === 'tools').length})
             </button>
             <button
               onClick={() => handleTrackChange('review')}
@@ -589,9 +711,9 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                   : 'bg-slate-800/80 text-rose-300 hover:bg-slate-800'
               }`}
             >
-              错题
+              待练
               {reviewIds.length > 0 && (
-                <span className="ml-0.5 px-1 py-0.2 rounded-full text-[9px] bg-rose-600 text-white font-mono">
+                <span className="ml-1 px-1.5 py-0.2 rounded-full text-[9px] bg-rose-500 text-white font-bold">
                   {reviewIds.length}
                 </span>
               )}
@@ -605,40 +727,47 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                 { key: 'all', label: '全部' },
                 { key: 'origami', label: '折纸盒' },
                 { key: 'assembly', label: '拼合' },
-                { key: 'unfold', label: '展开' },
-                { key: 'revolution', label: '旋转' },
                 { key: 'cross_section', label: '截面' },
-              ].map((c) => (
-                <button
-                  key={c.key}
-                  onClick={() => {
-                    setGeometryCategory(c.key);
-                    const matched = EXAM_QUESTIONS.filter(
-                      (q) => q.track === 'geometry' && (c.key === 'all' || q.category === c.key)
-                    );
-                    if (matched.length > 0) setActiveQuestionId(matched[0].id);
-                  }}
-                  className={`px-2 py-0.5 rounded-md font-medium whitespace-nowrap transition-colors cursor-pointer ${
-                    geometryCategory === c.key
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-slate-800 text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  {c.label}
-                </button>
-              ))}
+                { key: 'views', label: '三视图' },
+                { key: 'paper_folding', label: '平面折叠' },
+                { key: 'unfold', label: '表面展开·拓展' },
+                { key: 'revolution', label: '旋转体·拓展' },
+              ].map((c) => {
+                const count = QUESTION_MANIFEST.filter(
+                  (q) => q.track === 'geometry' && (c.key === 'all' || q.category === c.key)
+                ).length;
+                return (
+                  <button
+                    key={c.key}
+                    onClick={() => {
+                      setGeometryCategory(c.key);
+                      const matched = QUESTION_MANIFEST.filter(
+                        (q) => q.track === 'geometry' && (c.key === 'all' || q.category === c.key)
+                      );
+                      if (matched.length > 0) handleSelectQuestion(matched[0].id);
+                    }}
+                    className={`px-2 py-0.5 rounded-md font-medium whitespace-nowrap transition-colors cursor-pointer ${
+                      geometryCategory === c.key
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    {c.label} ({count})
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
 
         {/* Mobile: Horizontal Pills Bar */}
         <div className="flex lg:hidden p-2 bg-slate-950/80 border-b border-slate-800/80 gap-1.5 overflow-x-auto no-scrollbar touch-pan-x">
-          {filteredQuestions.length === 0 ? (
+          {filteredManifest.length === 0 ? (
             <div className="text-xs text-slate-500 py-1 px-2">暂无符合条件的题目</div>
           ) : (
-            filteredQuestions.map((q, idx) => {
+            filteredManifest.map((q, idx) => {
               const rec = records[q.id];
-              const isCurrent = currentQ && q.id === currentQ.id;
+              const isCurrent = effectiveActiveId === q.id;
               const qVersion = q.version || 1;
               const isVersionMatch = Boolean(rec && (rec.questionVersion || 1) === qVersion);
               const answered = Boolean(isVersionMatch && rec?.selectedAnswer);
@@ -678,9 +807,9 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
           )}
         </div>
 
-        {/* Desktop: Vertical Question Cards Sidebar (with flex-col to prevent horizontal squeeze) */}
+        {/* Desktop: Vertical Question Cards Sidebar */}
         <div className="hidden lg:flex flex-col flex-1 overflow-y-auto p-3 space-y-2">
-          {filteredQuestions.length === 0 ? (
+          {filteredManifest.length === 0 ? (
             <div className="h-48 flex flex-col items-center justify-center text-center p-4 text-slate-400 space-y-2">
               <CheckCircle2 className="w-8 h-8 text-emerald-400" />
               <p className="text-xs font-medium">当前分类下暂无题目</p>
@@ -691,9 +820,9 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
               )}
             </div>
           ) : (
-            filteredQuestions.map((q, idx) => {
+            filteredManifest.map((q, idx) => {
               const rec = records[q.id];
-              const isCurrent = currentQ && q.id === currentQ.id;
+              const isCurrent = effectiveActiveId === q.id;
               const qVersion = q.version || 1;
               const isVersionMatch = Boolean(rec && (rec.questionVersion || 1) === qVersion);
               const answered = Boolean(isVersionMatch && rec?.selectedAnswer);
@@ -714,9 +843,9 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                       <span className="text-[11px] font-semibold text-slate-400">
                         第 {idx + 1} 题 · {q.subType}
                       </span>
-                      {q.questionRole === 'variant' && (
-                        <span className="text-[9px] px-1 py-0.2 rounded bg-indigo-500/20 text-indigo-300 font-semibold">
-                          变式
+                      {q.isRealExam && (
+                        <span className="text-[9px] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-semibold">
+                          真题
                         </span>
                       )}
                     </div>
@@ -748,8 +877,8 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                   </div>
                   <div className="text-xs font-medium text-slate-200 line-clamp-1">{q.title}</div>
                   <div className="text-[10px] text-slate-500 flex items-center justify-between">
-                    <span>{q.source}</span>
-                    <span>难度: {q.difficulty}</span>
+                    <span className="truncate max-w-[160px]">{q.source}</span>
+                    <span>{q.difficulty ? `难度: ${q.difficulty}` : (q.year ? `${q.year}年` : '真题')}</span>
                   </div>
                 </button>
               );
@@ -759,8 +888,14 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
       </div>
 
       {/* Main Question & Solution View with min-w-0 */}
-      <div className="flex-1 min-w-0 h-full overflow-y-auto p-4 lg:p-8 flex flex-col gap-4 lg:gap-6 pb-16">
-        {!currentQ ? (
+      <div ref={questionPanelRef} className="flex-1 min-w-0 h-full overflow-y-auto p-4 lg:p-8 flex flex-col gap-4 lg:gap-6 pb-16">
+        <SpatialTrainingHub
+          counts={spatialTopicCounts}
+          activeCategory={activeTrack === 'geometry' ? geometryCategory : undefined}
+          onPractice={handleSpatialPractice}
+          onTimedTest={handleSpatialTest}
+        />
+        {filteredManifest.length === 0 ? (
           /* Empty State when no questions match filter */
           <div className="h-full flex flex-col items-center justify-center text-center p-8 space-y-4">
             <div className="w-16 h-16 rounded-3xl bg-slate-900 border border-slate-800 flex items-center justify-center text-emerald-400">
@@ -778,8 +913,30 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
               onClick={() => handleTrackChange('all')}
               className="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-white text-xs font-semibold rounded-xl shadow-md shadow-sky-500/25 transition-all cursor-pointer"
             >
-              查看全部题库 ({EXAM_QUESTIONS.length} 题)
+              查看全部题库 ({QUESTION_MANIFEST.length} 题)
             </button>
+          </div>
+        ) : !currentQ ? (
+          /* Loading State when current question is being fetched from pack */
+          <div className="h-full flex flex-col items-center justify-center text-center p-8 space-y-4">
+            {questionLoadError ? (
+              <>
+                <AlertCircle className="w-10 h-10 text-rose-400" />
+                <div className="space-y-1">
+                  <h3 className="text-base font-bold text-white">题目载入失败</h3>
+                  <p role="alert" className="text-xs text-rose-200">{questionLoadError}</p>
+                </div>
+                <button type="button" onClick={() => setQuestionRetryVersion((version) => version + 1)} className="rounded-lg bg-sky-600 px-3 py-2 text-xs font-bold text-white hover:bg-sky-500">重试</button>
+              </>
+            ) : (
+              <>
+                <Loader2 className="w-10 h-10 animate-spin text-sky-400" />
+                <div className="space-y-1">
+                  <h3 className="text-base font-bold text-white">正在载入题目与图例...</h3>
+                  <p className="text-xs text-slate-400">{currentManifest?.title || '正在载入题目数据包'}</p>
+                </div>
+              </>
+            )}
           </div>
         ) : (
           <>
@@ -793,7 +950,7 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                   </span>
                 </div>
                 <button
-                  onClick={() => setActiveQuestionId(parentExample.id)}
+                  onClick={() => handleSelectQuestion(parentExample.id)}
                   className="text-indigo-400 hover:text-indigo-300 underline font-semibold flex items-center gap-1 flex-shrink-0 ml-2 cursor-pointer"
                 >
                   <span>← 查看原例题</span>
@@ -805,13 +962,24 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
             <div className="bg-slate-900/90 p-4 lg:p-6 rounded-2xl border border-slate-800 space-y-3 lg:space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-sky-500/20 text-sky-300 border border-sky-500/30">
-                    {currentQ.source}
+                  <span className={`px-2 py-0.5 rounded-md text-[11px] font-semibold border ${
+                    currentQ.meta?.isRealExam
+                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                      : 'bg-sky-500/20 text-sky-300 border-sky-500/30'
+                  }`}>
+                    {currentQ.meta?.isRealExam ? '真题回忆版' : currentQ.source}
                   </span>
-                  <span className="text-xs text-slate-400 font-medium">难度: {currentQ.difficulty}</span>
+                  {currentQ.difficulty && (
+                    <span className="text-xs text-slate-400 font-medium">难度: {currentQ.difficulty}</span>
+                  )}
                   <span className="text-xs text-slate-500 font-mono">
                     {currentQ.unitName}
                   </span>
+                  {currentQ.meta?.year && currentQ.meta?.region && (
+                    <span className="text-xs text-sky-400/80 font-mono">
+                      ({currentQ.meta.year} {currentQ.meta.region})
+                    </span>
+                  )}
                 </div>
 
                 {/* 3D Simulator Jump or Review Operations */}
@@ -819,7 +987,7 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                   {currentQ.simulatorConfig && (
                     <button
                       onClick={() => {
-                        if (!isAnswered) {
+                        if (!isAnswered && currentQ.stepHints) {
                           handleUnlockHint(2);
                         }
                         onLoadIntoSimulator(currentQ.simulatorConfig, currentQ.id, currentQ.title);
@@ -827,7 +995,12 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                       className="w-full sm:w-auto flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-xs font-semibold shadow-md shadow-sky-500/20 transition-all cursor-pointer"
                     >
                       <Eye className="w-4 h-4" />
-                      <span>载入 3D 演练台直观复盘</span>
+                      <span>
+                        {currentQ.simulatorConfig.label ||
+                          (currentQ.simulatorConfig.isExact === false
+                            ? '相关考点演示'
+                            : '载入 3D 演练台直观复盘')}
+                      </span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   )}
@@ -873,138 +1046,151 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                   }
 
                   return (
-                    <button
-                      key={opt.key}
-                      disabled={isAnswered}
-                      onClick={() => handleSelectOption(opt.key)}
-                      className={`p-3.5 rounded-xl border text-left flex items-center justify-between text-xs lg:text-sm font-medium transition-all ${btnClass}`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="w-6 h-6 rounded-lg bg-slate-800 flex items-center justify-center font-bold text-xs text-slate-300">
-                          {opt.key}
-                        </span>
-                        <span>{opt.text}</span>
-                      </div>
-                      {isAnswered && isThisCorrect && (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                    <div key={opt.key} className={`rounded-xl border transition-all ${btnClass}`}>
+                      <button
+                        type="button"
+                        disabled={isAnswered}
+                        onClick={() => handleSelectOption(opt.key)}
+                        className="w-full p-3.5 text-left flex items-center justify-between text-xs lg:text-sm font-medium"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span className="w-6 h-6 rounded-lg bg-slate-800 flex items-center justify-center font-bold text-xs text-slate-300 shrink-0">
+                            {opt.key}
+                          </span>
+                          <span className="whitespace-pre-wrap leading-relaxed">{opt.text}</span>
+                          {opt.imageUrl && (
+                            <img src={opt.imageUrl} alt={`选项 ${opt.key} 图`} className="max-h-24 max-w-[45%] rounded bg-white p-1 object-contain" loading="lazy" />
+                          )}
+                        </div>
+                        {isAnswered && isThisCorrect && <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />}
+                        {isAnswered && isChosen && !isThisCorrect && <XCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />}
+                      </button>
+                      {opt.imageUrl && (
+                        <button
+                          type="button"
+                          onClick={() => setLightbox({ src: opt.imageUrl!, alt: `选项 ${opt.key} 图` })}
+                          aria-label={`放大查看选项 ${opt.key} 图`}
+                          className="ml-12 mb-2 inline-flex items-center gap-1 rounded-md px-2 py-1 text-[10px] text-sky-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400"
+                        >
+                          <ImageIcon className="h-3 w-3" /> 放大图片
+                        </button>
                       )}
-                      {isAnswered && isChosen && !isThisCorrect && (
-                        <XCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
-                      )}
-                    </button>
+                    </div>
                   );
                 })}
               </div>
             </div>
 
-            {/* 3-Tier Progressive Hints Accordion */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 lg:p-5 space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <div className="flex items-center gap-2 text-xs lg:text-sm font-bold text-amber-400">
-                  <Lightbulb className="w-4 h-4 text-amber-400" />
-                  <span>三阶递进式启发提示 (按需逐步解锁)</span>
+            {/* 3-Tier Progressive Hints Accordion (Only rendered if stepHints are defined) */}
+            {currentQ.stepHints && (
+              <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 lg:p-5 space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                  <div className="flex items-center gap-2 text-xs lg:text-sm font-bold text-amber-400">
+                    <Lightbulb className="w-4 h-4 text-amber-400" />
+                    <span>三阶递进式启发提示 (按需逐步解锁)</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-slate-400">
+                      {isAnswered ? (
+                        <>
+                          作答时使用提示: <strong className="text-amber-300">{hintsUsedCount}</strong> 阶
+                        </>
+                      ) : (
+                        <>
+                          已解锁: <strong className="text-amber-300">{currentHintsLevel}/3</strong> 阶
+                        </>
+                      )}
+                    </span>
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
+                        hintsUsedCount === 0
+                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                          : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                      }`}
+                    >
+                      {hintsUsedCount === 0 ? '独立答对模式' : '提示辅助模式'}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="text-slate-400">
-                    {isAnswered ? (
-                      <>
-                        作答时使用提示: <strong className="text-amber-300">{hintsUsedCount}</strong> 阶
-                      </>
-                    ) : (
-                      <>
-                        已解锁: <strong className="text-amber-300">{currentHintsLevel}/3</strong> 阶
-                      </>
+
+                <div className="space-y-2.5">
+                  {/* Tier 1: Relation hint */}
+                  <div className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-sky-400 flex items-center gap-1.5">
+                        <span className="w-4 h-4 rounded-full bg-sky-500/20 text-sky-300 flex items-center justify-center text-[10px]">
+                          1
+                        </span>
+                        第 1 阶：核心数量/空间关系定位
+                      </span>
+                      {currentHintsLevel < 1 && !isAnswered && (
+                        <button
+                          onClick={() => handleUnlockHint(1)}
+                          className="text-xs px-2.5 py-1 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 rounded-lg transition-colors cursor-pointer"
+                        >
+                          解锁提示 1
+                        </button>
+                      )}
+                    </div>
+                    {(currentHintsLevel >= 1 || isAnswered) && currentQ.stepHints.relation && (
+                      <p className="mt-2 text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 animate-in fade-in duration-200">
+                        {currentQ.stepHints.relation}
+                      </p>
                     )}
-                  </span>
-                  <span
-                    className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
-                      hintsUsedCount === 0
-                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                        : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                    }`}
-                  >
-                    {hintsUsedCount === 0 ? '独立答对模式' : '提示辅助模式'}
-                  </span>
+                  </div>
+
+                  {/* Tier 2: Representation hint */}
+                  <div className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-indigo-400 flex items-center gap-1.5">
+                        <span className="w-4 h-4 rounded-full bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-[10px]">
+                          2
+                        </span>
+                        第 2 阶：图解表征与模型建构 (展开图/工作格/条形)
+                      </span>
+                      {currentHintsLevel < 2 && !isAnswered && (
+                        <button
+                          onClick={() => handleUnlockHint(2)}
+                          className="text-xs px-2.5 py-1 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 rounded-lg transition-colors cursor-pointer"
+                        >
+                          解锁提示 2
+                        </button>
+                      )}
+                    </div>
+                    {(currentHintsLevel >= 2 || isAnswered) && currentQ.stepHints.representation && (
+                      <p className="mt-2 text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 animate-in fade-in duration-200">
+                        {currentQ.stepHints.representation}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Tier 3: Formula skeleton hint */}
+                  <div className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                        <span className="w-4 h-4 rounded-full bg-amber-500/20 text-amber-300 flex items-center justify-center text-[10px]">
+                          3
+                        </span>
+                        第 3 阶：列式算式骨架填空
+                      </span>
+                      {currentHintsLevel < 3 && !isAnswered && (
+                        <button
+                          onClick={() => handleUnlockHint(3)}
+                          className="text-xs px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg transition-colors cursor-pointer"
+                        >
+                          解锁提示 3
+                        </button>
+                      )}
+                    </div>
+                    {(currentHintsLevel >= 3 || isAnswered) && currentQ.stepHints.formula && (
+                      <p className="mt-2 text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 animate-in fade-in duration-200">
+                        {currentQ.stepHints.formula}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
-
-              <div className="space-y-2.5">
-                {/* Tier 1: Relation hint */}
-                <div className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-sky-400 flex items-center gap-1.5">
-                      <span className="w-4 h-4 rounded-full bg-sky-500/20 text-sky-300 flex items-center justify-center text-[10px]">
-                        1
-                      </span>
-                      第 1 阶：核心数量/空间关系定位
-                    </span>
-                    {currentHintsLevel < 1 && !isAnswered && (
-                      <button
-                        onClick={() => handleUnlockHint(1)}
-                        className="text-xs px-2.5 py-1 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 rounded-lg transition-colors cursor-pointer"
-                      >
-                        解锁提示 1
-                      </button>
-                    )}
-                  </div>
-                  {(currentHintsLevel >= 1 || isAnswered) && (
-                    <p className="mt-2 text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 animate-in fade-in duration-200">
-                      {currentQ.stepHints.relation}
-                    </p>
-                  )}
-                </div>
-
-                {/* Tier 2: Representation hint */}
-                <div className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-indigo-400 flex items-center gap-1.5">
-                      <span className="w-4 h-4 rounded-full bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-[10px]">
-                        2
-                      </span>
-                      第 2 阶：图解表征与模型建构 (展开图/工作格/条形)
-                    </span>
-                    {currentHintsLevel < 2 && !isAnswered && (
-                      <button
-                        onClick={() => handleUnlockHint(2)}
-                        className="text-xs px-2.5 py-1 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 rounded-lg transition-colors cursor-pointer"
-                      >
-                        解锁提示 2
-                      </button>
-                    )}
-                  </div>
-                  {(currentHintsLevel >= 2 || isAnswered) && (
-                    <p className="mt-2 text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 animate-in fade-in duration-200">
-                      {currentQ.stepHints.representation}
-                    </p>
-                  )}
-                </div>
-
-                {/* Tier 3: Formula skeleton hint */}
-                <div className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
-                      <span className="w-4 h-4 rounded-full bg-amber-500/20 text-amber-300 flex items-center justify-center text-[10px]">
-                        3
-                      </span>
-                      第 3 阶：列式算式骨架填空
-                    </span>
-                    {currentHintsLevel < 3 && !isAnswered && (
-                      <button
-                        onClick={() => handleUnlockHint(3)}
-                        className="text-xs px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg transition-colors cursor-pointer"
-                      >
-                        解锁提示 3
-                      </button>
-                    )}
-                  </div>
-                  {(currentHintsLevel >= 3 || isAnswered) && (
-                    <p className="mt-2 text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 animate-in fade-in duration-200">
-                      {currentQ.stepHints.formula}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
+            )}
 
             {/* Mistake Reflection & 5-Category Attribution (Shown when wrong) */}
             {isAnswered && !isCorrect && (
@@ -1097,7 +1283,7 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
 
                   <div className="flex flex-wrap gap-2">
                     {currentQ.variantIds.map((varId, idx) => {
-                      const varQ = EXAM_QUESTIONS.find((q) => q.id === varId);
+                      const varQ = questionLoader.getQuestionSync(varId);
                       if (!varQ) return null;
                       const varRec = records[varId];
                       const varQVersion = varQ.version || 1;
@@ -1108,7 +1294,7 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                       return (
                         <button
                           key={varId}
-                          onClick={() => setActiveQuestionId(varId)}
+                          onClick={() => handleSelectQuestion(varId)}
                           className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow-md shadow-indigo-600/20 transition-all cursor-pointer"
                         >
                           <span>变式 {idx + 1}: {varQ.subType}</span>
@@ -1175,37 +1361,58 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
                 {isExplVisible && (
                   <div className="space-y-4">
                     {/* 1. Fast Trick Box */}
-                    <div className="bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl space-y-2">
-                      <div className="flex items-center gap-2 text-xs font-bold text-amber-300">
-                        <Sparkles className="w-4 h-4 text-amber-400" />
-                        <span>公考 30 秒秒杀绝技</span>
+                    {currentQ.fastTrick && (
+                      <div className="bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl space-y-2">
+                        <div className="flex items-center gap-2 text-xs font-bold text-amber-300">
+                          <Sparkles className="w-4 h-4 text-amber-400" />
+                          <span>公考解题绝技与技巧</span>
+                        </div>
+                        <p className="text-xs text-amber-200/90 leading-relaxed font-medium">
+                          {currentQ.fastTrick}
+                        </p>
                       </div>
-                      <p className="text-xs text-amber-200/90 leading-relaxed font-medium">
-                        {currentQ.fastTrick}
-                      </p>
-                    </div>
+                    )}
 
                     {/* 2. Common Traps Box */}
-                    <div className="bg-rose-500/10 border border-rose-500/30 p-4 rounded-xl space-y-1.5">
-                      <div className="flex items-center gap-2 text-xs font-bold text-rose-400">
-                        <AlertTriangle className="w-4 h-4 text-rose-400" />
-                        <span>考生最容易踩的坑（雷区警示）</span>
+                    {currentQ.commonTraps && (
+                      <div className="bg-rose-500/10 border border-rose-500/30 p-4 rounded-xl space-y-1.5">
+                        <div className="flex items-center gap-2 text-xs font-bold text-rose-400">
+                          <AlertTriangle className="w-4 h-4 text-rose-400" />
+                          <span>考生易错点警示</span>
+                        </div>
+                        <p className="text-xs text-rose-200/90 leading-relaxed">
+                          {currentQ.commonTraps}
+                        </p>
                       </div>
-                      <p className="text-xs text-rose-200/90 leading-relaxed">
-                        {currentQ.commonTraps}
-                      </p>
-                    </div>
+                    )}
 
                     {/* 3. Detailed Step-by-Step Derivation */}
                     <div className="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
                       <div className="flex items-center gap-2 text-xs font-bold text-sky-400">
                         <Lightbulb className="w-4 h-4" />
-                        <span>严谨数学推导与空间拆解</span>
+                        <span>详细解析与空间拆解</span>
                       </div>
 
                       <div className="text-xs text-slate-300 whitespace-pre-line leading-relaxed">
                         {currentQ.detailedAnalysis}
                       </div>
+
+                      {/* Analysis Diagram Images */}
+                      {currentQ.analysisImages && currentQ.analysisImages.length > 0 && (
+                        <div className="my-3 flex flex-col items-center gap-2 p-3 bg-slate-950/80 rounded-xl border border-slate-800">
+                          <div className="text-[11px] text-slate-400 font-medium self-start">【解析图示】</div>
+                          {currentQ.analysisImages.map((src, i) => (
+                            <div key={i} className="max-w-full overflow-hidden rounded-xl bg-white p-2 shadow-md">
+                              <img
+                                src={src}
+                                alt={`解析图 ${i + 1}`}
+                                className="max-h-72 sm:max-h-96 w-auto max-w-full object-contain mx-auto"
+                                loading="lazy"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      )}
 
                       {currentQ.mathFormula && (
                         <div className="mt-3 bg-slate-950 p-3 rounded-lg border border-slate-800">
@@ -1364,6 +1571,15 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
             </div>
           </div>
         </div>
+      )}
+      {showTimedSpatialTest && (
+        <TimedSpatialTest
+          initialCategory={timedTestCategory}
+          onClose={() => setShowTimedSpatialTest(false)}
+        />
+      )}
+      {lightbox && (
+        <ImageLightbox src={lightbox.src} alt={lightbox.alt} onClose={() => setLightbox(null)} />
       )}
     </div>
   );

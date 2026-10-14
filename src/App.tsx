@@ -1,17 +1,28 @@
-import { useState, useEffect } from 'react';
-import { ArrowRight, X } from 'lucide-react';
+import { useState, useEffect, lazy, Suspense } from 'react';
+import { ArrowRight, X, Loader2 } from 'lucide-react';
 import { Navbar, type ActiveTab } from './components/Navbar';
-import { OrigamiViewer } from './components/OrigamiViewer';
-import { AssemblyViewer } from './components/AssemblyViewer';
-import { UnfoldingViewer } from './components/UnfoldingViewer';
-import { RevolutionViewer } from './components/RevolutionViewer';
-import { CrossSectionViewer } from './components/CrossSectionViewer';
 import { ExamQuizModal } from './components/ExamQuizModal';
 import { ExamCheatsheet } from './components/ExamCheatsheet';
-import { EXAM_QUESTIONS, type ExamQuestion } from './data/examQuestions';
+import { ViewerErrorBoundary } from './components/ViewerErrorBoundary';
+import type { ExamQuestion } from './data/examQuestions';
+import { GLOBAL_QUESTION_VERSIONS } from './data/questionManifest';
 import { learningStorage } from './utils/learningStorage';
 
-const QUESTION_VERSIONS = Object.fromEntries(EXAM_QUESTIONS.map((q) => [q.id, q.version || 1]));
+// Lazy-load 3D viewers to ensure initial bundle stays lightweight
+const OrigamiViewer = lazy(() => import('./components/OrigamiViewer').then((m) => ({ default: m.OrigamiViewer })));
+const AssemblyViewer = lazy(() => import('./components/AssemblyViewer').then((m) => ({ default: m.AssemblyViewer })));
+const UnfoldingViewer = lazy(() => import('./components/UnfoldingViewer').then((m) => ({ default: m.UnfoldingViewer })));
+const RevolutionViewer = lazy(() => import('./components/RevolutionViewer').then((m) => ({ default: m.RevolutionViewer })));
+const CrossSectionViewer = lazy(() => import('./components/CrossSectionViewer').then((m) => ({ default: m.CrossSectionViewer })));
+
+function ViewerLoadingFallback() {
+  return (
+    <div className="w-full h-full min-h-[500px] flex flex-col items-center justify-center bg-slate-950 text-slate-400 gap-3">
+      <Loader2 className="w-8 h-8 animate-spin text-sky-400" />
+      <span className="text-sm">正在载入 3D 渲染组件...</span>
+    </div>
+  );
+}
 
 export function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
@@ -33,6 +44,7 @@ export function App() {
     id: string;
     title: string;
     tab: string;
+    isExact?: boolean;
   } | null>(null);
 
   // Target question ID to activate in quiz
@@ -43,7 +55,7 @@ export function App() {
 
   useEffect(() => {
     const updateReviewBadge = () => {
-      const needed = learningStorage.getQuestionsNeedingReview(QUESTION_VERSIONS);
+      const needed = learningStorage.getQuestionsNeedingReview(GLOBAL_QUESTION_VERSIONS);
       setReviewCount(needed.length);
     };
     updateReviewBadge();
@@ -85,6 +97,7 @@ export function App() {
       id: questionId,
       title: questionTitle,
       tab: config.tab,
+      isExact: config.isExact ?? true,
     });
 
     if (config.tab === 'origami') {
@@ -147,7 +160,9 @@ export function App() {
           <div className="bg-slate-900/95 border border-sky-500/40 rounded-2xl shadow-2xl shadow-sky-950/80 p-2 pl-3.5 pr-2 flex items-center gap-2.5 sm:gap-3 backdrop-blur-md">
             <div className="flex items-center gap-2 text-xs">
               <span className="w-2 h-2 rounded-full bg-sky-400 animate-ping flex-shrink-0" />
-              <span className="text-slate-400 hidden sm:inline">3D演练复盘中：</span>
+              <span className="text-slate-400 hidden sm:inline">
+                {returnQuestion.isExact ? '3D演练复盘中：' : '相关考点演示中：'}
+              </span>
               <span className="font-bold text-white max-w-[130px] sm:max-w-[220px] truncate">
                 {returnQuestion.title}
               </span>
@@ -176,40 +191,60 @@ export function App() {
       {/* Main Module Content */}
       <main className="flex-1 relative overflow-hidden">
         {activeTab === 'origami' && (
-          <OrigamiViewer
-            key={JSON.stringify(origamiParams)}
-            initialParams={origamiParams}
-          />
+          <ViewerErrorBoundary fallbackTitle="折纸盒 3D 渲染器未能初始化">
+            <Suspense fallback={<ViewerLoadingFallback />}>
+              <OrigamiViewer
+                key={JSON.stringify(origamiParams)}
+                initialParams={origamiParams}
+              />
+            </Suspense>
+          </ViewerErrorBoundary>
         )}
 
         {activeTab === 'assembly' && (
-          <AssemblyViewer
-            key={JSON.stringify(assemblyParams)}
-            initialParams={assemblyParams}
-          />
+          <ViewerErrorBoundary fallbackTitle="立体拼合 3D 渲染器未能初始化">
+            <Suspense fallback={<ViewerLoadingFallback />}>
+              <AssemblyViewer
+                key={JSON.stringify(assemblyParams)}
+                initialParams={assemblyParams}
+              />
+            </Suspense>
+          </ViewerErrorBoundary>
         )}
 
         {activeTab === 'unfold' && (
-          <UnfoldingViewer
-            key={JSON.stringify(unfoldParams)}
-            initialMode={unfoldParams.mode || 'cylinder'}
-            initialParams={unfoldParams}
-          />
+          <ViewerErrorBoundary fallbackTitle="表面展开 3D 渲染器未能初始化">
+            <Suspense fallback={<ViewerLoadingFallback />}>
+              <UnfoldingViewer
+                key={JSON.stringify(unfoldParams)}
+                initialMode={unfoldParams.mode || 'cylinder'}
+                initialParams={unfoldParams}
+              />
+            </Suspense>
+          </ViewerErrorBoundary>
         )}
 
         {activeTab === 'revolution' && (
-          <RevolutionViewer
-            key={JSON.stringify(revolutionParams)}
-            initialMode={revolutionParams.mode || 'trapezoid'}
-            initialParams={revolutionParams}
-          />
+          <ViewerErrorBoundary fallbackTitle="旋转体 3D 渲染器未能初始化">
+            <Suspense fallback={<ViewerLoadingFallback />}>
+              <RevolutionViewer
+                key={JSON.stringify(revolutionParams)}
+                initialMode={revolutionParams.mode || 'trapezoid'}
+                initialParams={revolutionParams}
+              />
+            </Suspense>
+          </ViewerErrorBoundary>
         )}
 
         {activeTab === 'cross_section' && (
-          <CrossSectionViewer
-            key={JSON.stringify(crossSectionParams)}
-            initialPreset={crossSectionParams.preset || 'triangle'}
-          />
+          <ViewerErrorBoundary fallbackTitle="截面切切乐 3D 渲染器未能初始化">
+            <Suspense fallback={<ViewerLoadingFallback />}>
+              <CrossSectionViewer
+                key={JSON.stringify(crossSectionParams)}
+                initialPreset={crossSectionParams.preset || 'triangle'}
+              />
+            </Suspense>
+          </ViewerErrorBoundary>
         )}
 
         {activeTab === 'quiz' && (

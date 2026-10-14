@@ -1,0 +1,915 @@
+[
+  {
+    "id": "errrc:10975257",
+    "version": 1,
+    "source": "2024年江苏省公务员录用考试《行测》题（A类）（网友回忆版）",
+    "title": "2024江苏 · 相对面判定与公共顶点",
+    "track": "geometry",
+    "unitId": "origami_real",
+    "unitName": "空间重构与折纸盒真题",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-正方体折纸盒-相对面判定与公共顶点",
+    "questionText": "下列是四个正方体的外表面展开图，其中哪个展开图还原成正方体后，存在同一个公共顶点的三个面上的数字之和为8？",
+    "stemImages": [
+      "data/errrc/images/190710478b23e1b.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "C",
+    "detailedAnalysis": "若想展开图还原成正方体后，存在同一个公共顶点的三个面上的数字之和为8，需要“面1、面2、面5”或者“面1、面3、面4”相邻，即三个面存在公共点。\nA项：面1和面4为相对面，故面1、面3和面4不存在公共点；面2和面5为相对面，故面1、面2和面5不存在公共点。两种情况均不符合要求，排除。\nB项：面1和面4为相对面，故面1、面3和面4不存在公共点；面2和面5为相对面，故面1、面2和面5不存在公共点。两种情况均不符合要求，排除。\nC项：面1、面2和面5两两相邻，即三个面存在公共点，符合要求，当选。\nD项：面3和面4为相对面，故面1、面3和面4不存在公共点；面1和面5为相对面，故面1、面2和面5不存在公共点。两种情况均不符合要求，排除。\n故正确答案为C。",
+    "simulatorConfig": {
+      "tab": "origami",
+      "label": "相关考点演示（六面体折纸盒）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/10975257 空间重构-正方体折纸盒-相对面判定与公共顶点（两两相邻）分析.md",
+      "qid": "10975257",
+      "year": "2024",
+      "region": "江苏",
+      "paper": "2024年江苏省公务员录用考试《行测》题（A类）（网友回忆版）",
+      "point": "图形推理 / 空间重构-正方体折纸盒-相对面判定与公共顶点（两两相邻）分析",
+      "isRealExam": true
+    },
+    "fastTrick": "相对面排除法：先口算出和为8仅{1,2,5}和{1,3,4}两种组合，再用'同行隔一面相对＋Z字（阶梯）两端相对'口诀标出各图相对面对，目标组合一旦撞上任意一对相对面立即排除——A/B均因1-4、2-5相对出局，D因3-4、1-5相对出局，唯C的1、2、5分属三组相对面各一方、两两相邻，选C",
+    "commonTraps": "把'两面相邻'误当'三面共点'：必须三面两两相邻（不含相对面）才存在公共顶点，只验证其中两面相邻会误判；漏列数字组合：只想到1+3+4=8而漏掉1+2+5=8（或反之），导致排除不彻底或误选；阶梯形（2-2-2型）展开图相对面判断出错：不能机械套用'隔一面相对'，需用Z字两端或移面法，如C中误判2与3、5与6不相对"
+  },
+  {
+    "id": "errrc:17056533",
+    "version": 1,
+    "source": "2026年上海市公务员录用考试《行测》题（网友回忆版）",
+    "title": "2026上海 · 黑块贴棱关系判定）",
+    "track": "geometry",
+    "unitId": "origami_real",
+    "unitName": "空间重构与折纸盒真题",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-六面体展开图还原",
+    "questionText": "下列选项中，可以由左图给定的同一个六面体展开而成的是（    ）。",
+    "stemImages": [
+      "data/errrc/images/19ba21121bbac81.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "将题干立体图形能够识别的面标注序号（如下图所示），已知面e、面f和面g两两相邻，那么这三个面中必有一个面与面h为相对面，逐一分析选项。\n\nA项：选项展开图与题干一致，当选；\n\nB项：题干下面的立体图形中，正面内的黑块与面h不相邻，但选项展开图中无论面1还是面2，与正面相同的面内黑块均与面1或面2相邻，即面1和面2都不是面h，选项展开图与题干不一致，排除；\n\nC项：选项展开图中，面1和面2为相对面，二者均不与面e、面f和面g中的任一个构成相对面，因此面1和面2都不是面h，选项展开图与题干不一致，排除；\n\nD项：选项展开图中，面1和面2为相对面，二者均不与面e、面f和面g中的任一个构成相对面，因此面1和面2都不是面h，选项展开图与题干不一致，排除。\n\n故正确答案为A。",
+    "simulatorConfig": {
+      "tab": "origami",
+      "label": "相关考点演示（六面体折纸盒）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/17056533 空间重构-六面体展开图还原（相对面与相邻面-黑块贴棱关系判定）.md",
+      "qid": "17056533",
+      "year": "2026",
+      "region": "上海",
+      "paper": "2026年上海市公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 空间重构-六面体展开图还原（相对面与相邻面/黑块贴棱关系判定）",
+      "isRealExam": true
+    },
+    "fastTrick": "相对面排除法：由两视图锁定'两两相邻的三面e、f、g'→与h相对者必在e/f/g之中；B项黑块相邻关系不符、C/D项中面1与面2互为相对面却不与e/f/g任一面相对（均非面h），三项皆矛盾直接排除，A吻合",
+    "commonTraps": "只看面内黑块图案的形状，忽略'黑块是否贴棱/与哪些面相邻'这一关键信息，导致B项误判；展开图相对面判定失误：必须按'同行或同列隔一个面'或'Z字两端'找相对面，C、D的T形与阶梯形排布中极易看错面1与面2的位置关系；未将两个立体视图按公共棱/公共面对齐拼合，忽略黑块在公共棱上的方向对应，造成相邻关系错判",
+    "analysisImages": [
+      "data/errrc/images/19ba2138f8aa5f6.png",
+      "data/errrc/images/19ba21423664700.png",
+      "data/errrc/images/19ba214f286da29.png",
+      "data/errrc/images/19ba21571a7a4e8.png",
+      "data/errrc/images/19ba216217b7872.png"
+    ]
+  },
+  {
+    "id": "errrc:12019707",
+    "version": 1,
+    "source": "2026年广东省公务员录用考试《行测》题（网友回忆版）",
+    "title": "2026广东 · 公共点引线法",
+    "track": "geometry",
+    "unitId": "origami_real",
+    "unitName": "空间重构与折纸盒真题",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间折叠",
+    "questionText": "下列选项中，可以由给定平面图折叠而成的是（    ）。",
+    "stemImages": [
+      "data/errrc/images/19af8f2a5773a37.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "D",
+    "detailedAnalysis": "将题干展开图标上序号，如下图所示，逐一进行分析。\n\nA项：选项由面e、面f和面h构成，题干展开图中，面e和面h为相对面，二者不能同时出现，选项与题干展开图不一致，排除；\nB项：选项一定有面i，面i和面g为相对面，所以正面为面k。以面i和面k公共边中引出斜线的点为起点，对面k进行顺时针画边，如下图所示，题干展开图中，边1挨着面i，选项中，边1没有挨着面i，选项与题干展开图不一致，排除；\n\nC项：选项一定有面f和面i，若顶面为面e，则题干展开图中，三者的公共点挨着面f的字母“A”的尖，选项中，三者的公共点远离面f的字母“A”的尖；若顶面为面h，则选项中，三者的公共点引出了面h中的斜线，题干展开图中，三者的公共点没有引出面h中的斜线，选项与题干展开图不一致，排除；\nD项：选项由面h、面i和面k构成，选项与题干展开图一致，当选。\n故正确答案为D。",
+    "simulatorConfig": {
+      "tab": "origami",
+      "label": "相关考点演示（六面体折纸盒）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/12019707 空间折叠（六面体折纸盒）——相对面排除＋公共边画边法-公共点引线法.md",
+      "qid": "12019707",
+      "year": "2026",
+      "region": "广东",
+      "paper": "2026年广东省公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 空间折叠（六面体折纸盒）——相对面排除＋公共边画边法/公共点引线法",
+      "isRealExam": true
+    },
+    "fastTrick": "相对面排除＋画边法：先看A项，e与h相对却同现，秒排；再看B项，以i、k公共边引出斜线的点为起点顺时针画边，边1不挨面i，排除；C项用公共点引线法核对“A”尖与斜线指向不符，排除；D项三面相邻且细节全吻合，直接选D",
+    "commonTraps": "相对面判定不准（“隔一面”“Z字两端”漏判），导致A项相对面同现却未被排除；画边法起点选错：必须以两面公共边上引出斜线的点为起点顺时针画边，起点一错边序全乱，B项易被误判为正确；C项只对比面的图案形状，忽略公共点是否引出斜线、是否挨着字母“A”的尖这类指向细节，被相似图案迷惑",
+    "analysisImages": [
+      "data/errrc/images/19af8f34e28ec5f.png",
+      "data/errrc/images/19af8f379996d39.png"
+    ]
+  },
+  {
+    "id": "errrc:17056531",
+    "version": 1,
+    "source": "2026年上海市公务员录用考试《行测》题（网友回忆版）",
+    "title": "2026上海 · 画边法定位相邻面）",
+    "track": "geometry",
+    "unitId": "origami_real",
+    "unitName": "空间重构与折纸盒真题",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-六面体折纸盒",
+    "questionText": "下列选项中，可以由左图折叠而成的是（    ）。",
+    "stemImages": [
+      "data/errrc/images/19ba2103349569e.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "将题干展开图标上序号，如下图所示，逐一进行分析。\n\nA项：选项由面e、面f和面h构成，题干展开图中，面e和面h为相对面，二者不能同时出现，选项与题干展开图不一致，排除；\nB项：选项由面e、面g和面i构成，选项与题干展开图一致，当选；\nC项：选项出现面g，而面g和面k为相对面，二者不能同时出现，因此选项由面g、面h和面i构成，题干展开图中，三个面的公共点挨着面h中的白色矩形，而选项中三个面的公共点挨着面h中的黑色矩形，选项与题干展开图不一致，排除；\nD项：选项出现面g，而面g和面k为相对面，二者不能同时出现，因此选项顶面为面i，而面i和面f为相对面，二者不能同时出现，故选项由面g、面i和面e构成，在题干展开图和选项中，同时以面e和面g的公共边为起始边顺时针画边，题干展开图中边2对应面i，选项中边4对应面i，选项与题干展开图不一致，排除。\n故正确答案为B。",
+    "simulatorConfig": {
+      "tab": "origami",
+      "label": "相关考点演示（六面体折纸盒）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/17056531 空间重构-六面体折纸盒（相对面排除＋公共点-画边法定位相邻面）.md",
+      "qid": "17056531",
+      "year": "2026",
+      "region": "上海",
+      "paper": "2026年上海市公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 空间重构-六面体折纸盒（相对面排除＋公共点/画边法定位相邻面）",
+      "isRealExam": true
+    },
+    "fastTrick": "相对面排除法＋画边法：先用'e—h、g—k、i—f'三组相对面秒排A项（e、h同现）；C项看三面公共点贴的是面h的白色矩形还是黑色矩形；D项以面e、面g公共边为起始边顺时针画边比对边2与边4；剩余B项验证无相对面且相邻关系吻合，直接锁定。",
+    "commonTraps": "忽略相对面不能同时出现，误选含面e和面h的A项；C项只核对三个面花色齐全、未核对公共点挨着白色矩形还是黑色矩形这一精细特征；D项画边时起始边选错或顺时针方向数错，把展开图的边2与选项的边4混淆",
+    "analysisImages": [
+      "data/errrc/images/19ba2110f91b37b.png"
+    ]
+  },
+  {
+    "id": "errrc:2367814",
+    "version": 1,
+    "source": "2019年江苏省公务员录用考试《行测》题（B类）（网友回忆版）",
+    "title": "2019江苏 · 箭头指向检验）",
+    "track": "geometry",
+    "unitId": "origami_real",
+    "unitName": "空间重构与折纸盒真题",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-四面体折叠",
+    "questionText": "左边给定的是纸盒外表面的展开图，右边哪一项能由它折叠而成？请把它找出来。",
+    "stemImages": [
+      "data/errrc/images/169a9b78a5acd9d.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "将题干展开图中的面依次标注为面a、b、c、d，如下图所示：\n\nA项：与题干一致，当选；\nB项：该项由面a和面b组成，在展开图中面b中的直线不垂直于面a和面b的公共边，而选项面b中的直线垂直于面a和面b的公共边，选项与题干不一致，排除；\n\nC项：该项由面a和面d组成，在展开图中面d中的箭头指向的是面b，而选项中面d的箭头指向的是面a，选项与题干不一致，排除；\nD项：该项由面a和面c组成，在展开图中面c中的箭头指向面b，而选项中面c中的箭头指向的是面a，选项与题干不一致，排除。\n故正确答案为A。",
+    "simulatorConfig": {
+      "tab": "origami",
+      "label": "相关考点演示（六面体折纸盒）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/2367814 空间重构-四面体折叠（相邻面公共边与特征线-箭头指向检验）.md",
+      "qid": "2367814",
+      "year": "2019",
+      "region": "江苏",
+      "paper": "2019年江苏省公务员录用考试《行测》题（B类）（网友回忆版）",
+      "point": "图形推理 / 空间重构-四面体折叠（相邻面公共边与特征线/箭头指向检验）",
+      "isRealExam": true
+    },
+    "fastTrick": "公共边法+箭头指向检验：每个选项均为三面共顶点视图，先以面a为基准面，对B项查'b面直线与a、b公共边是否垂直'（不垂直排除），再对C、D项查'箭头指向哪个相邻面'（展开图中d、c箭头均指向面b，选项指向面a即排除），剩余A项当选。",
+    "commonTraps": "只确认选项中'出现过哪些面'，忽略特征线与公共边的角度关系（垂直/不垂直），导致B项误选；折叠后箭头指向的相邻面发生视角翻转，凭直觉平移展开图方向而看错箭头实际指向，导致C、D项误判；四面体展开图折叠存在镜像关系，直接以平面展开图的上下左右判断指向而未结合公共边定位",
+    "analysisImages": [
+      "data/errrc/images/169a9b82d8086af.png",
+      "data/errrc/images/169a9b8662797f3.png"
+    ]
+  },
+  {
+    "id": "errrc:12536558",
+    "version": 1,
+    "source": "2024年深圳市考公务员录用考试《行测》试题（网友回忆版）",
+    "title": "2024深圳市考 · 四面体展开图）",
+    "track": "geometry",
+    "unitId": "origami_real",
+    "unitName": "空间重构与折纸盒真题",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-立体图形的平面展开图识别",
+    "questionText": "从四个选项中选择一个替代问号，使两套图形的规律表现出最大的相似性，最适合的是（    ）。",
+    "stemImages": [
+      "data/errrc/images/18ce47e6ce93a72.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "观察发现，第一组图形中，三个图形均为四面体的平面展开图；第二组图形应遵循此规律，前两个图形均为三棱柱的平面展开图，故“？”处应选择一个三棱柱的平面展开图，只有A项符合。\n故正确答案为A。",
+    "simulatorConfig": {
+      "tab": "origami",
+      "label": "相关考点演示（六面体折纸盒）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/12536558 空间重构-立体图形的平面展开图识别（三棱柱-四面体展开图）.md",
+      "qid": "12536558",
+      "year": "2024",
+      "region": "深圳市考",
+      "paper": "2024年深圳市考公务员录用考试《行测》试题（网友回忆版）",
+      "point": "图形推理 / 空间重构-立体图形的平面展开图识别（三棱柱/四面体展开图）",
+      "isRealExam": true
+    },
+    "fastTrick": "数面定性法：第一组'4个三角形→四面体展开图'，第二组前两图'3矩形+2三角形→三棱柱展开图'，直接在选项中找可折叠成三棱柱者，排除B、C、D锁定A",
+    "commonTraps": "只数面总数（第二组各选项均为5个面）而忽略面的形状搭配与拼接位置，误选同为'3矩形+2三角形'但无法折叠封口的C；把规律错归纳为'三角形个数相同''对称性''线条数'等表面特征，遗漏'同一立体展开图'这一定性核心；对柱体展开图结构不熟：三棱柱的2个三角形底面须分别接在侧面矩形的长边一侧，接在侧面排的端头短边处不能围成柱体"
+  },
+  {
+    "id": "errrc:19526393",
+    "version": 1,
+    "source": "2026年国家公务员录用考试《行测》题（地市级网友回忆版）",
+    "title": "2026国考 · 六面体展开图折叠",
+    "track": "geometry",
+    "unitId": "origami_real",
+    "unitName": "空间重构与折纸盒真题",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-六面体展开图折叠",
+    "questionText": "左边为给定的正方体纸盒的外表面展开图，由2个该正方体纸盒组合而成的长方体可能是：",
+    "stemImages": [
+      "data/errrc/images/19ad49c0413ffbe.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "将原展开图标上序号如下图，逐一进行分析。\n\nA项：选项中左侧正方体纸盒由面f和面i构成，右侧正方体纸盒由面f、面g和面k构成，选项与题干展开图一致，当选；\nB项：选项中右侧正方体纸盒由面e、面h和面i构成，题干展开图中三个面的公共点与面i上黑块的顶点重合，而选项中三个面的公共点与面i上的黑块不相交，选项与题干展开图不一致，排除；\n\nC项：选项中左侧正方形纸盒由面f和面h构成，题干展开图中面f和面h为相对面，不能同时出现，选项与题干展开图不一致，排除；\nD项：选项中右侧正方形纸盒由面f、面h和面i构成，题干展开图中面f和面h为相对面，不能同时出现，选项与题干展开图不一致，排除。\n故正确答案为A。",
+    "simulatorConfig": {
+      "tab": "origami",
+      "label": "相关考点演示（六面体折纸盒）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/19526393 空间重构-六面体展开图折叠（相对面排除＋相邻面公共点细节判定）.md",
+      "qid": "19526393",
+      "year": "2026",
+      "region": "国考",
+      "paper": "2026年国家公务员录用考试《行测》题（地市级网友回忆版）",
+      "point": "图形推理 / 空间重构-六面体展开图折叠（相对面排除＋相邻面公共点细节判定）",
+      "isRealExam": true
+    },
+    "fastTrick": "相对面排除法＋公共点检验：先在展开图中标出相对面（如f与h），凡选项中同一正方体同时出现相对面的直接排除（秒杀C、D）；再对剩余项用'相邻三面公共点是否与图案顶点（面i黑块顶点）重合'检验排除B，锁定A。",
+    "commonTraps": "相对面判定失误：把'Z'字形两端或隔行错列的f与h误判为相邻面，导致无法排除C、D；B项忽视公共点细节：只看三个面的图案相似就误判可行，漏查'三面公共点与面i黑块顶点重合'这一位置约束；只核对单面图案、未逐一验证组合后每个可见面之间的相邻关系，遗漏组合体的面归属分析",
+    "analysisImages": [
+      "data/errrc/images/19ad49ccd46206d.png",
+      "data/errrc/images/19ad49d28605bf3.png"
+    ]
+  },
+  {
+    "id": "errrc:16070182",
+    "version": 1,
+    "source": "2026年湖北省公务员录用考试《行测》题（网友回忆版）",
+    "title": "2026湖北 · 六面体展开图折叠",
+    "track": "geometry",
+    "unitId": "origami_real",
+    "unitName": "空间重构与折纸盒真题",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-六面体展开图折叠",
+    "questionText": "左图是一个带把手的立方体纸盒，右边哪项可能是其外表面展开图？",
+    "stemImages": [
+      "data/errrc/images/19cec526efaeb2e.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "A项：数字1的面和数字4的面为相对面，相对面不能同时出现，选项展开图与题干立体图不一致，排除；\nB项：选项展开图与题干立体图一致，当选；\nC项：题干立体图中，数字4的面和数字6的面中的数字书写方向是一致的，而选项中这两个面中的数字书写方向不一致，选项展开图与题干立体图不一致，排除；\nD项：题干立体图中，数字4的面和数字6的面中的数字书写方向是一致的，而选项中这两个面中的数字书写方向不一致，选项展开图与题干立体图不一致，排除。\n故正确答案为B。",
+    "simulatorConfig": {
+      "tab": "origami",
+      "label": "相关考点演示（六面体折纸盒）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/16070182 空间重构-六面体展开图折叠（相对面排除＋相邻面数字方向验证）.md",
+      "qid": "16070182",
+      "year": "2026",
+      "region": "湖北",
+      "paper": "2026年湖北省公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 空间重构-六面体展开图折叠（相对面排除＋相邻面数字方向验证）",
+      "isRealExam": true
+    },
+    "fastTrick": "两步排除法：①相对面秒杀——A项中1面与4面为相对面，而立体图中二者相邻可见，直接排除A；②方向指针——抓住'立体图中4与6书写方向一致'这一特征，C、D折叠后4、6方向相反（6变9），排除C、D，唯一剩B",
+    "commonTraps": "只核对相邻面位置、忽略数字书写方向：6旋转180°即变9，C、D正是'面相邻但方向倒置'的陷阱；相对面规律不熟：展开图中同列隔一个面（如A项中1面与4面）即相对面，漏判会把A误留到最后；折叠方向搞反：展开图须向内折叠还原，翻折方向弄错会导致相邻关系与方向验证全部误判"
+  },
+  {
+    "id": "errrc:18650003",
+    "version": 1,
+    "source": "2025年重庆市定向选调优秀大学生到基层工作考试《行测》题",
+    "title": "2025选调 · 六面体折叠",
+    "track": "geometry",
+    "unitId": "origami_real",
+    "unitName": "空间重构与折纸盒真题",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-六面体折叠",
+    "questionText": "以下为纸盒的外表面展开图，问哪一个折叠成的纸盒和其他三个不一样？（    ）",
+    "stemImages": [
+      "data/errrc/images/19a24bf37b019f0.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "D",
+    "detailedAnalysis": "A项：内部为“少”和“R”的两个面为相对面，内部为“何”和“K”的两个面为相对面，内部为“由”和“U”的两个面为相对面；\nB项：内部为“少”和“R”的两个面为相对面，内部为“何”和“K”的两个面为相对面，内部为“由”和“U”的两个面为相对面；\nC项：内部为“少”和“R”的两个面为相对面，内部为“何”和“K”的两个面为相对面，内部为“由”和“U”的两个面为相对面；\nD项：内部为“少”和“K”的两个面为相对面，内部为“何”和“R”的两个面为相对面，内部为“由”和“U”的两个面为相对面。\n综上，D项的两组相对面与其他三项不同。\n本题为选非题，故正确答案为D。",
+    "simulatorConfig": {
+      "tab": "origami",
+      "label": "相关考点演示（六面体折纸盒）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/18650003 空间重构-六面体折叠（相对面关系判定）.md",
+      "qid": "18650003",
+      "year": "2025",
+      "region": "选调",
+      "paper": "2025年重庆市定向选调优秀大学生到基层工作考试《行测》题",
+      "point": "图形推理 / 空间重构-六面体折叠（相对面关系判定）",
+      "isRealExam": true
+    },
+    "fastTrick": "相对面口诀法（隔一相对、Z端相对）+排除对比：只需盯住'少'字面的相对面——A、B、C中'少'的对面都是'R'，D中'少'的对面是'K'，一组相对面即可锁定D，无需逐面模拟折叠",
+    "commonTraps": "相对面判定出错：把'Z'字形两端（隔面相对）误当作相邻面，或在拐弯处看错行列导致找错对面；四个展开图图案相同、视觉相似，误以为都能折成同一纸盒，未对每组相对面逐一比对；本题为选非题（找'不一样'的一项），按惯性去选'相同'的三项之一会选错"
+  },
+  {
+    "id": "errrc:11367779",
+    "version": 1,
+    "source": "2025年江苏省公务员录用考试《行测》题（A类）（网友回忆版）",
+    "title": "2025江苏 · 六面体折叠",
+    "track": "geometry",
+    "unitId": "origami_real",
+    "unitName": "空间重构与折纸盒真题",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-六面体折叠",
+    "questionText": "左边给定的是六面体的外表面展开图，右边哪一项是由它折叠而成？",
+    "stemImages": [
+      "data/errrc/images/194f2937144709d.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "本题为空间重构题。将题干展开图右侧的面进行移动，并为每个面标上序号，如下图所示，逐一分析选项。\n\nA项：选项由面e、面f和面g构成，选项与题干展开图一致，当选；\nB项：选项由面e、面f和面g构成，题干展开图中面f和面g的公共边挨着面f中的大长方形，而选项中面f和面g的公共边不挨着面f中的大长方形，选项与题干展开图不一致，排除；\nC项：选项由面g、面h和面k构成，题干展开图中面g和面h的公共边与面g中的线条垂直，而选项中面g和面h的公共边与面g中的线条平行，选项与题干展开图不一致，排除；\nD项：选项由面g、面i和面k构成，题干展开图中面g和面i是相对面，两者不能同时出现，选项与题干展开图不一致，排除。\n故正确答案为A。",
+    "simulatorConfig": {
+      "tab": "origami",
+      "label": "相关考点演示（六面体折纸盒）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/11367779 空间重构-六面体折叠（相对面排除＋公共边特征验证）.md",
+      "qid": "11367779",
+      "year": "2025",
+      "region": "江苏",
+      "paper": "2025年江苏省公务员录用考试《行测》题（A类）（网友回忆版）",
+      "point": "图形推理 / 空间重构-六面体折叠（相对面排除＋公共边特征验证）",
+      "isRealExam": true
+    },
+    "fastTrick": "相对面排除法＋公共边法（画边法）：第一步用相对面秒杀D（g与i同现）；第二步抓住'公共边是否紧邻面f的大长方形'排除B；第三步抓住'公共边与面g中线条垂直还是平行'排除C，锁定A",
+    "commonTraps": "只看三个面能否拼合、忽略公共边与面上图案的相对位置（是否紧邻大长方形、与线条垂直还是平行），误选B或C；展开图需先移动调整面再标号，直接按原图相邻关系判断公共边易出错；相对面判断失误，未发现面g与面i为相对面而误选D",
+    "analysisImages": [
+      "data/errrc/images/194f29482bf21b6.png"
+    ]
+  },
+  {
+    "id": "errrc:15419026",
+    "version": 1,
+    "source": "2025年湖北省选调生招录考试综合知识和行政职业能力测验试卷（网友回忆版）",
+    "title": "2025湖北 · 时针方向法）",
+    "track": "geometry",
+    "unitId": "origami_real",
+    "unitName": "空间重构与折纸盒真题",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "六面体展开图-展开图等同性判定",
+    "questionText": "以下除哪一项外，均为同一正方体纸盒的外表面展开图？",
+    "stemImages": [
+      "data/errrc/images/19589022d55ecd8.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "D",
+    "detailedAnalysis": "各选项面都相同，如下图所示，在四个选项中，均以黑色方块的直角顶点为起始点，沿着黑色方块所在面顺时针画边，逐一进行分析。\n\nA项：边1挨着白色直角三角形；\nB项：边1挨着白色直角三角形；\nC项：边1挨着白色直角三角形；\nD项：边1没有挨着白色直角三角形。\n综上，只有D项与其他三项不同。\n本题为选非题，故正确答案为D。",
+    "simulatorConfig": {
+      "tab": "origami",
+      "label": "相关考点演示（六面体折纸盒）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/15419026 六面体展开图-展开图等同性判定（画边法-时针方向法）.md",
+      "qid": "15419026",
+      "year": "2025",
+      "region": "湖北",
+      "paper": "2025年湖北省选调生招录考试综合知识和行政职业能力测验试卷（网友回忆版）",
+      "point": "图形推理 / 六面体展开图-展开图等同性判定（画边法/时针方向法）",
+      "isRealExam": true
+    },
+    "fastTrick": "画边法（时针法）：固定以黑方块直角顶点为起点、沿黑方块面顺时针画边1，直接观察边1旁的图案——A/B/C边1旁均为白色直角三角形，D不是，秒选D",
+    "commonTraps": "忽略「选非」问法，误把与其余三项相同的一项（如顺手选A）当成答案；画边起点不统一（未固定从黑色方块直角顶点出发）或方向时顺时逆混用，导致相邻面比较错乱；只看面与面是否相邻、忽略同一面图案的方向性（黑方块直角顶点位置、三角形朝向），漏掉相对位置差异",
+    "analysisImages": [
+      "data/errrc/images/1958902c7989278.png"
+    ]
+  },
+  {
+    "id": "errrc:12882220",
+    "version": 1,
+    "source": "2025年内蒙古公务员录用考试《行测》题（网友回忆版）",
+    "title": "2025内蒙古 · 六面体折纸盒",
+    "track": "geometry",
+    "unitId": "origami_real",
+    "unitName": "空间重构与折纸盒真题",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-六面体折纸盒",
+    "questionText": "以下为立方体的外表面，下列哪个立方体可以由此折成（    ）。",
+    "stemImages": [
+      "data/errrc/images/197c9251b892370.jpg"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "本题为空间重构题，对展开图进行编号，如下图所示：\n\nA项：选项由面e、面h和面i构成，选项与展开图一致，当选；\nB项：选项由面g、面h和面i构成，展开图中面g和面i为相对面，相对面不能同时出现，选项与展开图不一致，排除；\nC项：选项中存在两个空白面，而展开图中只有一个空白面，选项与展开图不一致，排除；\nD项：选项由面f、面g和面h构成，展开图中面f和面h为相对面，相对面不能同时出现，选项与展开图不一致，排除。\n故正确答案为A。",
+    "simulatorConfig": {
+      "tab": "origami",
+      "label": "相关考点演示（六面体折纸盒）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/12882220 空间重构-六面体折纸盒（相对面排除+相邻面验证）.md",
+      "qid": "12882220",
+      "year": "2025",
+      "region": "内蒙古",
+      "paper": "2025年内蒙古公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 空间重构-六面体折纸盒（相对面排除+相邻面验证）",
+      "isRealExam": true
+    },
+    "fastTrick": "相对面排除法：先在展开图标出三组相对面（圆↔十字、方框↔空白、对角线↔三角）；B中'方框+空白'同现、D中'圆+十字'同现直接排除，C数空白面数量（展开图仅一个）排除，剩余A即为答案。",
+    "commonTraps": "误把一行中'隔一个'的两面（圆与十字、方框与空白）当成相邻面，错杀正确项或放过错误项；忽略'特征面数量'这一排除角度：展开图只有一个空白面，C项立体图却出现两个空白面；只看面组合、不看对角线等特征线的指向与相邻关系，凭感觉误判A项",
+    "analysisImages": [
+      "data/errrc/images/197c925960ca4c6.jpg"
+    ]
+  },
+  {
+    "id": "errrc:12101006",
+    "version": 1,
+    "source": "2025年江苏省公务员录用考试《行测》题（B类）（网友回忆版）",
+    "title": "2025江苏 · 公共边定位法）",
+    "track": "geometry",
+    "unitId": "origami_real",
+    "unitName": "空间重构与折纸盒真题",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-六面体折叠",
+    "questionText": "左边给定的是六面体的外表面展开图，右边哪一项能由它折叠而成?",
+    "stemImages": [
+      "data/errrc/images/194f9814d39af29.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "C",
+    "detailedAnalysis": "将题干展开图标上序号，如下图所示，逐一进行分析。\n\nA项：选项的正面和顶面来自面e、面f、面i、面k，题干展开图中面e、面f、面i、面k任意面中的线条均与另一个面中的线条相交于公共边的中点，而选项中正面中的线条与顶面中的线条不相交，选项与题干展开图不一致，排除；\n\nB项：选项一定有面g与面h，且选项中三个面的公共点挨着顶面中的线条，故选项由面f、面g与面h构成。题干展开图中面g中的直角三角形挨着面f中的直角梯形，而选项中面g中的直角三角形挨着面f中的直角三角形，选项与题干展开图不一致，排除；\n\nC项：选项由面g、面i与面k构成，选项与题干展开图一致，当选；\n\nD项：选项一定有面g与面h，且选项中三个面的公共点不挨着顶面中的线条，故选项由面g、面h与面i构成。题干展开图中这三个面的公共点挨着面i中的直角梯形，而选项中这三个面的公共点挨着面i中的直角三角形，选项与题干展开图不一致，排除。\n\n故正确答案为C。",
+    "simulatorConfig": {
+      "tab": "origami",
+      "label": "相关考点演示（六面体折纸盒）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/12101006 空间重构-六面体折叠（公共点-公共边定位法）.md",
+      "qid": "12101006",
+      "year": "2025",
+      "region": "江苏",
+      "paper": "2025年江苏省公务员录用考试《行测》题（B类）（网友回忆版）",
+      "point": "图形推理 / 空间重构-六面体折叠（公共点/公共边定位法）",
+      "isRealExam": true
+    },
+    "fastTrick": "公共点法：对每个选项找出三个可见面的公共顶点，看公共点挨着的是'直角三角形'还是'直角梯形'、以及公共点是否紧邻面中线条，与展开图中对应三面公共点的特征逐一比对，不符即排除",
+    "commonTraps": "混淆'直角三角形'与'直角梯形'两类图案，公共点相邻图案看错（B、D项均考此点）；忽略'线条相交于公共边中点'这一细节而误选A项；立体图中三个可见面公共顶点的定位错误，导致选错对应展开图中的三个面",
+    "analysisImages": [
+      "data/errrc/images/194f981d763a7e0.png",
+      "data/errrc/images/1964ebfa1678ae7.png",
+      "data/errrc/images/194f982339ce44c.png",
+      "data/errrc/images/194f9825e3c956c.png",
+      "data/errrc/images/194f98286798499.png"
+    ]
+  },
+  {
+    "id": "errrc:12101001",
+    "version": 1,
+    "source": "2025年江苏省公务员录用考试《行测》题（C类）（网友回忆版）",
+    "title": "2025江苏 · 公共边贴线特征）",
+    "track": "geometry",
+    "unitId": "origami_real",
+    "unitName": "空间重构与折纸盒真题",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-六面体折叠",
+    "questionText": "左边给定的是六面体的外表面展开图，右边哪一项能由它折叠而成？",
+    "stemImages": [
+      "data/errrc/images/194f98058853845.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题考查六面体。将展开图中右下角的面移动，并给每个面标号，如下图所示，逐一进行分析。\n\nA项：选项一定有面i和面f，右面为面e或面k，展开图中面f和面k为相对面，无法同时出现，故右面为面e。展开图中面e、面f和面i的公共点引出一条线，而选项中三个面的公共点引出两条线，选项与题干展开图不一致，排除；\nB项：选项由面e、面g与面k构成，选项与题干展开图一致，当选；\nC项：选项一定有面h和面i，展开图中面h与面i的公共边挨着面h中的两条线，而选项中两个面的公共边只挨着面h中的一条线，选项与题干展开图不一致，排除；\nD项：选项由面f、面h和面i构成，展开图中三个面的公共点引出两条线，而选项中三个面的公共点只引出一条线，选项与题干展开图不一致，排除。\n故正确答案为B。",
+    "simulatorConfig": {
+      "tab": "origami",
+      "label": "相关考点演示（六面体折纸盒）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/12101001 空间重构-六面体折叠（相对面排除＋相邻面公共点引线-公共边贴线特征）.md",
+      "qid": "12101001",
+      "year": "2025",
+      "region": "江苏",
+      "paper": "2025年江苏省公务员录用考试《行测》题（C类）（网友回忆版）",
+      "point": "图形推理 / 空间重构-六面体折叠（相对面排除＋相邻面公共点引线/公共边贴线特征）",
+      "isRealExam": true
+    },
+    "fastTrick": "相对面排除＋公共点引线数指纹法：先判定面f与面k为相对面；再以'三面公共点引出几条线'（e-f-i为1条、f-h-i为2条）和'公共边贴着几条线'（h-i公共边贴面h两条线）为指纹，逐一核对选项，排除A、C、D锁定B",
+    "commonTraps": "忽略展开图右下角孤立的面需先平移归位再标号，直接判相对面/相邻面会错位；数公共点引出的线条数出错：线条恰好穿过公共点时易把1条数成2条或漏数，A、D项均靠此细节排除；把公共边'挨着几条线'误看成面内线条总数，忽略线与公共边的相对位置（C项排除依据）",
+    "analysisImages": [
+      "data/errrc/images/194fcea9a059810.png"
+    ]
+  },
+  {
+    "id": "errrc:19283845",
+    "version": 1,
+    "source": "2025年国家公务员录用考试《行测》题（行政执法卷网友回忆版）",
+    "title": "2025国考 · 六面体展开图折叠一致性",
+    "track": "geometry",
+    "unitId": "origami_real",
+    "unitName": "空间重构与折纸盒真题",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-六面体展开图折叠一致性",
+    "questionText": "以下除哪项外，都是同一正方体纸盒的外表面展开图？",
+    "stemImages": [
+      "data/errrc/images/193dc81c67f53e4.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "D",
+    "detailedAnalysis": "解法一：本题为空间重构题，如下图所示，A、B、C项中，两个“C”的开口方向一致，但D项中，两个“C”的开口方向不一致，因此D项折成的纸盒与其他三个不同。\n\n解法二：本题为空间重构题，如下图所示，A、B、C项中，“A”的左右分别与“C”的开口和后背相邻，但D项中，一个“A”的左右均与“C”的后背相邻，另一个“A”的左右均与“C”的开口相邻，因此D项折成的纸盒与其他三个不同。\n\n本题为选非题，故正确答案为D。",
+    "simulatorConfig": {
+      "tab": "origami",
+      "label": "相关考点演示（六面体折纸盒）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/19283845 空间重构-六面体展开图折叠一致性（特征面字母朝向+相邻面关系）.md",
+      "qid": "19283845",
+      "year": "2025",
+      "region": "国考",
+      "paper": "2025年国家公务员录用考试《行测》题（行政执法卷网友回忆版）",
+      "point": "图形推理 / 空间重构-六面体展开图折叠一致性（特征面字母朝向+相邻面关系）",
+      "isRealExam": true
+    },
+    "fastTrick": "特征面方向法（盯“C”开口）：不做完整折叠，直接扫四个图中两个C的开口朝向——A、B、C中两C开口同向，D中一左一右相反，选非题秒锁定D",
+    "commonTraps": "忽略“除哪项外”的选非问法，误选与其他三项一致的A/B/C；只比对字母A、C的相对位置（相邻/相对），漏看字母自身朝向（C开口方向）这一决定性特征；脑内旋转展开图时连字母一起随意转动，导致C开口朝向判断错乱",
+    "analysisImages": [
+      "data/errrc/images/193dc8210c433d3.png",
+      "data/errrc/images/193dc8242ba9f3d.png"
+    ]
+  },
+  {
+    "id": "errrc:17097750",
+    "version": 1,
+    "source": "2024年山西省县级纪委监委公务员录用考试《行测》题（网友回忆版）",
+    "title": "2024山西 · 相对面关系",
+    "track": "geometry",
+    "unitId": "origami_real",
+    "unitName": "空间重构与折纸盒真题",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-相对面关系",
+    "questionText": "以下为4个正方体的外表面展开图。其中哪个折成的正方体和其他3个不一样？",
+    "stemImages": [
+      "data/errrc/images/1954b403f688c92.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题为空间重构题。A、C、D三项中，构成相对面的两个面图案均相同，但B项中，“”面与“”面构成相对面，图案不同，只有B项与其他三项不同。\n本题为选非题，故正确答案为B。",
+    "simulatorConfig": {
+      "tab": "origami",
+      "label": "相关考点演示（六面体折纸盒）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/17097750 空间重构-相对面关系（展开图折纸盒）.md",
+      "qid": "17097750",
+      "year": "2024",
+      "region": "山西",
+      "paper": "2024年山西省县级纪委监委公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 空间重构-相对面关系（展开图折纸盒）",
+      "isRealExam": true
+    },
+    "fastTrick": "相对面配对法（口诀：同行隔一面、Z字两端相对）：先用口诀给四图各配出三组相对面，再验证2个○、2个箭头、2个条形是否各自落在相对面上，A/C/D全部满足，B中○与箭头交叉相对（←与○、○与↓为相对面），秒选B。",
+    "commonTraps": "只核对一组相对面就下结论：B中竖条与横条那组是同类的，若只看这组会误认为B也正常；必须三组全查，才能发现B中（←，○）（○，↓）两组图案不同。；把↓/←、←/→、竖条/横条因方向不同而误判A、D也存在相对面图案不同，从而错选A或D；本题以图案类别为准比较（面随正方体旋转，同类图案视为相同）。；相对面配错位：1-3-2型中顶面与底排第一面（Z字两端）相对、中间面与底排第二面相对；若误把顶面与底排第二面配对，A图会配出（竖条，←）这类异组而错选A。",
+    "analysisImages": [
+      "data/errrc/images/1954b4104c02e60.png",
+      "data/errrc/images/1954b412b9617a5.png"
+    ]
+  }
+]

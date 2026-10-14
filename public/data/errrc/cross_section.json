@@ -1,0 +1,577 @@
+[
+  {
+    "id": "errrc:15833785",
+    "version": 1,
+    "source": "2026年内蒙古公务员录用考试《行测》题（网友回忆版）",
+    "title": "2026内蒙古 · 正方体组合体截切",
+    "track": "geometry",
+    "unitId": "cross_section_real",
+    "unitName": "立体截面与空间剖切真题",
+    "questionRole": "example",
+    "category": "cross_section",
+    "subType": "截面图-正方体组合体截切",
+    "questionText": "左图为3个白色正方体和4个灰色正方体粘接而成的多面体，将其从任一方向剖开，下面哪一项不可能是该立体图形的截面？",
+    "stemImages": [
+      "data/errrc/images/19cedb15bcf860f.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题考查截面图，如下图所示，A、C、D三项均可截出，只有B项无法截出。\n\n本题为选非题，故正确答案为B。",
+    "simulatorConfig": {
+      "tab": "cross_section",
+      "label": "相关考点演示（立体截面器）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/15833785 截面图-正方体组合体截切（选非题）.md",
+      "qid": "15833785",
+      "year": "2026",
+      "region": "内蒙古",
+      "paper": "2026年内蒙古公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 截面图-正方体组合体截切（选非题）",
+      "isRealExam": true
+    },
+    "fastTrick": "数色否定法：B项含4个白色区块，而立体图只有3个白色正方体，每个正方体被截至多贡献1个连通区块，4＞3，直接锁定B为不可能截面，无需逐一构造其余截法",
+    "commonTraps": "漏看“不可能”三字，把选非题当选择题去选可截出的图形；误以为B可由现有3个白块截出，忽略“每个正方体至多贡献一个截面区块”且2×2结构必须有4个白块；忽略台阶式结构沿列方向纵截可得L形（A项），误以为A也截不出而纠结",
+    "analysisImages": [
+      "data/errrc/images/19cedb2222ec879.png"
+    ]
+  },
+  {
+    "id": "errrc:5445843",
+    "version": 1,
+    "source": "2023年国家公务员录用考试《行测》题（副省级网友回忆版）",
+    "title": "2023国考 · 圆柱组合体挖空截面的可截性判断",
+    "track": "geometry",
+    "unitId": "cross_section_real",
+    "unitName": "立体截面与空间剖切真题",
+    "questionRole": "example",
+    "category": "cross_section",
+    "subType": "截面图-圆柱组合体挖空截面的可截性判断",
+    "questionText": "下图是给定的立体图形（大圆柱内的虚线部分为挖空部分），将其从任一面剖开，下面哪一项不可能是该立体图形的截面？",
+    "stemImages": [
+      "data/errrc/images/1860c4800d7ab68.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "本题考查截面图。逐一分析选项。\nA项：无法截出，当选；\nB项：如下图所示，从上方圆柱向下经过空心圆柱竖切，可以截出，排除；\n\nC项：如下图所示，从上方圆柱向下经过空心圆柱斜切，可以截出，排除；\n\nD项：如下图所示，斜切下方圆柱同时经过空心部分，可以截出，排除。\n\n本题为选非题，故正确答案为A。",
+    "simulatorConfig": {
+      "tab": "cross_section",
+      "label": "相关考点演示（立体截面器）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/5445843 截面图-圆柱组合体挖空截面的可截性判断（选非题）.md",
+      "qid": "5445843",
+      "year": "2023",
+      "region": "国考",
+      "paper": "2023年国家公务员录用考试《行测》题（副省级网友回忆版）",
+      "point": "图形推理 / 截面图-圆柱组合体挖空截面的可截性判断（选非题）",
+      "isRealExam": true
+    },
+    "fastTrick": "排除法＋口诀“平切得圆、斜切得椭圆、竖切得矩形”：A项三个同心圆要求同一平面切出三层圆，而该立体任一水平截面最多只有“外圆＋空心圆”两层圆，层数对不上，直接锁定A为不可能截面",
+    "commonTraps": "忽略选非题设问，误把可截出的B/C/D当作答案；只记得平切得圆，忽略斜切得椭圆、竖切得矩形的组合截面，误判B/C/D不可截；误以为在两圆柱交界处平切可凑出三个同心圆，忽略任一高度平切只能呈现“所在圆柱外圆＋空心圆”两层，A正是多出一层而无对应高度",
+    "analysisImages": [
+      "data/errrc/images/1860c484bb95196.png",
+      "data/errrc/images/1860c48a2e48523.png",
+      "data/errrc/images/1860c4906bc2292.png"
+    ]
+  },
+  {
+    "id": "errrc:2742190",
+    "version": 1,
+    "source": "2021年江苏省公务员录用考试《行测》题（B类）（网友回忆版）",
+    "title": "2021江苏 · 圆锥组合体",
+    "track": "geometry",
+    "unitId": "cross_section_real",
+    "unitName": "立体截面与空间剖切真题",
+    "questionRole": "example",
+    "category": "cross_section",
+    "subType": "截面图-圆锥组合体",
+    "questionText": "左边为给定的立体图，从任意角度剖开，右边哪一项可能是它的截面图？",
+    "stemImages": [
+      "data/errrc/images/17680d8690cd61c.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题考查截面图，逐一分析选项。\nA项：垂直于上下底面偏离圆锥顶点不能切出两个梯形，切出的应该是双曲线加两条平行线的图形，选项与题干不一致，排除；\nB项：如下图所示，B项可截出，选项与题干一致，当选；\nC项：要想切出上面的形状，刀片应该斜切，要想切出下面的形状，应该平行于上下底面切，不同角度切出来的面不能存在于同一平面，选项与题干不一致，排除；\nD项：要想切出相切的两个椭圆，必然要经过两个圆锥顶点，但是经过顶点斜切不能切出椭圆，选项与题干不一致，排除。\n\n故正确答案为B。",
+    "simulatorConfig": {
+      "tab": "cross_section",
+      "label": "相关考点演示（立体截面器）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/2742190 截面图-圆锥组合体（沙漏状双圆锥）的剖切线型判断.md",
+      "qid": "2742190",
+      "year": "2021",
+      "region": "江苏",
+      "paper": "2021年江苏省公务员录用考试《行测》题（B类）（网友回忆版）",
+      "point": "图形推理 / 截面图-圆锥组合体（沙漏状双圆锥）的剖切线型判断",
+      "isRealExam": true
+    },
+    "fastTrick": "口诀排除法：记'平切得圆、斜切得椭圆、竖切偏轴得双曲线、过顶点只得三角形'；A的梯形、C的圆+弓形混搭、D的过顶点椭圆均违反口诀，一刀斜穿上下底面即可截出B的两个弓形，秒选B",
+    "commonTraps": "把立体图的正视图轮廓（A项两梯形）误当成竖直剖切结果，忽略圆锥侧面竖切出的边线是双曲线弧而非直线；忽略'过顶点剖切只能得三角形'，误以为D项两个相切椭圆可以通过顶点切出；忘记截面必须是同一平面一次剖切所得，误把两种不同刀法的结果拼接当成可行截面（如C项圆与弓形）",
+    "analysisImages": [
+      "data/errrc/images/17680cf090fb0e6.png"
+    ]
+  },
+  {
+    "id": "errrc:2367993",
+    "version": 1,
+    "source": "2019年江苏省公务员录用考试《行测》题（C类）（网友回忆版）",
+    "title": "2019江苏 · 空心贯穿体",
+    "track": "geometry",
+    "unitId": "cross_section_real",
+    "unitName": "立体截面与空间剖切真题",
+    "questionRole": "example",
+    "category": "cross_section",
+    "subType": "立体截面图-空心贯穿体",
+    "questionText": "左图为给定的立体，从任意角度剖开，右边哪一项不可能是它的截面图？",
+    "stemImages": [
+      "data/errrc/images/169aa754dcc502a.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题考查截面图。逐一分析选项。如下图所示，A、C、D项均可截出，如下图所示。B项无法截出，因为三棱柱是空心部分，B项中间矩形的两侧不应该有线。\n\n本题为选非题，故正确答案为B。",
+    "simulatorConfig": {
+      "tab": "cross_section",
+      "label": "相关考点演示（立体截面器）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/2367993 立体截面图-空心贯穿体（正方体内含空心三棱柱）的截面判断.md",
+      "qid": "2367993",
+      "year": "2019",
+      "region": "江苏",
+      "paper": "2019年江苏省公务员录用考试《行测》题（C类）（网友回忆版）",
+      "point": "图形推理 / 立体截面图-空心贯穿体（正方体内含空心三棱柱）的截面判断",
+      "isRealExam": true
+    },
+    "fastTrick": "空心优先法——先锁定立体中的空心贯穿三棱柱：凡截面中空心区域被画出封闭边线（中间矩形两侧带线）的必不可能，B项直接锁定，无需逐项画切面",
+    "commonTraps": "误以为剖到空心部分也应画出边界线，忽略空腔内无实体、不应有棱线；忽略三棱柱是贯穿整个正方体的空心结构，误判B可截出；选非题思维惯性，误选看似“异常”实则可截出的全灰C项",
+    "analysisImages": [
+      "data/errrc/images/169aa8305276f8d.png"
+    ]
+  },
+  {
+    "id": "errrc:2444725",
+    "version": 1,
+    "source": "2019年四川省公务员录用考试《行测》题（下半年）（网友回忆版）",
+    "title": "2019四川 · 正方体组合体的剖切面截取",
+    "track": "geometry",
+    "unitId": "cross_section_real",
+    "unitName": "立体截面与空间剖切真题",
+    "questionRole": "example",
+    "category": "cross_section",
+    "subType": "截面图-正方体组合体的剖切面截取",
+    "questionText": "左图给定的是由4个相同正方体组合成的立体图形，将其从任一面剖开，下面哪一项不可能是该立体图形的截面？",
+    "stemImages": [
+      "data/errrc/images/1874b7ce5dd74aa.jpg"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "本题考查截面图，如下图所示，B、C、D三项均可截出，只有A项无法截出。\n \n本题为选非题，故正确答案为A。",
+    "simulatorConfig": {
+      "tab": "cross_section",
+      "label": "相关考点演示（立体截面器）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/2444725 截面图-正方体组合体的剖切面截取（选非）.md",
+      "qid": "2444725",
+      "year": "2019",
+      "region": "四川",
+      "paper": "2019年四川省公务员录用考试《行测》题（下半年）（网友回忆版）",
+      "point": "图形推理 / 截面图-正方体组合体的剖切面截取（选非）",
+      "isRealExam": true
+    },
+    "fastTrick": "构造法（排除法）：横切底层→B的L形，平切单个正方体→C的正方形，斜切单个正方体一角→D的三角形，三个都能切出；剩下的A“尖顶房形”无法构造，选A。进阶口诀：正方体组合体全是直角面，截面边方向≤3，房形五边形要4个方向，直接排除",
+    "commonTraps": "忽略“选非题”，把能截出的选项当答案；误以为单个正方体能切出任意五边形，没发现房形五边形需要4个方向的边、而正方体表面只有3个朝向；想当然认为方块立体切不出三角形（D），其实斜切单个正方体一角即可得到",
+    "analysisImages": [
+      "data/errrc/images/19c940ea01c48dd.png"
+    ]
+  },
+  {
+    "id": "errrc:5430887",
+    "version": 1,
+    "source": "2023年浙江省公务员录用考试《行测》题（C类）（网友回忆版）",
+    "title": "2023浙江 · 截面图",
+    "track": "geometry",
+    "unitId": "cross_section_real",
+    "unitName": "立体截面与空间剖切真题",
+    "questionRole": "example",
+    "category": "cross_section",
+    "subType": "立体图形-截面图",
+    "questionText": "左图为给定的多面体，将其从任一面剖开，哪项不可能是该多面体的截面？",
+    "stemImages": [
+      "data/errrc/images/18649c621a9c579.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "D",
+    "detailedAnalysis": "本题考查截面图，逐一分析选项。\nA项：如下图所示，可以截出，排除；\n\nB项：如下图所示，可以截出，排除；\n\nC项：如下图所示，可以截出，排除；\n\nD项：无法截出，当选。\n本题为选非题，故正确答案为D。",
+    "simulatorConfig": {
+      "tab": "cross_section",
+      "label": "相关考点演示（立体截面器）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/5430887 立体图形-截面图（选非：判定不可能的截面）.md",
+      "qid": "5430887",
+      "year": "2023",
+      "region": "浙江",
+      "paper": "2023年浙江省公务员录用考试《行测》题（C类）（网友回忆版）",
+      "point": "图形推理 / 立体图形-截面图（选非：判定不可能的截面）",
+      "isRealExam": true
+    },
+    "fastTrick": "'一刀连通'排除法：逐项检验能否由一个平面一次截出——A竖切台阶形、B/C斜切组合形均可截出；D是两个分离图形（细竖条+L形）的拼接，截出L形的那一刀只会得到单一L形截面，不可能在同平面再分离出竖条，直接锁定D。",
+    "commonTraps": "选非题看错：题干问'不可能'，误把能截出的A/B/C当成答案；把B、C中'方形+横条'误认为两个分离图形或误以为截面只能是单一规则多边形，从而错选B/C；实际上斜切可得到此类连通的组合截面；'分开截再拼'陷阱：误以为立体的高块、低块可分别截出后拼成一个选项图形；截面必须同一平面一刀截得，D正是这种拼接型陷阱",
+    "analysisImages": [
+      "data/errrc/images/18649c664e3ec4b.png",
+      "data/errrc/images/18649c6942e6ab7.png",
+      "data/errrc/images/18649c6bd54d738.png"
+    ]
+  },
+  {
+    "id": "errrc:15833801",
+    "version": 1,
+    "source": "2026年广西区考公务员录用考试《行测》题（网友回忆版）",
+    "title": "2026广西 · 立体截面图",
+    "track": "geometry",
+    "unitId": "cross_section_real",
+    "unitName": "立体截面与空间剖切真题",
+    "questionRole": "example",
+    "category": "cross_section",
+    "subType": "立体截面图",
+    "questionText": "经过A、B、C三点所截出的图形为：",
+    "stemImages": [
+      "data/errrc/images/19e3ef2e10e5742.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "D",
+    "detailedAnalysis": "本题考查截面图。根据小正方体与大多面体的接触方式可发现，大多面体的e、f面的夹角为钝角，所以经过A、B、C三点不能截出矩形面，排除A、B项，再根据边的比例关系排除C项(截面如图1所示)。\n\n故正确答案为D。",
+    "simulatorConfig": {
+      "tab": "cross_section",
+      "label": "相关考点演示（立体截面器）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/15833801 立体截面图（三点定截面+面夹角与边比例辨析）.md",
+      "qid": "15833801",
+      "year": "2026",
+      "region": "广西",
+      "paper": "2026年广西区考公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 立体截面图（三点定截面+面夹角与边比例辨析）",
+      "isRealExam": true
+    },
+    "fastTrick": "排除法：抓住'e、f面夹角为钝角→截面必非矩形'一步排除A、B；再以'横向长边:斜边≈2:1'的边比例排除C，直接锁定D",
+    "commonTraps": "误把大多面体当作标准长方体，见A、B、C三点直接脑补矩形而错选B；排除矩形后仅停留在'是平行四边形'的定性判断，忽略边的比例关系这一二级辨析而在C、D间犹豫；忽略小正方体与大多面体的接触方式这一暗示面间夹角的图形信息",
+    "analysisImages": [
+      "data/errrc/images/19e67f84c3bce56.jpg"
+    ]
+  },
+  {
+    "id": "errrc:19526333",
+    "version": 1,
+    "source": "2026年国家公务员录用考试《行测》题（行政执法卷网友回忆版）",
+    "title": "2026国考 · 截面图",
+    "track": "geometry",
+    "unitId": "cross_section_real",
+    "unitName": "立体截面与空间剖切真题",
+    "questionRole": "example",
+    "category": "cross_section",
+    "subType": "截面图",
+    "questionText": "左边为给定的多面体，现用经P、Q、R三点的平面对其进行切割，切面为：",
+    "stemImages": [
+      "data/errrc/images/19ad4618910c23c.jpg"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题考查截面图。根据平面公理“过不在一条直线上的三点，有且只有一个平面”可以得出，经过P、Q、R三点可以确定唯一的切面（即截面），即为B项，如下图所示：\n\n故正确答案为B。",
+    "simulatorConfig": {
+      "tab": "cross_section",
+      "label": "相关考点演示（立体截面器）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/19526333 截面图（立体切割—三点定面）.md",
+      "qid": "19526333",
+      "year": "2026",
+      "region": "国考",
+      "paper": "2026年国家公务员录用考试《行测》题（行政执法卷网友回忆版）",
+      "point": "图形推理 / 截面图（立体切割—三点定面）",
+      "isRealExam": true
+    },
+    "fastTrick": "三点定面＋表面描线法：先由Q、R同在底部棱上锁定截面底边QR，再由P点定切面倾斜方向，沿'左侧面→斜面（过P）→顶部小凸起→右侧面'依次描出交线并封闭，对照选项即为B",
+    "commonTraps": "把切面的倾斜方向看反，误选与实际'左低右高'相反的阶梯形A；忽略切面同时穿过顶部小凸起，漏掉截面右侧升高台阶，误选C或D；把截面图当成多面体的外部轮廓投影，而非切割平面与各表面交线围成的封闭平面图形",
+    "analysisImages": [
+      "data/errrc/images/19ad475680baf6d.png"
+    ]
+  },
+  {
+    "id": "errrc:18649985",
+    "version": 1,
+    "source": "2025年重庆市定向选调优秀大学生到基层工作考试《行测》题",
+    "title": "2025选调 · 三点定面）",
+    "track": "geometry",
+    "unitId": "cross_section_real",
+    "unitName": "立体截面与空间剖切真题",
+    "questionRole": "example",
+    "category": "cross_section",
+    "subType": "截面图",
+    "questionText": "下图为15个白色和5个灰色正方体组合而成的多面体，将其经A、B、C三个顶点切开后，正确的截面是（    ）。",
+    "stemImages": [
+      "data/errrc/images/19a24bba091f965.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题选项不严谨，没有正确选项。\n本题考查截面图。根据平面公理“过不在一条直线上的三点，有且只有一个平面”可以得出，A、B、C三个顶点可以确定一个唯一的截面，将图形拆分后，如下图所示：\n \n由于图中是斜切，因此在经过点A所在的小立方体时，该小立方体所在的截面应为长方形，此时由于ef的长度大于小立方体的棱长，因此在长方形截面中横边长度应小于竖边长度，排除C、D两项；又由于点A所在的小立方体为灰色，点B所在的白色小立方体的右边不存在其他小立方体，因此在选项中最后一行的截面图中应只存在一个灰色长方形和一个白色长方形，排除A项。\n故正确答案为B。\n注：本题出题不严谨，由上面拆分后的图形可知，本题B项中的截面图也存在问题，正确的截面应如下图所示，因此考生可以侧重学习解题思路。",
+    "simulatorConfig": {
+      "tab": "cross_section",
+      "label": "相关考点演示（立体截面器）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/18649985 截面图（立体切割-三点定面）.md",
+      "qid": "18649985",
+      "year": "2025",
+      "region": "选调",
+      "paper": "2025年重庆市定向选调优秀大学生到基层工作考试《行测》题",
+      "point": "图形推理 / 截面图（立体切割-三点定面）",
+      "isRealExam": true
+    },
+    "fastTrick": "排除法+局部特征验证：先抓A点所在小立方体的截面形状（斜切成长方形且横边<竖边）秒杀排除C、D，再看最后一行颜色排布（一灰一白）排除A，锁定B",
+    "commonTraps": "忽略斜切经过小立方体时长方形的长宽比例（ef大于棱长→横边小于竖边），误选C或D；忽略颜色对应关系：A点所在立方体为灰色、B点白色立方体右侧无立方体，误选含多余色块的A项；题干本身不严谨（B项截面图亦有瑕疵），纠结于找'完全正确'的选项而浪费时间",
+    "analysisImages": [
+      "data/errrc/images/19a24bc85634d49.png",
+      "data/errrc/images/19a24bedfe20d09.png"
+    ]
+  },
+  {
+    "id": "errrc:13504539",
+    "version": 1,
+    "source": "2025年甘肃公务员录用考试《行测》题（网友回忆版）",
+    "title": "2025甘肃 · 立体截面图",
+    "track": "geometry",
+    "unitId": "cross_section_real",
+    "unitName": "立体截面与空间剖切真题",
+    "questionRole": "example",
+    "category": "cross_section",
+    "subType": "立体截面图",
+    "questionText": "下图为给定的多面体，将其沿a、b、c三个顶点所在的平面切开，其截面是（    ）。",
+    "stemImages": [
+      "data/errrc/images/19599f4c9c221d2.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题考查截面图。根据平面公理“过不在一条直线上的三点，有且只有一个平面”可以得出，经过a、b、c三点可以确定唯一的平面，即所得截面为B项，如下图所示：\n\n故正确答案为B。",
+    "simulatorConfig": {
+      "tab": "cross_section",
+      "label": "相关考点演示（立体截面器）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/13504539 立体截面图（三点定面切割）.md",
+      "qid": "13504539",
+      "year": "2025",
+      "region": "甘肃",
+      "paper": "2025年甘肃公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 立体截面图（三点定面切割）",
+      "isRealExam": true
+    },
+    "fastTrick": "三点描线法（截面必过定点）：在立体图上先标出a、b、c三点，沿'三点定唯一平面'想象切面与各表面的交线，得到'阶梯状'轮廓，结合排除法剔除不含台阶轮廓的A、C、D，直接锁定B",
+    "commonTraps": "忽略截面必须同时经过a、b、c三点，只凭外形相似误选C；空间想象失误，把斜切面想象成平行四边形而误选A；未核对台阶（凹凸）方向，把阶梯走势看反而误选D",
+    "analysisImages": [
+      "data/errrc/images/19599f5a9d36899.png"
+    ]
+  }
+]

@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "test:spatial": "node scripts/validate-spatial-training.mjs && node scripts/validate-spatial-bank.mjs && node scripts/verify-spatial-assessments.mjs",
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"

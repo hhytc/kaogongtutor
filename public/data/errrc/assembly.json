@@ -1,0 +1,803 @@
+[
+  {
+    "id": "errrc:10204640",
+    "version": 1,
+    "source": "2024年河南省公务员录用考试《行测》题（网友回忆版）",
+    "title": "2024河南 · 立体拼合",
+    "track": "geometry",
+    "unitId": "assembly_real",
+    "unitName": "立体拼合与空间组合真题",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合",
+    "questionText": "下图为15个白色和3个灰色正方体组合而成的多面体，其可以由①、②和③三个多面体组合而成，问能填入问号处的是：",
+    "stemImages": [
+      "data/errrc/images/18e4b05339fd968.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "本题考查立体拼合。题干立体图形可以由①、②以及A项旋转后拼合而成，具体过程如下图所示：\n\n故正确答案为A。",
+    "simulatorConfig": {
+      "tab": "assembly",
+      "label": "相关考点演示（立体拼合台）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/10204640 立体拼合（多面体组合：数量守恒+凹凸互补+旋转）.md",
+      "qid": "10204640",
+      "year": "2024",
+      "region": "河南",
+      "paper": "2024年河南省公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 立体拼合（多面体组合：数量守恒+凹凸互补+旋转）",
+      "isRealExam": true
+    },
+    "fastTrick": "数量守恒+凹凸互补法：先用18=①+②+③数出③的块数与灰色块个数做粗筛；再把①②从整体中“挖去”，以剩余空腔为模板与选项逐一旋转比对，仅A能凹凸咬合且灰色块归位。",
+    "commonTraps": "误认为零件只能按图中姿态平移、不能三维旋转，从而错选与①②姿态“顺眼”的选项；只做小正方体计数，发现四个选项数量相同后不知用凹凸形状与灰色落点做二次排除；只比对整体轮廓、忽略灰色正方体的位置对应，导致拼合后颜色对不上",
+    "analysisImages": [
+      "data/errrc/images/18e4b064332e791.png"
+    ]
+  },
+  {
+    "id": "errrc:13504506",
+    "version": 1,
+    "source": "2025年河北省公务员录用考试《行测》题（网友回忆版）",
+    "title": "2025河北 · 凹凸互补）",
+    "track": "geometry",
+    "unitId": "assembly_real",
+    "unitName": "立体拼合与空间组合真题",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合",
+    "questionText": "下图左侧给定的是3×3×3的正方体被分解后的多面体，切去的部分可以由给定的①、②和③三个多面体组合而成。以下哪项能填入问号处？",
+    "stemImages": [
+      "data/errrc/images/19599a9b27ea2f1.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题考查立体拼合。题干正方体中切去的部分可以由①、②以及B项三个多面体旋转后拼合而成，具体拼合过程如下图所示：\n\n故正确答案为B。",
+    "simulatorConfig": {
+      "tab": "assembly",
+      "label": "相关考点演示（立体拼合台）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/13504506 立体拼合（立方体切割重组-凹凸互补）.md",
+      "qid": "13504506",
+      "year": "2025",
+      "region": "河北",
+      "paper": "2025年河北省公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 立体拼合（立方体切割重组-凹凸互补）",
+      "isRealExam": true
+    },
+    "fastTrick": "立体拼合口诀'先数块、再看凸凹、旋转试拼'：①②各为4块的竖直凸字形立体，锁定③为4块且呈水平L形；将B水平旋转试拼，恰与①②咬合成切去部分，直接选B",
+    "commonTraps": "忽略多面体可在三维空间旋转，拿B的原朝向直接对比而误排除，转而误选形状'同向'却咬合不上的C；只数图中可见的小立方体、漏数被遮挡部分，导致切除部分块数判断错误；混淆拼合对象：应拼的是'切去的部分'而非复现左侧剩余图形，方向搞反后逐项全错",
+    "analysisImages": [
+      "data/errrc/images/19599aa491fecd5.png"
+    ]
+  },
+  {
+    "id": "errrc:12019797",
+    "version": 1,
+    "source": "2026年浙江省公务员录用考试《行测》题（C类）（网友回忆版）",
+    "title": "2026浙江 · 由两视图及全等小块反推小立体",
+    "track": "geometry",
+    "unitId": "assembly_real",
+    "unitName": "立体拼合与空间组合真题",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合-由两视图及全等小块反推小立体",
+    "questionText": "下面是某立体图形的正面和后面，它由三个完全相同的小立体图形组成，该小立体图形是：",
+    "stemImages": [
+      "data/errrc/images/19af955e10661ab.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "D",
+    "detailedAnalysis": "本题考查立体拼合，题干立体图形可由3个完全相同的D项图形拼合而成，具体拼合方式如下图所示。\n\n故正确答案为D。",
+    "simulatorConfig": {
+      "tab": "assembly",
+      "label": "相关考点演示（立体拼合台）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/12019797 立体拼合-由两视图及全等小块反推小立体（数小立方体+旋转试装）.md",
+      "qid": "12019797",
+      "year": "2026",
+      "region": "浙江",
+      "paper": "2026年浙江省公务员录用考试《行测》题（C类）（网友回忆版）",
+      "point": "图形推理 / 立体拼合-由两视图及全等小块反推小立体（数小立方体+旋转试装）",
+      "isRealExam": true
+    },
+    "fastTrick": "拼合试装法（凹凸咬合）+数块校验：先确认每块含5个小立方体，再抓住'正面中部缺口、背面完整'这一对约束，将D项图形在脑中旋转三次互相咬合拼装验证；A/B/C用凹凸形状差异快速排除",
+    "commonTraps": "把正面缺口当成贯穿的空洞，误以为该位置前后都没有方块，导致整体方块数数错；只验证正面轮廓是否相似，忽略背面轮廓必须完整这一约束，误选形状接近的选项；忽略'完全相同'允许旋转（翻转）后再拼，误以为三块必须同向摆放，从而觉得无解或排除正确答案",
+    "analysisImages": [
+      "data/errrc/images/19af956dbb8443e.png"
+    ]
+  },
+  {
+    "id": "errrc:16593237",
+    "version": 1,
+    "source": "2024年广东省公务员录用考试《行测》题（网友回忆版）",
+    "title": "2024广东 · 数量守恒",
+    "track": "geometry",
+    "unitId": "assembly_real",
+    "unitName": "立体拼合与空间组合真题",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合-数量守恒",
+    "questionText": "下列立体图形，最不可能由两个左侧立体图形拼接成的是（    ）。",
+    "stemImages": [
+      "data/errrc/images/18e47c64ecda153.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "D",
+    "detailedAnalysis": "本题考查立体拼合。\nA项：如下图所示，可以由两个左侧立体图形拼接成，排除；\n\nB项：如下图所示，可以由两个左侧立体图形拼接成，排除；\n\nC项：如下图所示，可以由两个左侧立体图形拼接成，排除；\n\nD项：左侧立体图形为4个小方块，由两个左侧立体图形拼接成的立体图形应为8个小方块，而该项只有7个小方块，无法由两个左侧立体图形拼接成，当选。\n本题为选非题，故正确答案为D。",
+    "simulatorConfig": {
+      "tab": "assembly",
+      "label": "相关考点演示（立体拼合台）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/16593237 立体拼合-数量守恒（小方块计数）.md",
+      "qid": "16593237",
+      "year": "2024",
+      "region": "广东",
+      "paper": "2024年广东省公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 立体拼合-数量守恒（小方块计数）",
+      "isRealExam": true
+    },
+    "fastTrick": "数量守恒法（数块法）：左图4块→两个拼成必为8块；快速清点各选项，D只有7块，直接锁定D，无需逐项试拼",
+    "commonTraps": "忽略“最不可能”的选非问法，误把能拼成的A/B/C当答案；数块时漏数被遮挡的小方块，把A/B/C或D的块数数错；误以为拼接可以重叠、切割或留空，忽视4+4=8这一数量必要条件",
+    "analysisImages": [
+      "data/errrc/images/18e47c6e823d708.png",
+      "data/errrc/images/18e47c7140481dd.png",
+      "data/errrc/images/18e47c73ffbeb20.png"
+    ]
+  },
+  {
+    "id": "errrc:13504321",
+    "version": 1,
+    "source": "2025年云南省公务员录用考试《行测》题（网友回忆版）",
+    "title": "2025云南 · 多面体组合",
+    "track": "geometry",
+    "unitId": "assembly_real",
+    "unitName": "立体拼合与空间组合真题",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合-多面体组合",
+    "questionText": "左下图为15个白色和3个灰色正方体组合而成的多面体，其可以由以下4项中除哪项外的3个小多面体组合而成？",
+    "stemImages": [
+      "data/errrc/images/19598b5b562d240.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "D",
+    "detailedAnalysis": "本题考查立体拼合。题干多面体可以由A、B、C中的小多面体（A、C 两项中的小多面体需要先旋转）拼合而成，具体拼合过程如下图所示。\n\n本题为选非题，故正确答案为D。",
+    "simulatorConfig": {
+      "tab": "assembly",
+      "label": "相关考点演示（立体拼合台）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/13504321 立体拼合-多面体组合（选非题）.md",
+      "qid": "13504321",
+      "year": "2025",
+      "region": "云南",
+      "paper": "2025年云南省公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 立体拼合-多面体组合（选非题）",
+      "isRealExam": true
+    },
+    "fastTrick": "灰块锚定+旋转试拼法：以题干3个灰色块所在的中部凹口为锚点，先放入无需旋转的B项，再旋转A、C两项试拼（解析明确A、C旋转后即可拼成），D项怎么旋转都无法嵌入凹空区域；选非问法直接锁定D",
+    "commonTraps": "忽略'除哪项外'的选非问法，把能拼合出题干多面体的A/B/C误当答案；忽略小多面体可以旋转这一前提（A、C须先旋转），按选项原图方向硬套而误判A、C无法拼合；只做块数与灰块数量的守恒清点（各选项均含1个灰块，数量信息不足以排除），不进行空间凹凸契合验证",
+    "analysisImages": [
+      "data/errrc/images/19598b6238a67f3.png"
+    ]
+  },
+  {
+    "id": "errrc:10297423",
+    "version": 1,
+    "source": "2025年四川省考/选调公务员录用考试《行测》试题（网友回忆版）",
+    "title": "2025四川 · 立体拼合",
+    "track": "geometry",
+    "unitId": "assembly_real",
+    "unitName": "立体拼合与空间组合真题",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "图形推理-立体拼合",
+    "questionText": "左图给定的是由等大的15个白色正方体和3个黑色正方体堆叠而成的多面体的正视图和后视图，该多面体可以由①、②和③三个多面体拼合而成，问以下哪一项能填入问号处？",
+    "stemImages": [
+      "data/errrc/images/193a60d8c855ce3.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "D",
+    "detailedAnalysis": "本题考查立体拼合。题干立体图形可以由①、②以及D项旋转拼合而成，如下图所示：\n\n故正确答案为D。",
+    "simulatorConfig": {
+      "tab": "assembly",
+      "label": "相关考点演示（立体拼合台）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/10297423 图形推理-立体拼合（正方体堆叠的拆分与重组）.md",
+      "qid": "10297423",
+      "year": "2025",
+      "region": "四川",
+      "paper": "2025年四川省考/选调公务员录用考试《行测》试题（网友回忆版）",
+      "point": "图形推理 / 图形推理-立体拼合（正方体堆叠的拆分与重组）",
+      "isRealExam": true
+    },
+    "fastTrick": "黑块定位法＋凹凸互补排除法：先由①②各含1黑推出③必含1黑（四选项同，不排除）；再看黑块相对位置——原图第三个黑块在高凸端角部，B、D黑块在凸起顶端、A、C黑块在低平端，秒杀排除A、C；最后旋转嵌入验证，仅D与①②咬合无重叠，锁定D。",
+    "commonTraps": "只验证'每块含1个黑块'的数量守恒就草率作答，忽略黑块在组件中的相对位置（高凸端还是低平端），无法区分A/C与B/D；误以为选项图形必须与拼入方向一致摆放；实际立体拼合中组件可任意旋转，D需旋转后才能嵌入，不能因'画向不同'而误排；A与C、B与D外形极为相近，仅白块阶梯走向或黑块位置有细微差异，需逐层逐块比对凹凸，粗看易选错",
+    "analysisImages": [
+      "data/errrc/images/193a9978872442a.png",
+      "data/errrc/images/193a997a5641176.png"
+    ]
+  },
+  {
+    "id": "errrc:16070184",
+    "version": 1,
+    "source": "2026年湖北省公务员录用考试《行测》题（网友回忆版）",
+    "title": "2026湖北 · 立体拼合",
+    "track": "geometry",
+    "unitId": "assembly_real",
+    "unitName": "立体拼合与空间组合真题",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合",
+    "questionText": "从所给的四个选项中，选择最合适的一个填入问号处，使之呈现一定的规律性：",
+    "stemImages": [
+      "data/errrc/images/19cec53710eaad8.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题考查立体拼合。第一组图的图一由图二和图三拼合而成，第二组图的图一也应由图二与“？”处图形拼合而成，对应B项。 \n\n故正确答案为B。",
+    "simulatorConfig": {
+      "tab": "assembly",
+      "label": "相关考点演示（立体拼合台）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/16070184 立体拼合（小立方体分块拼合还原）.md",
+      "qid": "16070184",
+      "year": "2026",
+      "region": "湖北",
+      "paper": "2026年湖北省公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 立体拼合（小立方体分块拼合还原）",
+      "isRealExam": true
+    },
+    "fastTrick": "立体拼合互补法：先数图一与图二的立方体块数，差值锁定问号处块数；再看图二凸出的'舌头'对应问号处须凹进的'槽'，凹凸互补快速排除，仅B能与图二严丝合缝拼成图一",
+    "commonTraps": "只看平面轮廓相似，忽略拼块须在三维空间无重叠、无空缺地咬合；未考虑拼块放入前可旋转（甚至翻转），只在原图方向上比对而误排正确项；忽略小立方体数量守恒，凭主观感觉选块数不符的选项",
+    "analysisImages": [
+      "data/errrc/images/19cec54a2136ef2.png"
+    ]
+  },
+  {
+    "id": "errrc:19526428",
+    "version": 1,
+    "source": "2026年国家公务员录用考试《行测》题（副省级网友回忆版）",
+    "title": "2026国考 · 立体拼合",
+    "track": "geometry",
+    "unitId": "assembly_real",
+    "unitName": "立体拼合与空间组合真题",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合",
+    "questionText": "左边为由12个白色正方体和3个灰色正方体组合而成的多面体前后两面直观图，问其可以由除哪项外的三个多面体组合而成？",
+    "stemImages": [
+      "data/errrc/images/19ad4e04709e585.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题考查立体拼合。题干立体图形可以由A、C、D三项旋转后拼合而成，具体过程如下图所示：\n\n本题为选非题，故正确答案为B。",
+    "simulatorConfig": {
+      "tab": "assembly",
+      "label": "相关考点演示（立体拼合台）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/19526428 立体拼合（多块拼合·选非题）.md",
+      "qid": "19526428",
+      "year": "2026",
+      "region": "国考",
+      "paper": "2026年国家公务员录用考试《行测》题（副省级网友回忆版）",
+      "point": "图形推理 / 立体拼合（多块拼合·选非题）",
+      "isRealExam": true
+    },
+    "fastTrick": "选非排除法+灰块锚定：先确认四个选项各含且仅含1个灰块（数量上无法排除），再用前后两面直观图分层还原题干凹凸轮廓，将A、C、D旋转试拼均能凹凸契合，唯B旋转后无法补齐空缺轮廓，直接锁定B",
+    "commonTraps": "选非题思维定势：习惯性去找'能拼合'的三项而误选，漏看题干'除哪项外'；忽略'旋转后拼合'：仅按选项原图朝向与题干硬比对，把本可旋转契合的A、C、D误判为不可用；只看一面直观图数块或定轮廓，忽略另一面中被遮挡的方块，导致空缺形状还原出错",
+    "analysisImages": [
+      "data/errrc/images/19ad4f05a98dd0e.png"
+    ]
+  },
+  {
+    "id": "errrc:19526323",
+    "version": 1,
+    "source": "2026年国家公务员录用考试《行测》题（地市级网友回忆版）",
+    "title": "2026国考 · 立体拼合",
+    "track": "geometry",
+    "unitId": "assembly_real",
+    "unitName": "立体拼合与空间组合真题",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合",
+    "questionText": "左边为由12个白色正方体和3个灰色正方体组合而成的多面体前后两面直观图，问其可以由除哪项外的三个多面体组合而成？",
+    "stemImages": [
+      "data/errrc/images/19bfd11ea41d50e.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "C",
+    "detailedAnalysis": "本题考查立体拼合。题干多面体可以由A、B、D三项中的立体图形拼合而成，具体拼合过程如下图所示：\n\n本题为选非题，故正确答案为C。",
+    "simulatorConfig": {
+      "tab": "assembly",
+      "label": "相关考点演示（立体拼合台）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/19526323 立体拼合（多块组合·选非型）.md",
+      "qid": "19526323",
+      "year": "2026",
+      "region": "国考",
+      "paper": "2026年国家公务员录用考试《行测》题（地市级网友回忆版）",
+      "point": "图形推理 / 立体拼合（多块组合·选非型）",
+      "isRealExam": true
+    },
+    "fastTrick": "灰块定位法＋旋转嵌入：以每块中唯一的灰色正方体为锚点，对照题干前、后两面直观图中灰色方块的位置逐一旋转试嵌，A、B、D凹凸互补可拼入（配合数块：D为6块，A、B合计9块，共15块），C怎么旋转都无法契合，选非故选C",
+    "commonTraps": "选非题审题失误：误把'除哪项外'理解成'选能拼合的一项'，错选A、B、D之一；忽略'前后两面直观图'是同一多面体的两个视角，误当作两个不同多面体或重复计数灰色方块；只凑小方块总数（15块）而忽略凹凸形状是否互补，误认为数量相等的组合即可拼合",
+    "analysisImages": [
+      "data/errrc/images/19ad3c9ffb79221.png"
+    ]
+  },
+  {
+    "id": "errrc:18643993",
+    "version": 1,
+    "source": "2026年广东省公务员录用考试《行测》题（网友回忆版）",
+    "title": "2026广东 · 相同小单元",
+    "track": "geometry",
+    "unitId": "assembly_real",
+    "unitName": "立体拼合与空间组合真题",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合-相同小单元",
+    "questionText": "下列选项中最符合所给图形规律的是（    ）。",
+    "stemImages": [
+      "data/errrc/images/19b06c990d123f8.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题考查立体拼合。题干立体图形分别是由1个、2个、3个图1的“L”型小方块拼合而成，故？处应由4个图1的“L”型小方块拼合而成，只有B项符合。具体拼合方式如下图所示：\n\n故正确答案为B。",
+    "simulatorConfig": {
+      "tab": "assembly",
+      "label": "相关考点演示（立体拼合台）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/18643993 立体拼合-相同小单元（L型三连块）数量递增与拆分验证.md",
+      "qid": "18643993",
+      "year": "2026",
+      "region": "广东",
+      "paper": "2026年广东省公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 立体拼合-相同小单元（L型三连块）数量递增与拆分验证",
+      "isRealExam": true
+    },
+    "fastTrick": "数块法+结构验证：先数各图小立方体个数得3、6、9、？→12，排除块数不符的D；再对块数凑够的A、C检查能否拆成4个L型三连块——含1×1三层高柱的无法拆分，排除，锁定B",
+    "commonTraps": "只数小立方体总数凑12就选，忽略'必须由L型小方块拼合'的结构约束（如含三层高柱的图形无法拆成L型单元）；立体图存在遮挡，漏数被挡住的小立方体导致总数判断错误；只盯着平面投影或位置变化找规律，忽略数量递增（1、2、3、4个L块）这一核心线索",
+    "analysisImages": [
+      "data/errrc/images/19b06ca30acb9a7.png"
+    ]
+  },
+  {
+    "id": "errrc:19283916",
+    "version": 1,
+    "source": "2025年国家公务员录用考试《行测》题（地市级网友回忆版）",
+    "title": "2025国考 · 立体拼合",
+    "track": "geometry",
+    "unitId": "assembly_real",
+    "unitName": "立体拼合与空间组合真题",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合",
+    "questionText": "左边为15个白色和3个灰色正方体组合而成多面体的正、反两面直观图，其可以由①、②和③三个多面体组合而成，问哪一项能填入问号处？",
+    "stemImages": [
+      "data/errrc/images/193d27565bc1e49.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题考查立体拼合。题干立体图形可以由①、②以及B项旋转后拼合而成，如下图所示：\n\n故正确答案为B。",
+    "simulatorConfig": {
+      "tab": "assembly",
+      "label": "相关考点演示（立体拼合台）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/19283916 立体拼合（组件互补拼合+灰色块颜色对位）.md",
+      "qid": "19283916",
+      "year": "2025",
+      "region": "国考",
+      "paper": "2025年国家公务员录用考试《行测》题（地市级网友回忆版）",
+      "point": "图形推理 / 立体拼合（组件互补拼合+灰色块颜色对位）",
+      "isRealExam": true
+    },
+    "fastTrick": "灰色数量守恒排除法+凹凸互补验证：整体3灰、①1灰、②1灰 ⇒ ③必只有1个灰块，先排除含2个灰块的C；再锁定①灰块在顶、②灰块在底臂末端，拼合后③的灰块须补在上层台阶转角，B旋转后吻合，直接选B",
+    "commonTraps": "只比较外形轮廓、忽略灰色块位置对应：A、B、D轮廓几乎相同仅灰块位置不同，不盯灰块必错；忽视组件允许三维旋转，按①②原图朝向硬套拼合，把可旋转补位的B误判为不合；只看正面直观图、漏用反面直观图，导致灰块前后方位判断错误而误选A或D",
+    "analysisImages": [
+      "data/errrc/images/193d27598f01637.png"
+    ]
+  },
+  {
+    "id": "errrc:3523525",
+    "version": 1,
+    "source": "2021年甘肃公务员录用考试《行测》题（网友回忆版）",
+    "title": "2021甘肃 · 立体拼合",
+    "track": "geometry",
+    "unitId": "assembly_real",
+    "unitName": "立体拼合与空间组合真题",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合",
+    "questionText": "从所给的四个选项中，选择最合适的一个选项拼搭出题干中的图形。",
+    "stemImages": [
+      "data/errrc/images/17df62f821fa2ab.jpg"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "本题考查立体拼合。根据题干给出的立体图形可知该图形共由8个小立方体组成，观察选项发现，C、D两项均共有9个小正方体，与题干不符，排除；\n再逐一分析剩下两个选项：\nA项：将图①立起来，再将图②进行左右上下翻转，进行拼合即可得到题干立体图形，如图所示，当选；\n\nB项：选项中包含两块凸起的小立方体，但是题干立体图形中只有一块小立方体是凸起的，所以无法得到题干立体图形，排除。\n故正确答案为A。",
+    "simulatorConfig": {
+      "tab": "assembly",
+      "label": "相关考点演示（立体拼合台）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/3523525 立体拼合（小立方体计数+旋转翻转拼合）.md",
+      "qid": "3523525",
+      "year": "2021",
+      "region": "甘肃",
+      "paper": "2021年甘肃公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 立体拼合（小立方体计数+旋转翻转拼合）",
+      "isRealExam": true
+    },
+    "fastTrick": "数量排除法+凸起计数法：先数各选项小立方体总数（题干共8个）秒杀排除C、D，再数凸起块数（题干仅1个凸起）排除B，锁定A，无需真正动手拼合",
+    "commonTraps": "忽略立体拼合中组件允许任意旋转和翻转，误以为图形方向须与选项呈现方向一致而错排A；只按可见面清点小立方体，漏数被遮挡的立方体，导致总数判断失误；在A、B二选一时只盯着单块形状比对，忽视'凸起块数'这一整体结构特征而陷入纠结",
+    "analysisImages": [
+      "data/errrc/images/17df62fd00c181d.jpg"
+    ]
+  },
+  {
+    "id": "errrc:4818019",
+    "version": 1,
+    "source": "2022年四川省公务员录用考试《行测》题（网友回忆版）",
+    "title": "2022四川 · 立体拼合",
+    "track": "geometry",
+    "unitId": "assembly_real",
+    "unitName": "立体拼合与空间组合真题",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合",
+    "questionText": "下图为同样大小的18个白色正方体和3个灰色正方体堆叠而成的多面体正视图和后视图。该多面体可拆分为①、②、③和④共4个多面体的组合，下列哪一项能填入问号处？",
+    "stemImages": [
+      "data/errrc/images/17fc5edc6330782.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "本题考查立体拼合，如下图所示，立体图可以由①、②、③以及A项拼合而成。\n\n故正确答案为A。",
+    "simulatorConfig": {
+      "tab": "assembly",
+      "label": "相关考点演示（立体拼合台）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/4818019 立体拼合（正方体堆叠多面体的拆分与重组）.md",
+      "qid": "4818019",
+      "year": "2022",
+      "region": "四川",
+      "paper": "2022年四川省公务员录用考试《行测》题（网友回忆版）",
+      "point": "图形推理 / 立体拼合（正方体堆叠多面体的拆分与重组）",
+      "isRealExam": true
+    },
+    "fastTrick": "排除法＋凹凸互补试拼：先用'灰块分配'确定④全白、用块数守恒锁定④的块数，排除C（平板2×2）、D（竖直L形）等形状明显不合的选项，再将剩余空腔与A、B旋转比对，凹凸能咬合的A即为答案",
+    "commonTraps": "只数视图可见方块而漏数被遮挡的正方体，块数守恒算错；忽略灰色正方体在①②③中已各占1个的分配关系，颜色判断失误；A与B外形相近，未在空间中旋转就凭平面轮廓草率判断，误选凸起方向相反的B",
+    "analysisImages": [
+      "data/errrc/images/17fc5eeb1931c08.png"
+    ]
+  },
+  {
+    "id": "errrc:5893669",
+    "version": 1,
+    "source": "2024年国家公务员录用考试《行测》题（行政执法卷网友回忆版）",
+    "title": "2024国考 · 凹凸互补+灰色块颜色对应）",
+    "track": "geometry",
+    "unitId": "assembly_real",
+    "unitName": "立体拼合与空间组合真题",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合",
+    "questionText": "左图为15个白色正方体和3个灰色正方体组合而成的多面体，其可以由①、②和③三个多面体组合而成，问哪项能填入问号处？",
+    "stemImages": [
+      "data/errrc/images/18c0a9536754076.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "本题考查立体拼合，如下图所示，立体图形可由①、②以及A项拼合而成。\n\n故正确答案为A。",
+    "simulatorConfig": {
+      "tab": "assembly",
+      "label": "相关考点演示（立体拼合台）",
+      "isExact": false
+    },
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/5893669 立体拼合（多块拼合-凹凸互补+灰色块颜色对应）.md",
+      "qid": "5893669",
+      "year": "2024",
+      "region": "国考",
+      "paper": "2024年国家公务员录用考试《行测》题（行政执法卷网友回忆版）",
+      "point": "图形推理 / 立体拼合（多块拼合-凹凸互补+灰色块颜色对应）",
+      "isRealExam": true
+    },
+    "fastTrick": "凹凸互补法+颜色定位：先在整体图中'挖去'①和②，把剩余空腔（注意块体可三维旋转）与四个选项比对轮廓，再用灰块'居中被包围'的位置特征排除B、C、D，锁定A",
+    "commonTraps": "只比对形状不做颜色守恒：忽略灰块数量与位置的对应关系，误选灰块在顶端的B或C；忽视三维旋转：把选项按纸面呈现方向直接硬套，未旋转就判定'不吻合'而错排正确项；凹凸方向看反：将空腔的凸凹与块体的凸凹弄反，产生镜像错误；忽略被遮挡方块：整体中被遮挡的灰色正方体未纳入考量，导致灰块位置判断失误",
+    "analysisImages": [
+      "data/errrc/images/18c0a9ac1a254b8.png"
+    ]
+  }
+]

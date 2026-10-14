@@ -1,0 +1,1432 @@
+[
+  {
+    "id": "errrc:19283859",
+    "version": 1,
+    "source": "2025年国家公务员录用考试《行测》题（地市级网友回忆版）",
+    "title": "2025国考地市级 · 截面图",
+    "track": "geometry",
+    "unitId": "cross_section_guokao",
+    "unitName": "立体截面与空心组合体",
+    "questionRole": "example",
+    "category": "cross_section",
+    "subType": "截面图（立体切割——三点定面）",
+    "questionText": "左边为给定的多面体，现用经P、Q、R三点的平面对其进行切割，问哪个选项是其切面？",
+    "stemImages": [
+      "data/errrc/images/19381b61ea714a5.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "本题考查截面图。根据平面公理“过不在一条直线上的三点，有且只有一个平面”可以得出，经过P、Q、R三点可以确定的唯一切面（即截面），即为A项，如下图所示：\n故正确答案为A。",
+    "analysisImages": [
+      "data/errrc/images/19381b6a1957bfe.png"
+    ],
+    "knowledgePoints": [
+      "三点确定切面",
+      "空心与组合体截面",
+      "选非与存在性判断"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/19283859 截面图（立体切割——三点定面）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/19283859%20%E6%88%AA%E9%9D%A2%E5%9B%BE%EF%BC%88%E7%AB%8B%E4%BD%93%E5%88%87%E5%89%B2%E2%80%94%E2%80%94%E4%B8%89%E7%82%B9%E5%AE%9A%E9%9D%A2%EF%BC%89.md",
+      "qid": "19283859",
+      "year": "2025",
+      "region": "国考",
+      "paper": "2025年国家公务员录用考试《行测》题（地市级网友回忆版）",
+      "point": "图形推理 / 截面图（立体切割——三点定面）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2025",
+          "paper": "行政执法卷",
+          "questionNumber": "80",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730493"
+        },
+        {
+          "year": "2025",
+          "paper": "地市卷",
+          "questionNumber": "81",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%9C%B0%E5%B8%82%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730489"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:19283877",
+    "version": 1,
+    "source": "2025年国家公务员录用考试《行测》题（行政执法卷网友回忆版）",
+    "title": "2025国考行政执法 · 立体拼合",
+    "track": "geometry",
+    "unitId": "assembly_guokao",
+    "unitName": "立体拼合与方块约束",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合（多组件拼合·选非题）",
+    "questionText": "以下为4个由若干棱长为1的正方体拼成的多面体，将它们在3×3×4空间内进行拼接，不可能拼成以下四个选项中的哪一个多面体？",
+    "stemImages": [
+      "data/errrc/images/19381dc08764e3b.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "C",
+    "detailedAnalysis": "本题考查立体拼合。如下图所示，A、B、D三项均能由题干多面体拼接而成。\n本题为选非题，故正确答案为C。",
+    "analysisImages": [
+      "data/errrc/images/19381dca4c4f487.png"
+    ],
+    "knowledgePoints": [
+      "体积与方块数量守恒",
+      "凹凸互补",
+      "颜色与多组件约束"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/19283877 立体拼合（多组件拼合·选非题）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/19283877%20%E7%AB%8B%E4%BD%93%E6%8B%BC%E5%90%88%EF%BC%88%E5%A4%9A%E7%BB%84%E4%BB%B6%E6%8B%BC%E5%90%88%C2%B7%E9%80%89%E9%9D%9E%E9%A2%98%EF%BC%89.md",
+      "qid": "19283877",
+      "year": "2025",
+      "region": "国考",
+      "paper": "2025年国家公务员录用考试《行测》题（行政执法卷网友回忆版）",
+      "point": "图形推理 / 立体拼合（多组件拼合·选非题）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2025",
+          "paper": "行政执法卷",
+          "questionNumber": "81",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730493"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:19283952",
+    "version": 1,
+    "source": "2025年国家公务员录用考试《行测》题（地市级网友回忆版）",
+    "title": "2025国考地市级 · 空间重构-外表面展开图",
+    "track": "geometry",
+    "unitId": "origami_guokao",
+    "unitName": "空间重构与外表面展开",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-外表面展开图（公共边法）",
+    "questionText": "下图为4个黑色、8个白色正方体粘接成的长方体，问哪一项可能是其正确的外表面展开图?",
+    "stemImages": [
+      "data/errrc/images/1938250367ecfe7.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "D",
+    "detailedAnalysis": "本题为空间重构题，可以通过公共边进行判断，由构成直角的两条边为公共边可知，公共边两侧对应的黑白块颜色应相同，逐一进行分析。\nA项：公共边①和②两侧黑白块颜色不同，选项与题干不一致，排除；\nB项：公共边①和②两侧黑白块颜色不同，选项与题干不一致，排除；\nC项：公共边①和②、③和④两侧黑白块颜色不同，选项与题干不一致，排除；\nD项：公共边①和②、③和④、⑤和⑥两侧黑白块颜色均相同，选项与题干一致，当选。\n故正确答案为D。",
+    "analysisImages": [
+      "data/errrc/images/193865fb68c4315.jpg"
+    ],
+    "knowledgePoints": [
+      "相对面与相邻面",
+      "公共边与公共顶点",
+      "图案方向与旋转"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/19283952 空间重构-外表面展开图（公共边法）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/19283952%20%E7%A9%BA%E9%97%B4%E9%87%8D%E6%9E%84-%E5%A4%96%E8%A1%A8%E9%9D%A2%E5%B1%95%E5%BC%80%E5%9B%BE%EF%BC%88%E5%85%AC%E5%85%B1%E8%BE%B9%E6%B3%95%EF%BC%89.md",
+      "qid": "19283952",
+      "year": "2025",
+      "region": "国考",
+      "paper": "2025年国家公务员录用考试《行测》题（地市级网友回忆版）",
+      "point": "图形推理 / 空间重构-外表面展开图（公共边法）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2025",
+          "paper": "地市卷",
+          "questionNumber": "80",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%9C%B0%E5%B8%82%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730489"
+        },
+        {
+          "year": "2025",
+          "paper": "副省卷",
+          "questionNumber": "86",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730497"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:19283965",
+    "version": 1,
+    "source": "2025年国家公务员录用考试《行测》题（副省级网友回忆版）",
+    "title": "2025国考副省级 · 图形推理-截面图",
+    "track": "geometry",
+    "unitId": "cross_section_guokao",
+    "unitName": "立体截面与空心组合体",
+    "questionRole": "example",
+    "category": "cross_section",
+    "subType": "图形推理-截面图（立体切割·三点定面）",
+    "questionText": "左边为给定的多面体，现用经P、Q、R三个顶点的平面对其进行切割，问哪个选项是其切面？",
+    "stemImages": [
+      "data/errrc/images/1938288e2b60142.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题考查截面图。根据平面公理“过不在一条直线上的三点，有且只有一个平面”可以得出，经过P、Q、R三点可以确定唯一的平面，即切面为B项，如下图所示：\n故正确答案为B。",
+    "analysisImages": [
+      "data/errrc/images/193828954c46519.png"
+    ],
+    "knowledgePoints": [
+      "三点确定切面",
+      "空心与组合体截面",
+      "选非与存在性判断"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/19283965 图形推理-截面图（立体切割·三点定面）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/19283965%20%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86-%E6%88%AA%E9%9D%A2%E5%9B%BE%EF%BC%88%E7%AB%8B%E4%BD%93%E5%88%87%E5%89%B2%C2%B7%E4%B8%89%E7%82%B9%E5%AE%9A%E9%9D%A2%EF%BC%89.md",
+      "qid": "19283965",
+      "year": "2025",
+      "region": "国考",
+      "paper": "2025年国家公务员录用考试《行测》题（副省级网友回忆版）",
+      "point": "图形推理 / 图形推理-截面图（立体切割·三点定面）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2025",
+          "paper": "副省卷",
+          "questionNumber": "87",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2025%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89---%E4%BC%B0%E5%88%86.pdf?time=1733730497"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:19526329",
+    "version": 1,
+    "source": "2026年国家公务员录用考试《行测》题（副省级网友回忆版）",
+    "title": "2026国考副省级 · 空间重构-展开图与立体图对应",
+    "track": "geometry",
+    "unitId": "origami_guokao",
+    "unitName": "空间重构与外表面展开",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-展开图与立体图对应（特征面描边标号匹配公共边）",
+    "questionText": "下图为由2个正方体组合而成的长方体，问这2个正方体的外表面展开图可能分别是：",
+    "stemImages": [
+      "data/errrc/images/19ad3d242ab3ff9.png",
+      "data/errrc/images/19ad3d364a5e3fa.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "②和④"
+      },
+      {
+        "key": "B",
+        "text": "②和③"
+      },
+      {
+        "key": "C",
+        "text": "①和④"
+      },
+      {
+        "key": "D",
+        "text": "①和③"
+      }
+    ],
+    "correctAnswer": "D",
+    "detailedAnalysis": "将题干2个正方体的面标上字母序号，并在立体图形和外表面展开图的“T”字形面（面e和面g）中以“T”字形中线端点为起始点，顺时针描边标号，如下图所示。\n图①中，标出“T字形”面中对应的边2和边3后发现，二者与题干右侧正方体中面g的边2和边3对应一致，故图①可能是题干右侧正方体的外表面展开图；\n图②中，标出“T字形”面中对应的边2和边3后发现，二者与题干右侧正方体中面g的边2和边3对应不一致，故图②不可能是题干右侧正方体的外表面展开图，标出“T字形”面中对应的边4后发现，与题干左侧正方体中面e的边4对应不一致，故图②不可能是题干左侧正方体的外表面展开图；\n图③中，标出“T字形”面中对应的边4后发现，该公共边与题干左侧正方体中面e的边4对应一致，故图③可能是题干左侧正方体的外表面展开图；\n图④中，标出“T字形”面中对应的边2和边3后发现，二者与题干右侧正方体中面g的边2和边3对应不一致，故图④不可能是题干右侧正方体的外表面展开图，标出“T字形”面中对应的边4后发现，与题干左侧正方体中面e的边4对应不一致，故图④不可能是题干左侧正方体的外表面展开图。\n综上，2个正方体的外表面展开图可能是①和③，对应D项。\n故正确答案为D。",
+    "analysisImages": [
+      "data/errrc/images/19ad40bd0e5d0be.png",
+      "data/errrc/images/19ad3d646e78c43.png"
+    ],
+    "knowledgePoints": [
+      "相对面与相邻面",
+      "公共边与公共顶点",
+      "图案方向与旋转"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/19526329 空间重构-展开图与立体图对应（特征面描边标号匹配公共边）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/19526329%20%E7%A9%BA%E9%97%B4%E9%87%8D%E6%9E%84-%E5%B1%95%E5%BC%80%E5%9B%BE%E4%B8%8E%E7%AB%8B%E4%BD%93%E5%9B%BE%E5%AF%B9%E5%BA%94%EF%BC%88%E7%89%B9%E5%BE%81%E9%9D%A2%E6%8F%8F%E8%BE%B9%E6%A0%87%E5%8F%B7%E5%8C%B9%E9%85%8D%E5%85%AC%E5%85%B1%E8%BE%B9%EF%BC%89.md",
+      "qid": "19526329",
+      "year": "2026",
+      "region": "国考",
+      "paper": "2026年国家公务员录用考试《行测》题（副省级网友回忆版）",
+      "point": "图形推理 / 空间重构-展开图与立体图对应（特征面描边标号匹配公共边）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2026",
+          "paper": "行政执法卷",
+          "questionNumber": "81",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2026%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1764503955"
+        },
+        {
+          "year": "2026",
+          "paper": "副省卷",
+          "questionNumber": "87",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2026%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89-%E4%BC%B0%E5%88%86.pdf?time=1764726077"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:19526397",
+    "version": 1,
+    "source": "2026年国家公务员录用考试《行测》题（副省级网友回忆版）",
+    "title": "2026国考副省级 · 空间重构-三视图",
+    "track": "geometry",
+    "unitId": "views_guokao",
+    "unitName": "三视图与观察投影",
+    "questionRole": "example",
+    "category": "views",
+    "subType": "空间重构-三视图（含黑白方块的视图投影判定）",
+    "questionText": "左边为由15个白色正方体和3个黑色正方体组合而成的多面体俯视图和左视图，其正视图可能是：",
+    "stemImages": [
+      "data/errrc/images/19ad4d2221d7e6b.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题考查三视图。题干中俯视图中间一列最下方为黑色正方形，左视图最右列只有最下方一个黑色正方形，则对应选项中正视图中间一列最下方为黑色正方形，排除C、D两项。\n俯视图、左视图结合选项主视图可以确定立体图形，逐一分析A、B选项。\nA项：结合题干两个视图和A项，可能的立体图形有以下5种情况（注意图④和图⑤两个箭头指向的正方体的下方为黑色正方体），如下图所示。此时在所有情况下，立体图形均只有12个白色正方体，而题干中所给为15个白色正方体，不符合题干要求，排除；\nB项：结合题干两个视图和B项，可以确定立体图形（注意第二层左上角为黑色正方体），如下图所示。此时立体图形有15个白色正方体和3个黑色正方体，符合题干要求，当选。\n故正确答案为B。",
+    "analysisImages": [
+      "data/errrc/images/19bf99090cfe4ae.png",
+      "data/errrc/images/19ad4abf1f928a6.png"
+    ],
+    "knowledgePoints": [
+      "观察方向与投影",
+      "遮挡与可见棱线",
+      "颜色和数量联合约束"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/19526397 空间重构-三视图（含黑白方块的视图投影判定）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/19526397%20%E7%A9%BA%E9%97%B4%E9%87%8D%E6%9E%84-%E4%B8%89%E8%A7%86%E5%9B%BE%EF%BC%88%E5%90%AB%E9%BB%91%E7%99%BD%E6%96%B9%E5%9D%97%E7%9A%84%E8%A7%86%E5%9B%BE%E6%8A%95%E5%BD%B1%E5%88%A4%E5%AE%9A%EF%BC%89.md",
+      "qid": "19526397",
+      "year": "2026",
+      "region": "国考",
+      "paper": "2026年国家公务员录用考试《行测》题（副省级网友回忆版）",
+      "point": "图形推理 / 空间重构-三视图（含黑白方块的视图投影判定）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2026",
+          "paper": "地市卷",
+          "questionNumber": "80",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2026%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%9C%B0%E5%B8%82%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89-%E4%BC%B0%E5%88%86.pdf?time=1764726045"
+        },
+        {
+          "year": "2026",
+          "paper": "副省卷",
+          "questionNumber": "86",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2026%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89-%E4%BC%B0%E5%88%86.pdf?time=1764726077"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:4637338",
+    "version": 1,
+    "source": "2022年国家公务员录用考试《行测》题（副省级网友回忆版）",
+    "title": "2022国考副省级 · 图形推理-立体拼合",
+    "track": "geometry",
+    "unitId": "assembly_guokao",
+    "unitName": "立体拼合与方块约束",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "图形推理-立体拼合（多正方体组合拆分·分层计数+凹凸一致）",
+    "questionText": "左图给定的是由相同正方体堆叠而成的多面体。该多面体可以由①、②和③三个多面体组合而成，以下哪项能填入问号处？",
+    "stemImages": [
+      "data/errrc/images/17d6f30c455e224.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "D",
+    "detailedAnalysis": "本题考查立体拼合。\n观察题干给出的多面体可知，图形可分为3层，由上至下第一层有2个小立方体，第二层有7个小立方体，第三层有9个小立方体。观察发现，图②共有3层，由上至下第一层有2个小立方体，第二层有1个小立方体，第三层有3个小立方体，可以拼合在多面体右侧，如下图所示，则题干多面体第二层还剩余6个小立方体，第三层还剩余6个小立方体。图①最下层的5个小立方体排列形状与题干多面体第二层剩余的形状相似，故图①最下层可以拼合在多面体第二层，最上层可以拼合在多面体第三层，如下图所示。根据凹凸一致的原则，剩余的形状只有D项符合。具体组合方式如下图所示：\n故正确答案为D。",
+    "analysisImages": [
+      "data/errrc/images/17d66414aea14e5.png"
+    ],
+    "knowledgePoints": [
+      "体积与方块数量守恒",
+      "凹凸互补",
+      "颜色与多组件约束"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/4637338 图形推理-立体拼合（多正方体组合拆分·分层计数+凹凸一致）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/4637338%20%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86-%E7%AB%8B%E4%BD%93%E6%8B%BC%E5%90%88%EF%BC%88%E5%A4%9A%E6%AD%A3%E6%96%B9%E4%BD%93%E7%BB%84%E5%90%88%E6%8B%86%E5%88%86%C2%B7%E5%88%86%E5%B1%82%E8%AE%A1%E6%95%B0%2B%E5%87%B9%E5%87%B8%E4%B8%80%E8%87%B4%EF%BC%89.md",
+      "qid": "4637338",
+      "year": "2022",
+      "region": "国考",
+      "paper": "2022年国家公务员录用考试《行测》题（副省级网友回忆版）",
+      "point": "图形推理 / 图形推理-立体拼合（多正方体组合拆分·分层计数+凹凸一致）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2022",
+          "paper": "行政执法卷",
+          "questionNumber": "77",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729910"
+        },
+        {
+          "year": "2022",
+          "paper": "地市卷",
+          "questionNumber": "77",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%B8%82%E5%9C%B0%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729914"
+        },
+        {
+          "year": "2022",
+          "paper": "副省卷",
+          "questionNumber": "82",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729918"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:4637364",
+    "version": 1,
+    "source": "2022年国家公务员录用考试《行测》题（行政执法卷网友回忆版）",
+    "title": "2022国考行政执法 · 截面图",
+    "track": "geometry",
+    "unitId": "cross_section_guokao",
+    "unitName": "立体截面与空心组合体",
+    "questionRole": "example",
+    "category": "cross_section",
+    "subType": "截面图（立体图形剖切）",
+    "questionText": "左图是给定的立体图形，将其从任一面剖开，以下哪项可能是该立体图形的截面？",
+    "stemImages": [
+      "data/errrc/images/17d6636ebfe23a0.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "C",
+    "detailedAnalysis": "本题考查截面图，逐一分析选项。\nA项：无法截出完整的圆环，排除；\nB项：无法截出半圆，排除；\nC项：如下图所示，可以截出，当选；\nD项：长方体中无法截出直角三角形，排除。\n故正确答案为C。",
+    "analysisImages": [
+      "data/errrc/images/17d6637d73c422f.png"
+    ],
+    "knowledgePoints": [
+      "三点确定切面",
+      "空心与组合体截面",
+      "选非与存在性判断"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/4637364 截面图（立体图形剖切）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/4637364%20%E6%88%AA%E9%9D%A2%E5%9B%BE%EF%BC%88%E7%AB%8B%E4%BD%93%E5%9B%BE%E5%BD%A2%E5%89%96%E5%88%87%EF%BC%89.md",
+      "qid": "4637364",
+      "year": "2022",
+      "region": "国考",
+      "paper": "2022年国家公务员录用考试《行测》题（行政执法卷网友回忆版）",
+      "point": "图形推理 / 截面图（立体图形剖切）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2022",
+          "paper": "行政执法卷",
+          "questionNumber": "76",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729910"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:4637401",
+    "version": 1,
+    "source": "2022年国家公务员录用考试《行测》题（地市级网友回忆版）",
+    "title": "2022国考地市级 · 空间重构-六面体折叠",
+    "track": "geometry",
+    "unitId": "origami_guokao",
+    "unitName": "空间重构与外表面展开",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-六面体折叠（画边法比较相邻面找异项）",
+    "questionText": "下列纸盒的外表面展开图中，哪项折叠成的纸盒和其他三个不一样？",
+    "stemImages": [
+      "data/errrc/images/17d663f10730925.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "将选项展开图标上序号，如下图所示（各选项面都相同，故相同的面用相同字母表示），逐一进行分析。\nA项：以面e挨着黑块的点为起点进行顺时针画边（如下图所示），边1对应面f，边2对应面c，边3对应面d；\nB项：以面e挨着黑块的点为起点进行顺时针画边（如下图所示），边1对应面f，边2对应面a，边3对应面d；\nC项：以面e挨着黑块的点为起点进行顺时针画边（如下图所示），边1对应面f，边2对应面a，边3对应面d；\nD项：以面e挨着黑块的点为起点进行顺时针画边（如下图所示），边1对应面f，边2对应面a，边3对应面d。\n综上，只有A项与其他三项不同。\n本题为选非题，故正确答案为A。",
+    "analysisImages": [
+      "data/errrc/images/17d66408869994f.png",
+      "data/errrc/images/17d6640ccb05910.png"
+    ],
+    "knowledgePoints": [
+      "相对面与相邻面",
+      "公共边与公共顶点",
+      "图案方向与旋转"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/4637401 空间重构-六面体折叠（画边法比较相邻面找异项）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/4637401%20%E7%A9%BA%E9%97%B4%E9%87%8D%E6%9E%84-%E5%85%AD%E9%9D%A2%E4%BD%93%E6%8A%98%E5%8F%A0%EF%BC%88%E7%94%BB%E8%BE%B9%E6%B3%95%E6%AF%94%E8%BE%83%E7%9B%B8%E9%82%BB%E9%9D%A2%E6%89%BE%E5%BC%82%E9%A1%B9%EF%BC%89.md",
+      "qid": "4637401",
+      "year": "2022",
+      "region": "国考",
+      "paper": "2022年国家公务员录用考试《行测》题（地市级网友回忆版）",
+      "point": "图形推理 / 空间重构-六面体折叠（画边法比较相邻面找异项）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2022",
+          "paper": "行政执法卷",
+          "questionNumber": "75",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729910"
+        },
+        {
+          "year": "2022",
+          "paper": "地市卷",
+          "questionNumber": "76",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%B8%82%E5%9C%B0%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729914"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:4637564",
+    "version": 1,
+    "source": "2022年国家公务员录用考试《行测》题（副省级网友回忆版）",
+    "title": "2022国考副省级 · 截面图-剖切面与空心立体的相交判断",
+    "track": "geometry",
+    "unitId": "cross_section_guokao",
+    "unitName": "立体截面与空心组合体",
+    "questionRole": "example",
+    "category": "cross_section",
+    "subType": "截面图-剖切面与空心立体的相交判断",
+    "questionText": "左图是给定的空心立体图形，将其从任一面剖开，右边哪项可能是该立体图形的截面？",
+    "stemImages": [
+      "data/errrc/images/17d66ad80e30da2.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题考查截面图，逐一分析选项。\nA项：无法切出，排除；\nB项：从图形上半部分横着切，经过中间空心部分即可得到，当选；\nC项：无法切出，排除；\nD项：无法切出，排除。\n故正确答案为B。",
+    "analysisImages": [
+      "data/errrc/images/18a43efd42c3afc.jpg"
+    ],
+    "knowledgePoints": [
+      "三点确定切面",
+      "空心与组合体截面",
+      "选非与存在性判断"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/4637564 截面图-剖切面与空心立体的相交判断.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/4637564%20%E6%88%AA%E9%9D%A2%E5%9B%BE-%E5%89%96%E5%88%87%E9%9D%A2%E4%B8%8E%E7%A9%BA%E5%BF%83%E7%AB%8B%E4%BD%93%E7%9A%84%E7%9B%B8%E4%BA%A4%E5%88%A4%E6%96%AD.md",
+      "qid": "4637564",
+      "year": "2022",
+      "region": "国考",
+      "paper": "2022年国家公务员录用考试《行测》题（副省级网友回忆版）",
+      "point": "图形推理 / 截面图-剖切面与空心立体的相交判断",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2022",
+          "paper": "地市卷",
+          "questionNumber": "75",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%B8%82%E5%9C%B0%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729914"
+        },
+        {
+          "year": "2022",
+          "paper": "副省卷",
+          "questionNumber": "81",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729918"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:4639349",
+    "version": 1,
+    "source": "2022年国家公务员录用考试《行测》题（副省级网友回忆版）",
+    "title": "2022国考副省级 · 空间重构-六面体折叠",
+    "track": "geometry",
+    "unitId": "origami_guokao",
+    "unitName": "空间重构与外表面展开",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-六面体折叠（公共边法）",
+    "questionText": "左图是给定纸盒的外表面，下面哪项能由它折叠而成？",
+    "stemImages": [
+      "data/errrc/images/17d70b4e35b3ece.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "将原展开图标上序号如下图，逐一进行分析。\nA项：选项出现了面g、面k和面f，选项与题干展开图一致，当选；\nB项：选项出现了面e、面i和面h，面e和面h的公共边挨着面e中的小白块，而题干的面e和面h的公共边没有挨着面e中的小白块，选项与题干展开图不一致，排除；\nC项：选项出现了面e、面k和面i，面e和面i的公共边挨着面e中的小白块，而题干的面e和面i的公共边没有挨着面e中的小白块，选项与题干展开图不一致，排除；\nD项：选项出现了面k、面f和面g，面f和面g的公共边没有挨着面g中的小白块，而题干中面f和面g的公共边挨着面g中的小白块，选项与题干展开图不一致，排除。\n故正确答案为A。",
+    "analysisImages": [
+      "data/errrc/images/17d6fd247df982a.png"
+    ],
+    "knowledgePoints": [
+      "相对面与相邻面",
+      "公共边与公共顶点",
+      "图案方向与旋转"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/4639349 空间重构-六面体折叠（公共边法）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/4639349%20%E7%A9%BA%E9%97%B4%E9%87%8D%E6%9E%84-%E5%85%AD%E9%9D%A2%E4%BD%93%E6%8A%98%E5%8F%A0%EF%BC%88%E5%85%AC%E5%85%B1%E8%BE%B9%E6%B3%95%EF%BC%89.md",
+      "qid": "4639349",
+      "year": "2022",
+      "region": "国考",
+      "paper": "2022年国家公务员录用考试《行测》题（副省级网友回忆版）",
+      "point": "图形推理 / 空间重构-六面体折叠（公共边法）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2022",
+          "paper": "副省卷",
+          "questionNumber": "80",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2022%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E5%89%AF%E7%9C%81%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733729918"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:5445798",
+    "version": 1,
+    "source": "2023年国家公务员录用考试《行测》题（地市级网友回忆版）",
+    "title": "2023国考地市级 · 立体拼合",
+    "track": "geometry",
+    "unitId": "assembly_guokao",
+    "unitName": "立体拼合与方块约束",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合（多面体切割重组、旋转归位）",
+    "questionText": "左图为等大的3个灰色正方体和15个白色正方体组合成的多面体，其可以切割为①、②和③三个小多面体，问③代表的多面体可能是：",
+    "stemImages": [
+      "data/errrc/images/185912f84643349.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "本题考查立体拼合。如下图所示，将图①、图②进行旋转，结合A项，即可拼合成为左图的多面体。\n故正确答案为A。",
+    "analysisImages": [
+      "data/errrc/images/186edb1884c344e.png",
+      "data/errrc/images/185912f0dc7fb7b.png"
+    ],
+    "knowledgePoints": [
+      "体积与方块数量守恒",
+      "凹凸互补",
+      "颜色与多组件约束"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/5445798 立体拼合（多面体切割重组、旋转归位）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/5445798%20%E7%AB%8B%E4%BD%93%E6%8B%BC%E5%90%88%EF%BC%88%E5%A4%9A%E9%9D%A2%E4%BD%93%E5%88%87%E5%89%B2%E9%87%8D%E7%BB%84%E3%80%81%E6%97%8B%E8%BD%AC%E5%BD%92%E4%BD%8D%EF%BC%89.md",
+      "qid": "5445798",
+      "year": "2023",
+      "region": "国考",
+      "paper": "2023年国家公务员录用考试《行测》题（地市级网友回忆版）",
+      "point": "图形推理 / 立体拼合（多面体切割重组、旋转归位）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2023",
+          "paper": "行政执法卷",
+          "questionNumber": "77",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2023%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733730137"
+        },
+        {
+          "year": "2023",
+          "paper": "地市卷",
+          "questionNumber": "77",
+          "sourceUrl": "https://exam2.gwyks.cn/papermain/downloadPDF?id=3382449&type=2"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:5445822",
+    "version": 1,
+    "source": "2023年国家公务员录用考试《行测》题（地市级网友回忆版）",
+    "title": "2023国考地市级 · 空间折叠-折纸投影面积计算",
+    "track": "geometry",
+    "unitId": "paper_folding_guokao",
+    "unitName": "折纸覆盖与投影面积",
+    "questionRole": "example",
+    "category": "paper_folding",
+    "subType": "空间折叠-折纸投影面积计算（翻折覆盖与重叠容斥）",
+    "questionText": "将一张直角三角形形状的纸片进行两次折叠，展开后的折痕将该三角形分成如图所示的a、b、c、d四个部分，则两次折叠后的纸片投影面积为：",
+    "stemImages": [
+      "data/errrc/images/185c3df5f93fe00.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "b+d+c-a"
+      },
+      {
+        "key": "B",
+        "text": "b+d-c"
+      },
+      {
+        "key": "C",
+        "text": "b+c-a"
+      },
+      {
+        "key": "D",
+        "text": "b+d-a"
+      }
+    ],
+    "correctAnswer": "D",
+    "detailedAnalysis": "第一步，将直角三角形先沿水平折痕进行折叠，即将面c和面d向下折叠，覆盖面b和面a，得到如下图形，此时折叠后面积为：b+d；\n第二步，将直角三角形沿着竖直折痕进行折叠，即将面b和面c向右折叠，覆盖面d和面a，得到如下图形，此时折叠后面积为：d+b-a。\n故正确答案为D。",
+    "analysisImages": [
+      "data/errrc/images/18ab1b03b354fa3.png",
+      "data/errrc/images/18ab1b077b10b2a.png"
+    ],
+    "knowledgePoints": [
+      "沿折线翻折",
+      "覆盖与重叠面积",
+      "纸面积和投影面积"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/5445822 空间折叠-折纸投影面积计算（翻折覆盖与重叠容斥）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/5445822%20%E7%A9%BA%E9%97%B4%E6%8A%98%E5%8F%A0-%E6%8A%98%E7%BA%B8%E6%8A%95%E5%BD%B1%E9%9D%A2%E7%A7%AF%E8%AE%A1%E7%AE%97%EF%BC%88%E7%BF%BB%E6%8A%98%E8%A6%86%E7%9B%96%E4%B8%8E%E9%87%8D%E5%8F%A0%E5%AE%B9%E6%96%A5%EF%BC%89.md",
+      "qid": "5445822",
+      "year": "2023",
+      "region": "国考",
+      "paper": "2023年国家公务员录用考试《行测》题（地市级网友回忆版）",
+      "point": "图形推理 / 空间折叠-折纸投影面积计算（翻折覆盖与重叠容斥）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2023",
+          "paper": "行政执法卷",
+          "questionNumber": "75",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2023%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733730137"
+        },
+        {
+          "year": "2023",
+          "paper": "地市卷",
+          "questionNumber": "75",
+          "sourceUrl": "https://exam2.gwyks.cn/papermain/downloadPDF?id=3382449&type=2"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:5445823",
+    "version": 1,
+    "source": "2023年国家公务员录用考试《行测》题（行政执法卷网友回忆版）",
+    "title": "2023国考行政执法 · 三视图-立体图形视图判断",
+    "track": "geometry",
+    "unitId": "views_guokao",
+    "unitName": "三视图与观察投影",
+    "questionRole": "example",
+    "category": "views",
+    "subType": "三视图-立体图形视图判断（选非题）",
+    "questionText": "左图为给定的立体图形，从任一角度观看，下面哪项不可能是该立体图形的视图？",
+    "stemImages": [
+      "data/errrc/images/18905ddc5bb955b.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "C",
+    "detailedAnalysis": "本题考查三视图。如下图所示，A、B、D三项按图中箭头方向观察，均可看到，排除；C项为从上往下观察图形，则左右两侧应有两条竖线，当选。\n本题为选非题，故正确答案为C。",
+    "analysisImages": [
+      "data/errrc/images/18a02cb42a34959.png"
+    ],
+    "knowledgePoints": [
+      "观察方向与投影",
+      "遮挡与可见棱线",
+      "颜色和数量联合约束"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/5445823 三视图-立体图形视图判断（选非题）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/5445823%20%E4%B8%89%E8%A7%86%E5%9B%BE-%E7%AB%8B%E4%BD%93%E5%9B%BE%E5%BD%A2%E8%A7%86%E5%9B%BE%E5%88%A4%E6%96%AD%EF%BC%88%E9%80%89%E9%9D%9E%E9%A2%98%EF%BC%89.md",
+      "qid": "5445823",
+      "year": "2023",
+      "region": "国考",
+      "paper": "2023年国家公务员录用考试《行测》题（行政执法卷网友回忆版）",
+      "point": "图形推理 / 三视图-立体图形视图判断（选非题）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2023",
+          "paper": "行政执法卷",
+          "questionNumber": "76",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2023%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E5%BD%95%E7%94%A8%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733730137"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:5445914",
+    "version": 1,
+    "source": "2023年国家公务员录用考试《行测》题（副省级网友回忆版）",
+    "title": "2023国考副省级 · 立体拼合",
+    "track": "geometry",
+    "unitId": "assembly_guokao",
+    "unitName": "立体拼合与方块约束",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合（整体切割复原/剩余空间凹凸互补）",
+    "questionText": "左图为等大的3个灰色正方体和15个白色正方体所组成的多面体，其可以切割为①、②和③三个小多面体，则③代表的多面体可能是：",
+    "stemImages": [
+      "data/errrc/images/18591fac10ed080.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "C",
+    "detailedAnalysis": "本题考查立体拼合。如下图所示，立体图可以由①、②以及C项拼合而成。\n故正确答案为C。",
+    "analysisImages": [
+      "data/errrc/images/1859a8d19296c02.jpg"
+    ],
+    "knowledgePoints": [
+      "体积与方块数量守恒",
+      "凹凸互补",
+      "颜色与多组件约束"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/5445914 立体拼合（整体切割复原-剩余空间凹凸互补）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/5445914%20%E7%AB%8B%E4%BD%93%E6%8B%BC%E5%90%88%EF%BC%88%E6%95%B4%E4%BD%93%E5%88%87%E5%89%B2%E5%A4%8D%E5%8E%9F-%E5%89%A9%E4%BD%99%E7%A9%BA%E9%97%B4%E5%87%B9%E5%87%B8%E4%BA%92%E8%A1%A5%EF%BC%89.md",
+      "qid": "5445914",
+      "year": "2023",
+      "region": "国考",
+      "paper": "2023年国家公务员录用考试《行测》题（副省级网友回忆版）",
+      "point": "图形推理 / 立体拼合（整体切割复原/剩余空间凹凸互补）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2023",
+          "paper": "副省卷",
+          "questionNumber": "82",
+          "sourceUrl": "https://exam2.gwyks.cn/papermain/downloadPDF?id=3382316&type=2"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:5445923",
+    "version": 1,
+    "source": "2023年国家公务员录用考试《行测》题（副省级网友回忆版）",
+    "title": "2023国考副省级 · 空间重构-六面体折叠",
+    "track": "geometry",
+    "unitId": "origami_guokao",
+    "unitName": "空间重构与外表面展开",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-六面体折叠（公共点/公共边定位相邻面）",
+    "questionText": "左边给定的是正方体的外表面展开图，下面哪一项能由它折叠而成？",
+    "stemImages": [
+      "data/errrc/images/186006c363e75db.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题为空间重构题。对展开图进行编号，如下图所示：\n面a、面d和面2为具有唯一公共点的三个面，面a和面2中加粗（标蓝）的两条线构成直角，为公共边，可知折成立体图形后，面2中箭头与面1中箭头平行，且方向相反，只有B项符合。\n故正确答案为B。",
+    "analysisImages": [
+      "data/errrc/images/186006c88bc6b15.png"
+    ],
+    "knowledgePoints": [
+      "相对面与相邻面",
+      "公共边与公共顶点",
+      "图案方向与旋转"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/5445923 空间重构-六面体折叠（公共点-公共边定位相邻面）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/5445923%20%E7%A9%BA%E9%97%B4%E9%87%8D%E6%9E%84-%E5%85%AD%E9%9D%A2%E4%BD%93%E6%8A%98%E5%8F%A0%EF%BC%88%E5%85%AC%E5%85%B1%E7%82%B9-%E5%85%AC%E5%85%B1%E8%BE%B9%E5%AE%9A%E4%BD%8D%E7%9B%B8%E9%82%BB%E9%9D%A2%EF%BC%89.md",
+      "qid": "5445923",
+      "year": "2023",
+      "region": "国考",
+      "paper": "2023年国家公务员录用考试《行测》题（副省级网友回忆版）",
+      "point": "图形推理 / 空间重构-六面体折叠（公共点/公共边定位相邻面）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2023",
+          "paper": "副省卷",
+          "questionNumber": "81",
+          "sourceUrl": "https://exam2.gwyks.cn/papermain/downloadPDF?id=3382316&type=2"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:5893661",
+    "version": 1,
+    "source": "2024年国家公务员录用考试《行测》题（地市级网友回忆版）",
+    "title": "2024国考地市级 · 空间重构-外表面展开图",
+    "track": "geometry",
+    "unitId": "origami_guokao",
+    "unitName": "空间重构与外表面展开",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-外表面展开图（面一一对应/无中生有面排除）",
+    "questionText": "左图为8个白色正方体和4个黑色正方体粘接而成的长方体，问以下哪一个不可能是其外表面展开图？",
+    "stemImages": [
+      "data/errrc/images/18c0a8b8322c9ec.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "D",
+    "detailedAnalysis": "将长方体的外表面依次标上序号，如下图所示，面e为正面、面f为顶面、面k为右侧面、面i为左侧面，面g为背面，面h为底面，逐一分析选项。\nA项：展开图的6个面（如上图所示）与长方体的外表面一一对应，选项与题干一致，排除；\nB项：展开图的6个面（如上图所示）与长方体的外表面一一对应，选项与题干一致，排除；\nC项：展开图的6个面（如上图所示）与长方体的外表面一一对应，选项与题干一致，排除；\nD项：展开图中左下角的面和右侧的面为无中生有的面，选项与题干不一致，当选。\n本题为选非题，故正确答案为D。",
+    "analysisImages": [
+      "data/errrc/images/18c0a8c1a5c599d.png"
+    ],
+    "knowledgePoints": [
+      "相对面与相邻面",
+      "公共边与公共顶点",
+      "图案方向与旋转"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/5893661 空间重构-外表面展开图（面一一对应-无中生有面排除）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/5893661%20%E7%A9%BA%E9%97%B4%E9%87%8D%E6%9E%84-%E5%A4%96%E8%A1%A8%E9%9D%A2%E5%B1%95%E5%BC%80%E5%9B%BE%EF%BC%88%E9%9D%A2%E4%B8%80%E4%B8%80%E5%AF%B9%E5%BA%94-%E6%97%A0%E4%B8%AD%E7%94%9F%E6%9C%89%E9%9D%A2%E6%8E%92%E9%99%A4%EF%BC%89.md",
+      "qid": "5893661",
+      "year": "2024",
+      "region": "国考",
+      "paper": "2024年国家公务员录用考试《行测》题（地市级网友回忆版）",
+      "point": "图形推理 / 空间重构-外表面展开图（面一一对应/无中生有面排除）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2024",
+          "paper": "行政执法卷",
+          "questionNumber": "76",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2024%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733730291"
+        },
+        {
+          "year": "2024",
+          "paper": "地市卷",
+          "questionNumber": "76",
+          "sourceUrl": "https://gz163rsw.com/Uploads/202409/66dd6e15f0e02.pdf"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:5893673",
+    "version": 1,
+    "source": "2024年国家公务员录用考试《行测》题（副省级网友回忆版）",
+    "title": "2024国考副省级 · 截面图-三点定面立体切割",
+    "track": "geometry",
+    "unitId": "cross_section_guokao",
+    "unitName": "立体截面与空心组合体",
+    "questionRole": "example",
+    "category": "cross_section",
+    "subType": "截面图-三点定面立体切割",
+    "questionText": "上图为13个白色正方体和5个灰色正方体组合而成的多面体，现用经A、B、C三个顶点的平面对该多面体进行切割，正确的截面是：",
+    "stemImages": [
+      "data/errrc/images/18c0a9b44a26dec.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题考查截面图。根据平面公理“过不在一条直线上的三点，有且只有一个平面”可以得出，A、B、C三个顶点可以确定一个唯一的截面，如下图所示：\n从下往上看即可得到如下截图：\n故正确答案为B。",
+    "analysisImages": [
+      "data/errrc/images/18c0a9cfde3386d.png",
+      "data/errrc/images/18c0a9d23dfa68e.png"
+    ],
+    "knowledgePoints": [
+      "三点确定切面",
+      "空心与组合体截面",
+      "选非与存在性判断"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/5893673 截面图-三点定面立体切割.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/5893673%20%E6%88%AA%E9%9D%A2%E5%9B%BE-%E4%B8%89%E7%82%B9%E5%AE%9A%E9%9D%A2%E7%AB%8B%E4%BD%93%E5%88%87%E5%89%B2.md",
+      "qid": "5893673",
+      "year": "2024",
+      "region": "国考",
+      "paper": "2024年国家公务员录用考试《行测》题（副省级网友回忆版）",
+      "point": "图形推理 / 截面图-三点定面立体切割",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2024",
+          "paper": "行政执法卷",
+          "questionNumber": "77",
+          "sourceUrl": "https://upload.xingguanggongkao.com/pdf/2024%E5%B9%B4%E5%9B%BD%E5%AE%B6%E5%85%AC%E5%8A%A1%E5%91%98%E8%80%83%E8%AF%95%E3%80%8A%E8%A1%8C%E6%B5%8B%E3%80%8B%E7%9C%9F%E9%A2%98%EF%BC%88%E8%A1%8C%E6%94%BF%E6%89%A7%E6%B3%95%E5%8D%B7-%E8%80%83%E7%94%9F%E5%9B%9E%E5%BF%86%E7%89%88%EF%BC%89.pdf?time=1733730291"
+        },
+        {
+          "year": "2024",
+          "paper": "副省卷",
+          "questionNumber": "81",
+          "sourceUrl": "https://static.32xueyuan.com/zq/u/cms/www/202410/09100412q9dd.pdf"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:5894887",
+    "version": 1,
+    "source": "2024年国家公务员录用考试《行测》题（副省级网友回忆版）",
+    "title": "2024国考副省级 · 立体拼合",
+    "track": "geometry",
+    "unitId": "assembly_guokao",
+    "unitName": "立体拼合与方块约束",
+    "questionRole": "example",
+    "category": "assembly",
+    "subType": "立体拼合（多面体组合·凹凸互补）",
+    "questionText": "左图为15个白色正方体和3个灰色正方体组合而成的多面体，其可以由①、②、③三个多面体组合而成，问哪项能填入问号处？",
+    "stemImages": [
+      "data/errrc/images/18c13cfb9d94a04.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "A",
+    "detailedAnalysis": "本题考查立体拼合。如下图所示，立体图可以由①、②以及A项拼合而成。\n故正确答案为A。",
+    "analysisImages": [
+      "data/errrc/images/18cf1edacaa8106.png"
+    ],
+    "knowledgePoints": [
+      "体积与方块数量守恒",
+      "凹凸互补",
+      "颜色与多组件约束"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/5894887 立体拼合（多面体组合·凹凸互补）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/5894887%20%E7%AB%8B%E4%BD%93%E6%8B%BC%E5%90%88%EF%BC%88%E5%A4%9A%E9%9D%A2%E4%BD%93%E7%BB%84%E5%90%88%C2%B7%E5%87%B9%E5%87%B8%E4%BA%92%E8%A1%A5%EF%BC%89.md",
+      "qid": "5894887",
+      "year": "2024",
+      "region": "国考",
+      "paper": "2024年国家公务员录用考试《行测》题（副省级网友回忆版）",
+      "point": "图形推理 / 立体拼合（多面体组合·凹凸互补）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2024",
+          "paper": "地市卷",
+          "questionNumber": "74",
+          "sourceUrl": "https://gz163rsw.com/Uploads/202409/66dd6e15f0e02.pdf"
+        },
+        {
+          "year": "2024",
+          "paper": "副省卷",
+          "questionNumber": "80",
+          "sourceUrl": "https://static.32xueyuan.com/zq/u/cms/www/202410/09100412q9dd.pdf"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:5894980",
+    "version": 1,
+    "source": "2024年国家公务员录用考试《行测》题（地市级网友回忆版）",
+    "title": "2024国考地市级 · 截面图-立体切割",
+    "track": "geometry",
+    "unitId": "cross_section_guokao",
+    "unitName": "立体截面与空心组合体",
+    "questionRole": "example",
+    "category": "cross_section",
+    "subType": "截面图-立体切割（三点定面确定截面）",
+    "questionText": "左图为13个白色正方体和5个灰色正方体组合而成的多面体，现用经A、B、C三个顶点的平面对该多面体进行切割，正确的截面是：",
+    "stemImages": [
+      "data/errrc/images/18c14b4818a6bd1.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "B",
+    "detailedAnalysis": "本题考查截面图。根据平面公理“过不在一条直线上的三点，有且只有一个平面”得出A、B、C三个点可以确定一个唯一的截面，如下图所示：\n将截面上下翻转后即可得到如下截图：\n故正确答案为B。",
+    "analysisImages": [
+      "data/errrc/images/19cc0ea92be5ecb.png",
+      "data/errrc/images/18c14b5378a75f0.png"
+    ],
+    "knowledgePoints": [
+      "三点确定切面",
+      "空心与组合体截面",
+      "选非与存在性判断"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/5894980 截面图-立体切割（三点定面确定截面）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/5894980%20%E6%88%AA%E9%9D%A2%E5%9B%BE-%E7%AB%8B%E4%BD%93%E5%88%87%E5%89%B2%EF%BC%88%E4%B8%89%E7%82%B9%E5%AE%9A%E9%9D%A2%E7%A1%AE%E5%AE%9A%E6%88%AA%E9%9D%A2%EF%BC%89.md",
+      "qid": "5894980",
+      "year": "2024",
+      "region": "国考",
+      "paper": "2024年国家公务员录用考试《行测》题（地市级网友回忆版）",
+      "point": "图形推理 / 截面图-立体切割（三点定面确定截面）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2024",
+          "paper": "地市卷",
+          "questionNumber": "77",
+          "sourceUrl": "https://gz163rsw.com/Uploads/202409/66dd6e15f0e02.pdf"
+        }
+      ]
+    }
+  },
+  {
+    "id": "errrc:5895236",
+    "version": 1,
+    "source": "2024年国家公务员录用考试《行测》题（副省级网友回忆版）",
+    "title": "2024国考副省级 · 空间重构-长方体外表面展开图",
+    "track": "geometry",
+    "unitId": "origami_guokao",
+    "unitName": "空间重构与外表面展开",
+    "questionRole": "example",
+    "category": "origami",
+    "subType": "空间重构-长方体外表面展开图（相邻面公共边与灰块位置对应）",
+    "questionText": "左图为8个白色正方体和4个灰色正方体粘接而成的长方体，问以下哪一个可能是其外表面展开图？",
+    "stemImages": [
+      "data/errrc/images/18c14b7114e2eda.png"
+    ],
+    "options": [
+      {
+        "key": "A",
+        "text": "A"
+      },
+      {
+        "key": "B",
+        "text": "B"
+      },
+      {
+        "key": "C",
+        "text": "C"
+      },
+      {
+        "key": "D",
+        "text": "D"
+      }
+    ],
+    "correctAnswer": "D",
+    "detailedAnalysis": "将长方体的外表面依次标上序号，如下图所示，面e为正面、面f为顶面、面k为右侧面、面i为左侧面、面g为背面、面h为底面，逐一进行分析。\nA项：展开图的6个面与长方体的外表面可以对应（如上图所示），但在题干长方体中，面e和面i的公共边应挨着面i中的黑色方块，而A项中两面的公共边没有挨着面i中的黑色方块，选项与题干不一致，排除；\nB项：展开图的6个面中，不存在面e和面f，选项与题干不一致，排除；\nC项：展开图的6个面中，不存在面e和面f，选项与题干不一致，排除；\nD项：展开图的6个面（如上图所示）与长方体的外表面一一对应，选项与题干一致，当选。\n故正确答案为D。",
+    "analysisImages": [
+      "data/errrc/images/18c7bff81cd4a6d.png"
+    ],
+    "knowledgePoints": [
+      "相对面与相邻面",
+      "公共边与公共顶点",
+      "图案方向与旋转"
+    ],
+    "meta": {
+      "sourceRepo": "https://github.com/ERRRC/kaogongzhentizhengliu",
+      "upstreamRevision": "84ab93d4b64b61d897bece8a1c0a5bab06b4feb2",
+      "sourcePath": "10-真题/判断推理/图形推理/5895236 空间重构-长方体外表面展开图（相邻面公共边与灰块位置对应）.md",
+      "sourceUrl": "https://github.com/ERRRC/kaogongzhentizhengliu/blob/84ab93d4b64b61d897bece8a1c0a5bab06b4feb2/10-%E7%9C%9F%E9%A2%98/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/5895236%20%E7%A9%BA%E9%97%B4%E9%87%8D%E6%9E%84-%E9%95%BF%E6%96%B9%E4%BD%93%E5%A4%96%E8%A1%A8%E9%9D%A2%E5%B1%95%E5%BC%80%E5%9B%BE%EF%BC%88%E7%9B%B8%E9%82%BB%E9%9D%A2%E5%85%AC%E5%85%B1%E8%BE%B9%E4%B8%8E%E7%81%B0%E5%9D%97%E4%BD%8D%E7%BD%AE%E5%AF%B9%E5%BA%94%EF%BC%89.md",
+      "qid": "5895236",
+      "year": "2024",
+      "region": "国考",
+      "paper": "2024年国家公务员录用考试《行测》题（副省级网友回忆版）",
+      "point": "图形推理 / 空间重构-长方体外表面展开图（相邻面公共边与灰块位置对应）",
+      "isRealExam": true,
+      "appearances": [
+        {
+          "year": "2024",
+          "paper": "副省卷",
+          "questionNumber": "82",
+          "sourceUrl": "https://static.32xueyuan.com/zq/u/cms/www/202410/09100412q9dd.pdf"
+        }
+      ]
+    }
+  }
+]
