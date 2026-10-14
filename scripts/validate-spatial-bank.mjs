@@ -85,4 +85,41 @@ assert(paperAudit.papers.every(p => p.checked && p.sha256 && p.sourceUrl));
 assert.equal(paperAudit.appearances.length, 45);
 assert.deepEqual(new Set(paperAudit.appearances.map(p => p.id)), new Set(audit.questions.map(q => q.id)), 'Paper cross-check and imported question universe differ');
 assert(paperAudit.appearances.every(p => p.checked && all.has(p.id)));
+
+const exactAllow = read('docs/spatial-3d-exact-allowlist.json');
+const exactAllowed = new Set(exactAllow.exactQuestionIds || []);
+let relatedNational = 0;
+let exactNational = 0;
+let noneNational = 0;
+for (const observed of audit.questions) {
+  const q = all.get(observed.id);
+  const sim = q.simulatorConfig;
+  if (!sim) {
+    noneNational += 1;
+    continue;
+  }
+  assert.equal(typeof sim.tab, 'string', `${observed.id} simulatorConfig.tab required`);
+  assert.equal(typeof sim.isExact, 'boolean', `${observed.id} simulatorConfig.isExact must be boolean`);
+  if (sim.isExact === true) {
+    assert(exactAllowed.has(observed.id), `${observed.id} claims isExact=true but is not in docs/spatial-3d-exact-allowlist.json`);
+    assert(sim.label && !String(sim.label).includes('相关考点'), `${observed.id} exact simulator must not use 相关考点 label`);
+    exactNational += 1;
+  } else {
+    assert(sim.label && String(sim.label).includes('相关考点'), `${observed.id} related simulator must label 相关考点演示`);
+    assert(!String(sim.label).includes('精确还原') || String(sim.label).includes('非') , `${observed.id} related label must not claim 精确还原`);
+    relatedNational += 1;
+  }
+}
+assert.equal(exactNational + relatedNational + noneNational, audit.questions.length);
+for (const q of all.values()) {
+  const sim = q.simulatorConfig;
+  if (sim?.isExact === true) {
+    assert(exactAllowed.has(q.id), `${q.id} has isExact=true outside national allowlist policy`);
+  }
+  if (metadata.get(q.id)?.packId === 'spatial_training') {
+    assert(!sim, `${q.id} original training must not advertise simulatorConfig`);
+  }
+}
 console.log(`PASS: ${all.size} pack questions, ${imageReferences} valid image references; ${audit.questions.length} observed national spatial questions covered; runtime/audit metadata agrees.`);
+console.log(`3D coverage for ${audit.questions.length} national spatial items: exact=${exactNational}, related=${relatedNational}, none=${noneNational}; exact-allowlist=${exactAllowed.size}.`);
+

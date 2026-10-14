@@ -36,7 +36,7 @@
     "detailedAnalysis": "本题考查立体拼合。题干立体图形可以由①、②以及A项旋转后拼合而成，具体过程如下图所示：\n\n故正确答案为A。",
     "simulatorConfig": {
       "tab": "assembly",
-      "label": "相关考点演示（立体拼合台）",
+      "label": "相关考点演示（立体拼合台 · 非本题精确还原）",
       "isExact": false
     },
     "meta": {
@@ -93,7 +93,7 @@
     "detailedAnalysis": "本题考查立体拼合。题干正方体中切去的部分可以由①、②以及B项三个多面体旋转后拼合而成，具体拼合过程如下图所示：\n\n故正确答案为B。",
     "simulatorConfig": {
       "tab": "assembly",
-      "label": "相关考点演示（立体拼合台）",
+      "label": "相关考点演示（立体拼合台 · 非本题精确还原）",
       "isExact": false
     },
     "meta": {
@@ -150,7 +150,7 @@
     "detailedAnalysis": "本题考查立体拼合，题干立体图形可由3个完全相同的D项图形拼合而成，具体拼合方式如下图所示。\n\n故正确答案为D。",
     "simulatorConfig": {
       "tab": "assembly",
-      "label": "相关考点演示（立体拼合台）",
+      "label": "相关考点演示（立体拼合台 · 非本题精确还原）",
       "isExact": false
     },
     "meta": {
@@ -207,7 +207,7 @@
     "detailedAnalysis": "本题考查立体拼合。\nA项：如下图所示，可以由两个左侧立体图形拼接成，排除；\n\nB项：如下图所示，可以由两个左侧立体图形拼接成，排除；\n\nC项：如下图所示，可以由两个左侧立体图形拼接成，排除；\n\nD项：左侧立体图形为4个小方块，由两个左侧立体图形拼接成的立体图形应为8个小方块，而该项只有7个小方块，无法由两个左侧立体图形拼接成，当选。\n本题为选非题，故正确答案为D。",
     "simulatorConfig": {
       "tab": "assembly",
-      "label": "相关考点演示（立体拼合台）",
+      "label": "相关考点演示（立体拼合台 · 非本题精确还原）",
       "isExact": false
     },
     "meta": {
@@ -266,7 +266,7 @@
     "detailedAnalysis": "本题考查立体拼合。题干多面体可以由A、B、C中的小多面体（A、C 两项中的小多面体需要先旋转）拼合而成，具体拼合过程如下图所示。\n\n本题为选非题，故正确答案为D。",
     "simulatorConfig": {
       "tab": "assembly",
-      "label": "相关考点演示（立体拼合台）",
+      "label": "相关考点演示（立体拼合台 · 非本题精确还原）",
       "isExact": false
     },
     "meta": {
@@ -323,7 +323,7 @@
     "detailedAnalysis": "本题考查立体拼合。题干立体图形可以由①、②以及D项旋转拼合而成，如下图所示：\n\n故正确答案为D。",
     "simulatorConfig": {
       "tab": "assembly",
-      "label": "相关考点演示（立体拼合台）",
+      "label": "相关考点演示（立体拼合台 · 非本题精确还原）",
       "isExact": false
     },
     "meta": {
@@ -381,7 +381,7 @@
     "detailedAnalysis": "本题考查立体拼合。第一组图的图一由图二和图三拼合而成，第二组图的图一也应由图二与“？”处图形拼合而成，对应B项。 \n\n故正确答案为B。",
     "simulatorConfig": {
       "tab": "assembly",
-      "label": "相关考点演示（立体拼合台）",
+      "label": "相关考点演示（立体拼合台 · 非本题精确还原）",
       "isExact": false
     },
     "meta": {
@@ -438,7 +438,7 @@
     "detailedAnalysis": "本题考查立体拼合。题干立体图形可以由A、C、D三项旋转后拼合而成，具体过程如下图所示：\n\n本题为选非题，故正确答案为B。",
     "simulatorConfig": {
       "tab": "assembly",
-      "label": "相关考点演示（立体拼合台）",
+      "label": "相关考点演示（立体拼合台 · 非本题精确还原）",
       "isExact": false
     },
     "meta": {
@@ -495,7 +495,7 @@
     "detailedAnalysis": "本题考查立体拼合。题干多面体可以由A、B、D三项中的立体图形拼合而成，具体拼合过程如下图所示：\n\n本题为选非题，故正确答案为C。",
     "simulatorConfig": {
       "tab": "assembly",
-      "label": "相关考点演示（立体拼合台）",
+      "label": "相关考点演示（立体拼合台 · 非本题精确还原）",
       "isExact": false
     },
     "meta": {
@@ -552,7 +552,7 @@
     "detailedAnalysis": "本题考查立体拼合。题干立体图形分别是由1个、2个、3个图1的“L”型小方块拼合而成，故？处应由4个图1的“L”型小方块拼合而成，只有B项符合。具体拼合方式如下图所示：\n\n故正确答案为B。",
     "simulatorConfig": {
       "tab": "assembly",
-      "label": "相关考点演示（立体拼合台）",
+      "label": "相关考点演示（立体拼合台 · 非本题精确还原）",
       "isExact": false
     },
     "meta": {
@@ -609,7 +609,7 @@
     "detailedAnalysis": "本题考查立体拼合。题干立体图形可以由①、②以及B项旋转后拼合而成，如下图所示：\n\n故正确答案为B。",
     "simulatorConfig": {
       "tab": "assembly",
-      "label": "相关考点演示（立体拼合台）",
+      "label": "相关考点演示（立体拼合台 · 非本题精确还原）",
       "isExact": false
     },
     "meta": {
@@ -666,7 +666,7 @@
     "detailedAnalysis": "本题考查立体拼合。根据题干给出的立体图形可知该图形共由8个小立方体组成，观察选项发现，C、D两项均共有9个小正方体，与题干不符，排除；\n再逐一分析剩下两个选项：\nA项：将图①立起来，再将图②进行左右上下翻转，进行拼合即可得到题干立体图形，如图所示，当选；\n\nB项：选项中包含两块凸起的小立方体，但是题干立体图形中只有一块小立方体是凸起的，所以无法得到题干立体图形，排除。\n故正确答案为A。",
     "simulatorConfig": {
       "tab": "assembly",
-      "label": "相关考点演示（立体拼合台）",
+      "label": "相关考点演示（立体拼合台 · 非本题精确还原）",
       "isExact": false
     },
     "meta": {
@@ -723,7 +723,7 @@
     "detailedAnalysis": "本题考查立体拼合，如下图所示，立体图可以由①、②、③以及A项拼合而成。\n\n故正确答案为A。",
     "simulatorConfig": {
       "tab": "assembly",
-      "label": "相关考点演示（立体拼合台）",
+      "label": "相关考点演示（立体拼合台 · 非本题精确还原）",
       "isExact": false
     },
     "meta": {
@@ -780,7 +780,7 @@
     "detailedAnalysis": "本题考查立体拼合，如下图所示，立体图形可由①、②以及A项拼合而成。\n\n故正确答案为A。",
     "simulatorConfig": {
       "tab": "assembly",
-      "label": "相关考点演示（立体拼合台）",
+      "label": "相关考点演示（立体拼合台 · 非本题精确还原）",
       "isExact": false
     },
     "meta": {

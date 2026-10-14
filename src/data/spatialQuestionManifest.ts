@@ -14,7 +14,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2025",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:19283877",
@@ -28,7 +28,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2025",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:19283952",
@@ -42,7 +42,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2025",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:19283965",
@@ -56,7 +56,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2025",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:19526329",
@@ -70,7 +70,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2026",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:19526397",
@@ -84,7 +84,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2026",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:4637338",
@@ -98,7 +98,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2022",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:4637364",
@@ -112,7 +112,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2022",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:4637401",
@@ -126,7 +126,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2022",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:4637564",
@@ -140,7 +140,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2022",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:4639349",
@@ -154,7 +154,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2022",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:5445798",
@@ -168,7 +168,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2023",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:5445822",
@@ -182,7 +182,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2023",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:5445823",
@@ -196,7 +196,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2023",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:5445914",
@@ -210,7 +210,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2023",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:5445923",
@@ -224,7 +224,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2023",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:5893661",
@@ -238,7 +238,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2024",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:5893673",
@@ -252,7 +252,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2024",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:5894887",
@@ -266,7 +266,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2024",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:5894980",
@@ -280,7 +280,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2024",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "errrc:5895236",
@@ -294,7 +294,7 @@ export const SPATIAL_SUPPLEMENT_MANIFEST: QuestionManifestItem[] = [
     "year": "2024",
     "region": "国考",
     "isRealExam": true,
-    "hasSimulator": false
+    "hasSimulator": true
   },
   {
     "id": "spatial:views-occlusion-front-faces-example",

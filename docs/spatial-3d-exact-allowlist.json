@@ -1,0 +1,4 @@
+{
+  "$comment": "Question IDs permitted to use simulatorConfig.isExact=true. Empty until a reconstruction is verified.",
+  "exactQuestionIds": []
+}

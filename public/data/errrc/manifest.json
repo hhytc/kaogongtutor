@@ -582,7 +582,7 @@
       "year": "2025",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:19283877",
@@ -596,7 +596,7 @@
       "year": "2025",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:19283952",
@@ -610,7 +610,7 @@
       "year": "2025",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:19283965",
@@ -624,7 +624,7 @@
       "year": "2025",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:19526329",
@@ -638,7 +638,7 @@
       "year": "2026",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:19526397",
@@ -652,7 +652,7 @@
       "year": "2026",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:4637338",
@@ -666,7 +666,7 @@
       "year": "2022",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:4637364",
@@ -680,7 +680,7 @@
       "year": "2022",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:4637401",
@@ -694,7 +694,7 @@
       "year": "2022",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:4637564",
@@ -708,7 +708,7 @@
       "year": "2022",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:4639349",
@@ -722,7 +722,7 @@
       "year": "2022",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:5445798",
@@ -736,7 +736,7 @@
       "year": "2023",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:5445822",
@@ -750,7 +750,7 @@
       "year": "2023",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:5445823",
@@ -764,7 +764,7 @@
       "year": "2023",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:5445914",
@@ -778,7 +778,7 @@
       "year": "2023",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:5445923",
@@ -792,7 +792,7 @@
       "year": "2023",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:5893661",
@@ -806,7 +806,7 @@
       "year": "2024",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:5893673",
@@ -820,7 +820,7 @@
       "year": "2024",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:5894887",
@@ -834,7 +834,7 @@
       "year": "2024",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:5894980",
@@ -848,7 +848,7 @@
       "year": "2024",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "errrc:5895236",
@@ -862,7 +862,7 @@
       "year": "2024",
       "region": "国考",
       "isRealExam": true,
-      "hasSimulator": false
+      "hasSimulator": true
     },
     {
       "id": "spatial:views-occlusion-front-faces-example",
