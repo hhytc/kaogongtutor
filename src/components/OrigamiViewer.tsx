@@ -22,7 +22,21 @@ import {
 } from 'lucide-react';
 import { learningStorage, type SavedSpatialIntuitionProgress } from '../utils/learningStorage';
 
-export type NetType = '1-4-1' | '2-3-1' | '2-2-2' | '3-3';
+export type NetFamily = '1-4-1' | '2-3-1' | '2-2-2' | '3-3';
+/** Concrete net ids (net-01..net-11) plus family aliases used by guided mode / saved progress. */
+export type NetType =
+  | NetFamily
+  | 'net-01'
+  | 'net-02'
+  | 'net-03'
+  | 'net-04'
+  | 'net-05'
+  | 'net-06'
+  | 'net-07'
+  | 'net-08'
+  | 'net-09'
+  | 'net-10'
+  | 'net-11';
 
 interface OrigamiViewerProps {
   initialMode?: string;
@@ -206,20 +220,109 @@ const FaceThumbnail: React.FC<{ pattern: FacePattern; size?: number; className?:
   );
 };
 
+
 interface NetDefinition {
   faces: Record<number, [number, number]>;
   edges: [number, number][];
 }
 
+export interface CubeNetMeta {
+  id: NetType;
+  family: NetFamily;
+  index: number;
+  label: string;
+  shortLabel: string;
+  isFamilyRep: boolean;
+  cells: [number, number][];
+}
+
+/** Catalog order matches public/data/spatial/images/cube_nets_11.svg and validate-spatial-training.mjs */
+const CUBE_NET_CATALOG: CubeNetMeta[] = [
+  { id: 'net-01', family: '1-4-1', index: 1, label: '① 一四一 · 长翼枝干', shortLabel: '1-4-1①', isFamilyRep: false, cells: [[0,0],[0,1],[0,2],[1,1],[2,1],[3,1]] },
+  { id: 'net-02', family: '3-3', index: 2, label: '② 三三 · 错位双排', shortLabel: '3-3', isFamilyRep: true, cells: [[0,0],[0,1],[0,2],[1,2],[1,3],[1,4]] },
+  { id: 'net-03', family: '2-3-1', index: 3, label: '③ 二三一 · 楼梯拐角', shortLabel: '2-3-1①', isFamilyRep: true, cells: [[0,0],[0,1],[1,1],[1,2],[1,3],[2,1]] },
+  { id: 'net-04', family: '2-3-1', index: 4, label: '④ 二三一 · 偏翼楼梯', shortLabel: '2-3-1②', isFamilyRep: false, cells: [[0,0],[0,1],[1,1],[1,2],[1,3],[2,2]] },
+  { id: 'net-05', family: '2-3-1', index: 5, label: '⑤ 二三一 · 斜翼楼梯', shortLabel: '2-3-1③', isFamilyRep: false, cells: [[0,0],[0,1],[1,1],[1,2],[1,3],[2,3]] },
+  { id: 'net-06', family: '1-4-1', index: 6, label: '⑥ 一四一 · 偏心短翼', shortLabel: '1-4-1②', isFamilyRep: false, cells: [[0,0],[0,1],[1,1],[1,2],[2,1],[3,1]] },
+  { id: 'net-07', family: '2-2-2', index: 7, label: '⑦ 二二二 · 三级台阶', shortLabel: '2-2-2', isFamilyRep: true, cells: [[0,0],[0,1],[1,1],[1,2],[2,2],[2,3]] },
+  { id: 'net-08', family: '1-4-1', index: 8, label: '⑧ 一四一 · 中部分叉', shortLabel: '1-4-1③', isFamilyRep: false, cells: [[0,0],[0,1],[1,1],[2,1],[2,2],[3,1]] },
+  { id: 'net-09', family: '1-4-1', index: 9, label: '⑨ 一四一 · 远端侧翼', shortLabel: '1-4-1④', isFamilyRep: false, cells: [[0,0],[0,1],[1,1],[2,1],[3,1],[3,2]] },
+  { id: 'net-10', family: '1-4-1', index: 10, label: '⑩ 一四一 · 经典十字', shortLabel: '1-4-1★', isFamilyRep: true, cells: [[0,1],[1,0],[1,1],[1,2],[1,3],[2,1]] },
+  { id: 'net-11', family: '1-4-1', index: 11, label: '⑪ 一四一 · 斜十字', shortLabel: '1-4-1⑤', isFamilyRep: false, cells: [[0,1],[1,0],[1,1],[1,2],[1,3],[2,2]] },
+];
+
+const ALL_NET_IDS: NetType[] = [
+  '1-4-1', '2-3-1', '2-2-2', '3-3',
+  'net-01', 'net-02', 'net-03', 'net-04', 'net-05', 'net-06',
+  'net-07', 'net-08', 'net-09', 'net-10', 'net-11',
+];
+
+function isNetType(value: unknown): value is NetType {
+  return typeof value === 'string' && (ALL_NET_IDS as string[]).includes(value);
+}
+
+function getNetMeta(netType: NetType): CubeNetMeta {
+  if (netType === '1-4-1' || netType === 'net-10') return CUBE_NET_CATALOG[9];
+  if (netType === '2-3-1' || netType === 'net-03') return CUBE_NET_CATALOG[2];
+  if (netType === '2-2-2' || netType === 'net-07') return CUBE_NET_CATALOG[6];
+  if (netType === '3-3' || netType === 'net-02') return CUBE_NET_CATALOG[1];
+  const found = CUBE_NET_CATALOG.find((n) => n.id === netType);
+  return found ?? CUBE_NET_CATALOG[9];
+}
+
+const NetMiniPreview: React.FC<{ cells: [number, number][]; active?: boolean; size?: number }> = ({
+  cells,
+  active = false,
+  size = 44,
+}) => {
+  const xs = cells.map((c) => c[0]);
+  const ys = cells.map((c) => c[1]);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+  const cols = maxX - minX + 1;
+  const rows = maxY - minY + 1;
+  const cell = Math.max(4, Math.floor((size - 4) / Math.max(cols, rows)));
+  const w = cols * cell + 4;
+  const h = rows * cell + 4;
+  const set = new Set(cells.map(([x, y]) => `${x},${y}`));
+  return (
+    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="block flex-shrink-0">
+      {Array.from({ length: rows }, (_, row) =>
+        Array.from({ length: cols }, (_, col) => {
+          const x = minX + col;
+          const y = maxY - row;
+          if (!set.has(`${x},${y}`)) return null;
+          return (
+            <rect
+              key={`${x},${y}`}
+              x={2 + col * cell}
+              y={2 + row * cell}
+              width={cell - 1}
+              height={cell - 1}
+              rx={1.5}
+              fill={active ? '#818cf8' : '#334155'}
+              stroke={active ? '#c7d2fe' : '#64748b'}
+              strokeWidth={1}
+            />
+          );
+        })
+      )}
+    </svg>
+  );
+};
+
 const NET_DEFINITIONS: Record<NetType, NetDefinition> = {
+  // Family representatives (guided-mode anchors) — keep exact face placements for教程文案
   '1-4-1': {
     faces: {
-      0: [0, 0],   // Top
-      1: [0, 1],   // Front
-      2: [0, 2],   // Bottom
-      3: [0, -1],  // Back
-      4: [-1, 0],  // Left
-      5: [1, 0],   // Right
+      0: [0, 0],
+      1: [0, 1],
+      2: [0, 2],
+      3: [0, -1],
+      4: [-1, 0],
+      5: [1, 0],
     },
     edges: [
       [0, 1],
@@ -280,7 +383,59 @@ const NET_DEFINITIONS: Record<NetType, NetDefinition> = {
       [1, 2],
     ],
   },
+  // Full 11-net catalog (frame-propagated face ids; spanning-tree hinges)
+  'net-01': {
+    faces: { 0: [0, 0], 1: [0, 1], 2: [0, 2], 3: [2, 1], 4: [3, 1], 5: [1, 1] },
+    edges: [[0, 1], [1, 5], [1, 2], [5, 3], [3, 4]],
+  },
+  'net-02': {
+    faces: { 0: [0, 0], 1: [0, 1], 2: [0, 2], 3: [1, 3], 4: [1, 4], 5: [1, 2] },
+    edges: [[0, 1], [1, 2], [2, 5], [5, 3], [3, 4]],
+  },
+  'net-03': {
+    faces: { 0: [0, 0], 1: [0, 1], 2: [1, 2], 3: [2, 1], 4: [1, 3], 5: [1, 1] },
+    edges: [[0, 1], [1, 5], [5, 3], [5, 2], [2, 4]],
+  },
+  'net-04': {
+    faces: { 0: [0, 0], 1: [0, 1], 2: [1, 2], 3: [2, 2], 4: [1, 3], 5: [1, 1] },
+    edges: [[0, 1], [1, 5], [5, 2], [2, 3], [2, 4]],
+  },
+  'net-05': {
+    faces: { 0: [0, 0], 1: [0, 1], 2: [1, 2], 3: [2, 3], 4: [1, 3], 5: [1, 1] },
+    edges: [[0, 1], [1, 5], [5, 2], [2, 4], [4, 3]],
+  },
+  'net-06': {
+    faces: { 0: [0, 0], 1: [0, 1], 2: [1, 2], 3: [2, 1], 4: [3, 1], 5: [1, 1] },
+    edges: [[0, 1], [1, 5], [5, 3], [5, 2], [3, 4]],
+  },
+  'net-07': {
+    faces: { 0: [0, 0], 1: [0, 1], 2: [1, 2], 3: [2, 2], 4: [2, 3], 5: [1, 1] },
+    edges: [[0, 1], [1, 5], [5, 2], [2, 3], [3, 4]],
+  },
+  'net-08': {
+    faces: { 0: [0, 0], 1: [0, 1], 2: [2, 2], 3: [2, 1], 4: [3, 1], 5: [1, 1] },
+    edges: [[0, 1], [1, 5], [5, 3], [3, 4], [3, 2]],
+  },
+  'net-09': {
+    faces: { 0: [0, 0], 1: [0, 1], 2: [3, 2], 3: [2, 1], 4: [3, 1], 5: [1, 1] },
+    edges: [[0, 1], [1, 5], [5, 3], [3, 4], [4, 2]],
+  },
+  'net-10': {
+    faces: { 0: [0, 1], 1: [1, 2], 2: [2, 1], 3: [1, 0], 4: [1, 3], 5: [1, 1] },
+    edges: [[0, 5], [5, 2], [5, 1], [5, 3], [1, 4]],
+  },
+  'net-11': {
+    faces: { 0: [0, 1], 1: [1, 2], 2: [2, 2], 3: [1, 0], 4: [1, 3], 5: [1, 1] },
+    edges: [[0, 5], [5, 1], [5, 3], [1, 2], [1, 4]],
+  },
 };
+
+// Catalog family representatives share the guided-mode fold trees (relative-face / clock demos stay consistent).
+NET_DEFINITIONS['net-10'] = NET_DEFINITIONS['1-4-1'];
+NET_DEFINITIONS['net-03'] = NET_DEFINITIONS['2-3-1'];
+NET_DEFINITIONS['net-07'] = NET_DEFINITIONS['2-2-2'];
+NET_DEFINITIONS['net-02'] = NET_DEFINITIONS['3-3'];
+
 
 interface GuidedStep3Case {
   id: number;
@@ -431,10 +586,10 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
   // Load saved intuition progress from learningStorage
   const savedProgress = useMemo(() => learningStorage.getSpatialIntuitionProgress(), []);
 
-  // Determine if caller specifically requested free mode or a specific archetype
+  // Determine if caller specifically requested free mode or a specific net
   const isFreeRequested = Boolean(
     initialParams.mode === 'free' ||
-    (initialParams.mode && ['1-4-1', '2-3-1', '2-2-2', '3-3'].includes(initialParams.mode))
+    isNetType(initialParams.mode)
   );
 
   const initialViewMode: 'guided' | 'free' = isFreeRequested ? 'free' : 'guided';
@@ -450,16 +605,19 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
     return '1-4-1';
   };
 
-  // Active net archetype: 1-4-1, 2-3-1, 2-2-2, 3-3
+  // Active net: family alias (guided) or concrete net-01..net-11 (free catalog)
   const [netType, setNetType] = useState<NetType>(() => {
-    if (initialParams.mode && ['1-4-1', '2-3-1', '2-2-2', '3-3'].includes(initialParams.mode)) {
-      return initialParams.mode as NetType;
+    if (isNetType(initialParams.mode)) {
+      return initialParams.mode;
     }
     if (initialViewMode === 'guided') {
       return deriveGuidedNetType(initialGuidedStep, initialStep5SubQ);
     }
-    return savedProgress?.netType || '1-4-1';
+    return (savedProgress?.netType && isNetType(savedProgress.netType) ? savedProgress.netType : '1-4-1');
   });
+  const [netFamilyFilter, setNetFamilyFilter] = useState<NetFamily | 'all'>(() => getNetMeta(
+    isNetType(initialParams.mode) ? initialParams.mode : '1-4-1'
+  ).family);
 
   // Folding progress: 0 (completely flat 2D net) -> 1 (fully folded 3D cube)
   const [foldProgress, setFoldProgress] = useState<number>(0);
@@ -1398,48 +1556,57 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
             </div>
           ) : (
             <div className="flex flex-col gap-1.5 pointer-events-auto">
-              {/* Free Archetype Selector */}
-              <div className="flex overflow-x-auto no-scrollbar gap-1.5">
-                <button
-                  onClick={() => { stopAnimation(); setNetType('1-4-1'); setFoldProgress(0); }}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer ${
-                    netType === '1-4-1'
-                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400'
-                      : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700/80'
-                  }`}
-                >
-                  ⭐ 1-4-1型 (经典十字 · 6种)
-                </button>
-                <button
-                  onClick={() => { stopAnimation(); setNetType('2-3-1'); setFoldProgress(0); }}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer ${
-                    netType === '2-3-1'
-                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400'
-                      : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700/80'
-                  }`}
-                >
-                  📐 2-3-1型 (楼梯拐角 · 3种)
-                </button>
-                <button
-                  onClick={() => { stopAnimation(); setNetType('2-2-2'); setFoldProgress(0); }}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer ${
-                    netType === '2-2-2'
-                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400'
-                      : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700/80'
-                  }`}
-                >
-                  🪜 2-2-2型 (阶梯台阶 · 1种)
-                </button>
-                <button
-                  onClick={() => { stopAnimation(); setNetType('3-3'); setFoldProgress(0); }}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer ${
-                    netType === '3-3'
-                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400'
-                      : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700/80'
-                  }`}
-                >
-                  🔀 3-3型 (两排错开 · 1种)
-                </button>
+              {/* Family filter + all 11 legal nets */}
+              <div className="flex overflow-x-auto no-scrollbar gap-1.5 items-center">
+                {([
+                  ['all', '全部11种'],
+                  ['1-4-1', '一四一·6'],
+                  ['2-3-1', '二三一·3'],
+                  ['2-2-2', '二二二·1'],
+                  ['3-3', '三三·1'],
+                ] as const).map(([key, label]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setNetFamilyFilter(key)}
+                    className={`px-2 py-1 rounded-lg text-[10px] font-semibold backdrop-blur-md whitespace-nowrap cursor-pointer ${
+                      netFamilyFilter === key
+                        ? 'bg-violet-600 text-white shadow-md shadow-violet-600/25'
+                        : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700/80'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <div className="flex overflow-x-auto no-scrollbar gap-1.5 pb-0.5">
+                {CUBE_NET_CATALOG.filter((net) => netFamilyFilter === 'all' || net.family === netFamilyFilter).map((net) => {
+                  const active = getNetMeta(netType).id === net.id || netType === net.id;
+                  return (
+                    <button
+                      key={net.id}
+                      type="button"
+                      title={net.label}
+                      onClick={() => {
+                        stopAnimation();
+                        setNetType(net.id);
+                        setNetFamilyFilter(net.family);
+                        setFoldProgress(0);
+                      }}
+                      className={`flex items-center gap-1.5 px-2 py-1 rounded-xl text-[10px] font-medium backdrop-blur-md transition-all whitespace-nowrap cursor-pointer border ${
+                        active
+                          ? 'bg-indigo-600 text-white border-indigo-400 shadow-lg shadow-indigo-600/30'
+                          : 'bg-slate-800/90 text-slate-300 border-slate-700/80 hover:bg-slate-700/80'
+                      }`}
+                    >
+                      <NetMiniPreview cells={net.cells} active={active} size={36} />
+                      <span className="flex flex-col items-start leading-tight">
+                        <span>{net.shortLabel}</span>
+                        {net.isFamilyRep && <span className="text-[8px] opacity-80">家族代表</span>}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Quick Anchor Face Selector Strip */}
@@ -1500,7 +1667,7 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
               <div className="flex items-center justify-between gap-2 text-xs mb-1">
                 <span className="font-semibold text-slate-200 text-[11px] flex items-center gap-1.5 flex-wrap">
                   <Sparkles className="w-3 h-3 text-indigo-400 flex-shrink-0" />
-                  <span>展开型: <strong className="text-indigo-300 font-mono">{netType}</strong></span>
+                  <span>展开型: <strong className="text-indigo-300">{getNetMeta(netType).label}</strong></span>
                   <span className="text-slate-600">|</span>
                   <span className="text-amber-300 font-medium flex items-center gap-1">
                     <Crown className="w-3 h-3 text-amber-400" />
@@ -2940,33 +3107,51 @@ export const OrigamiViewer: React.FC<OrigamiViewerProps> = ({
               </div>
             </div>
 
-            {/* 11 Nets Catalog Modal / Expandable Card */}
+            {/* 11 Nets Catalog — interactive */}
             {showCatalog && (
               <div className="bg-indigo-950/30 border border-indigo-500/40 p-4 rounded-xl space-y-3 animate-in fade-in duration-200">
-                <div className="flex items-center justify-between text-xs font-bold text-indigo-300">
-                  <span className="flex items-center gap-1">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                    公考正方体 11 种合法展开图四大家族
+                <div className="flex items-center justify-between text-xs font-bold text-indigo-300 gap-2">
+                  <span className="flex items-center gap-1 min-w-0">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                    <span className="truncate">11 种合法展开图 · 点击即可动态折叠</span>
                   </span>
-                  <span className="text-[11px] font-mono text-slate-400">总计 11 种</span>
+                  <span className="text-[10px] font-mono text-slate-400 flex-shrink-0">演示模型</span>
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-xs text-slate-300">
-                  <div className="bg-slate-950/70 p-2.5 rounded-lg border border-slate-800 space-y-1">
-                    <div className="font-bold text-indigo-400">① 一四一型 (共 6 种)</div>
-                    <div className="text-[11px] text-slate-400">中间 4 个一字排开，上下各 1 个。上 1 个在 4 列任意位置，下 1 个对应排布。</div>
-                  </div>
-                  <div className="bg-slate-950/70 p-2.5 rounded-lg border border-slate-800 space-y-1">
-                    <div className="font-bold text-indigo-400">② 二三一型 (共 3 种)</div>
-                    <div className="text-[11px] text-slate-400">中间 3 个一排，上方 2 个并排，下方 1 个（像楼梯拐角）。</div>
-                  </div>
-                  <div className="bg-slate-950/70 p-2.5 rounded-lg border border-slate-800 space-y-1">
-                    <div className="font-bold text-indigo-400">③ 二二二型 (共 1 种)</div>
-                    <div className="text-[11px] text-slate-400">每行 2 个，依次错开一格，成经典的三级台阶形状。</div>
-                  </div>
-                  <div className="bg-slate-950/70 p-2.5 rounded-lg border border-slate-800 space-y-1">
-                    <div className="font-bold text-indigo-400">④ 三三型 (共 1 种)</div>
-                    <div className="text-[11px] text-slate-400">两排各 3 个，相互错开一格，成目字相错形。</div>
-                  </div>
+                <p className="text-[10px] text-slate-400 leading-relaxed">
+                  按四大家族归类的全部 11 种自由六连方合法网。导学阶梯仍使用各家族代表构型；本图鉴可切换任意一种进行折叠演示（非某道国考题的精确还原）。
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {CUBE_NET_CATALOG.map((net) => {
+                    const active = getNetMeta(netType).id === net.id || netType === net.id;
+                    return (
+                      <button
+                        key={net.id}
+                        type="button"
+                        onClick={() => {
+                          stopAnimation();
+                          setViewMode('free');
+                          setNetType(net.id);
+                          setNetFamilyFilter(net.family);
+                          setFoldProgress(0);
+                          setShowCatalog(true);
+                        }}
+                        className={`flex items-center gap-2 p-2 rounded-xl border text-left transition-all cursor-pointer ${
+                          active
+                            ? 'bg-indigo-600/30 border-indigo-400 text-white'
+                            : 'bg-slate-950/70 border-slate-800 text-slate-300 hover:border-indigo-500/50'
+                        }`}
+                      >
+                        <NetMiniPreview cells={net.cells} active={active} size={48} />
+                        <div className="min-w-0">
+                          <div className="text-[11px] font-bold truncate">{net.label}</div>
+                          <div className="text-[10px] text-slate-400">
+                            家族 {net.family}
+                            {net.isFamilyRep ? ' · 导学代表' : ''}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}

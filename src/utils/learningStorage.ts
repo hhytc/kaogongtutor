@@ -64,7 +64,7 @@ export interface SavedSpatialIntuitionProgress {
   guidedStep5Q3Answer?: string | null;
   step5Q3FirstTryCorrect?: boolean | null;
   guidedCompletedSteps: number[];
-  netType?: '1-4-1' | '2-3-1' | '2-2-2' | '3-3';
+  netType?: string;
   anchorFaceId?: number;
   guidedStep2TargetFaceId?: number;
   step3CaseIndex?: number;
@@ -103,7 +103,8 @@ function isValidSpatialProgress(obj: any): obj is SavedSpatialIntuitionProgress 
   for (const f of boolOrNullFields) {
     if (obj[f] !== undefined && obj[f] !== null && typeof obj[f] !== 'boolean') return false;
   }
-  if (obj.netType !== undefined && !['1-4-1', '2-3-1', '2-2-2', '3-3'].includes(obj.netType)) {
+  const allowedNets = ['1-4-1','2-3-1','2-2-2','3-3','net-01','net-02','net-03','net-04','net-05','net-06','net-07','net-08','net-09','net-10','net-11'];
+  if (obj.netType !== undefined && !allowedNets.includes(obj.netType)) {
     return false;
   }
   if (obj.anchorFaceId !== undefined && (typeof obj.anchorFaceId !== 'number' || obj.anchorFaceId < 0 || obj.anchorFaceId > 5)) {
