@@ -4,7 +4,7 @@ import { MathView } from './MathView';
 import { Sparkles, ArrowRight, Zap, Target } from 'lucide-react';
 
 interface ExamCheatsheetProps {
-  onSelectTab: (tab: 'unfold' | 'revolution' | 'cross_section' | 'origami' | 'assembly') => void;
+  onSelectTab: (tab: 'unfold' | 'revolution' | 'cross_section' | 'origami' | 'assembly' | 'views' | 'paper_folding') => void;
 }
 
 export const ExamCheatsheet: React.FC<ExamCheatsheetProps> = ({ onSelectTab }) => {
@@ -48,6 +48,14 @@ export const ExamCheatsheet: React.FC<ExamCheatsheetProps> = ({ onSelectTab }) =
               borderHover = 'hover:border-rose-500/50';
               bgGlow = 'from-rose-500/10';
               badgeBg = 'bg-rose-500/20 text-rose-300 border-rose-500/30';
+            } else if (card.category === 'views') {
+              borderHover = 'hover:border-cyan-500/50';
+              bgGlow = 'from-cyan-500/10';
+              badgeBg = 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30';
+            } else if (card.category === 'paper_folding') {
+              borderHover = 'hover:border-pink-500/50';
+              bgGlow = 'from-pink-500/10';
+              badgeBg = 'bg-pink-500/20 text-pink-300 border-pink-500/30';
             }
 
             return (
@@ -64,6 +72,8 @@ export const ExamCheatsheet: React.FC<ExamCheatsheetProps> = ({ onSelectTab }) =
                       {card.category === 'unfold' && '表面展开'}
                       {card.category === 'revolution' && '旋转动态'}
                       {card.category === 'cross_section' && '空间截面'}
+                      {card.category === 'views' && '三视图'}
+                      {card.category === 'paper_folding' && '平面折叠'}
                     </span>
                     <h3 className="text-base font-bold text-white mt-2">{card.title}</h3>
                   </div>

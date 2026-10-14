@@ -1,7 +1,7 @@
 import React from 'react';
-import { Box, RefreshCw, Scissors, Award, BookMarked, Layers, Puzzle } from 'lucide-react';
+import { Box, RefreshCw, Scissors, Award, BookMarked, Layers, Puzzle, Cuboid, FileStack } from 'lucide-react';
 
-export type ActiveTab = 'unfold' | 'revolution' | 'cross_section' | 'origami' | 'assembly' | 'quiz' | 'cheatsheet';
+export type ActiveTab = 'unfold' | 'revolution' | 'cross_section' | 'origami' | 'assembly' | 'views' | 'paper_folding' | 'quiz' | 'cheatsheet';
 
 interface NavbarProps {
   activeTab: ActiveTab;
@@ -89,6 +89,31 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange, reviewCo
         >
           <Scissors className="w-3.5 h-3.5" />
           <span>截面切切乐</span>
+        </button>
+
+
+        <button
+          onClick={() => onTabChange('views')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
+            activeTab === 'views'
+              ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/25'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+          }`}
+        >
+          <Cuboid className="w-3.5 h-3.5" />
+          <span>三视图</span>
+        </button>
+
+        <button
+          onClick={() => onTabChange('paper_folding')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
+            activeTab === 'paper_folding'
+              ? 'bg-rose-600 text-white shadow-md shadow-rose-600/25'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+          }`}
+        >
+          <FileStack className="w-3.5 h-3.5" />
+          <span>平面折叠</span>
         </button>
 
         <div className="w-[1px] h-4 bg-slate-800 mx-1 hidden md:block" />

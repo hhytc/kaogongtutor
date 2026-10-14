@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, ChevronDown, Clock3, Target } from 'lucide-react';
+import { BookOpen, ChevronDown, Clock3, Target, Box } from 'lucide-react';
 import { SPATIAL_TOPICS, type SpatialCategory } from '../data/spatialTopics';
 
 export interface SpatialTopicCount {
@@ -14,6 +14,7 @@ interface SpatialTrainingHubProps {
   activeCategory?: string;
   onPractice: (category: SpatialCategory) => void;
   onTimedTest: (category: SpatialCategory) => void;
+  onOpenDemo?: (category: SpatialCategory) => void;
 }
 
 export const SpatialTrainingHub: React.FC<SpatialTrainingHubProps> = ({
@@ -21,6 +22,7 @@ export const SpatialTrainingHub: React.FC<SpatialTrainingHubProps> = ({
   activeCategory,
   onPractice,
   onTimedTest,
+  onOpenDemo,
 }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -86,6 +88,18 @@ export const SpatialTrainingHub: React.FC<SpatialTrainingHubProps> = ({
                     >
                       <Clock3 className="h-3 w-3" /> 限时测验
                     </button>
+                    {onOpenDemo && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setExpanded(false);
+                          onOpenDemo(topic.category);
+                        }}
+                        className="inline-flex items-center gap-1 rounded-lg border border-emerald-600/70 bg-emerald-950/50 px-2.5 py-1.5 text-[10px] font-semibold text-emerald-200 hover:bg-emerald-900/60 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                      >
+                        <Box className="h-3 w-3" /> 3D 演示
+                      </button>
+                    )}
                   </div>
                 </article>
               );

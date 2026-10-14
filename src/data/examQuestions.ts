@@ -31,7 +31,7 @@ export interface ExamQuestion {
   analysisImages?: string[];
   mathFormula?: string;
   simulatorConfig?: {
-    tab: 'unfold' | 'revolution' | 'cross_section' | 'origami' | 'assembly';
+    tab: 'unfold' | 'revolution' | 'cross_section' | 'origami' | 'assembly' | 'views' | 'paper_folding';
     mode?: string;
     params?: Record<string, number | string | boolean>;
     label?: string;

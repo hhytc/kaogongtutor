@@ -48,6 +48,7 @@ interface ExamQuizModalProps {
     questionId: string,
     questionTitle: string
   ) => void;
+  onOpenSpatialDemo?: (category: SpatialCategory) => void;
   initialQuestionId?: string | null;
 }
 
@@ -121,6 +122,7 @@ function renderVoxelCluster(
 
 export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
   onLoadIntoSimulator,
+  onOpenSpatialDemo,
   initialQuestionId,
 }) => {
   // Records from local storage
@@ -894,6 +896,7 @@ export const ExamQuizModal: React.FC<ExamQuizModalProps> = ({
           activeCategory={activeTrack === 'geometry' ? geometryCategory : undefined}
           onPractice={handleSpatialPractice}
           onTimedTest={handleSpatialTest}
+          onOpenDemo={onOpenSpatialDemo}
         />
         {filteredManifest.length === 0 ? (
           /* Empty State when no questions match filter */

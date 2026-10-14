@@ -14,6 +14,8 @@ const AssemblyViewer = lazy(() => import('./components/AssemblyViewer').then((m)
 const UnfoldingViewer = lazy(() => import('./components/UnfoldingViewer').then((m) => ({ default: m.UnfoldingViewer })));
 const RevolutionViewer = lazy(() => import('./components/RevolutionViewer').then((m) => ({ default: m.RevolutionViewer })));
 const CrossSectionViewer = lazy(() => import('./components/CrossSectionViewer').then((m) => ({ default: m.CrossSectionViewer })));
+const ViewsViewer = lazy(() => import('./components/ViewsViewer').then((m) => ({ default: m.ViewsViewer })));
+const PaperFoldingViewer = lazy(() => import('./components/PaperFoldingViewer').then((m) => ({ default: m.PaperFoldingViewer })));
 
 function ViewerLoadingFallback() {
   return (
@@ -85,6 +87,14 @@ export function App() {
     preset: 'triangle',
   });
 
+  const [viewsParams, setViewsParams] = useState<Record<string, any>>({
+    mode: 'projections',
+  });
+
+  const [paperFoldingParams, setPaperFoldingParams] = useState<Record<string, any>>({
+    mode: 'half_fold',
+  });
+
   // Handler to load question into 3D simulator
   const handleLoadIntoSimulator = (
     config: ExamQuestion['simulatorConfig'],
@@ -137,6 +147,18 @@ export function App() {
         setCrossSectionParams({ preset: config.params.preset });
       }
       setActiveTab('cross_section');
+    } else if (config.tab === 'views') {
+      setViewsParams({
+        mode: config.mode || 'projections',
+        ...(config.params || {}),
+      });
+      setActiveTab('views');
+    } else if (config.tab === 'paper_folding') {
+      setPaperFoldingParams({
+        mode: config.mode || 'half_fold',
+        ...(config.params || {}),
+      });
+      setActiveTab('paper_folding');
     }
   };
 
@@ -247,9 +269,48 @@ export function App() {
           </ViewerErrorBoundary>
         )}
 
+        {activeTab === 'views' && (
+          <ViewerErrorBoundary fallbackTitle="三视图 3D 渲染器未能初始化">
+            <Suspense fallback={<ViewerLoadingFallback />}>
+              <ViewsViewer
+                key={JSON.stringify(viewsParams)}
+                initialMode={viewsParams.mode || 'projections'}
+                initialParams={viewsParams}
+              />
+            </Suspense>
+          </ViewerErrorBoundary>
+        )}
+
+        {activeTab === 'paper_folding' && (
+          <ViewerErrorBoundary fallbackTitle="平面折叠 3D 渲染器未能初始化">
+            <Suspense fallback={<ViewerLoadingFallback />}>
+              <PaperFoldingViewer
+                key={JSON.stringify(paperFoldingParams)}
+                initialMode={paperFoldingParams.mode || 'half_fold'}
+                initialParams={paperFoldingParams}
+              />
+            </Suspense>
+          </ViewerErrorBoundary>
+        )}
+
         {activeTab === 'quiz' && (
           <ExamQuizModal
             onLoadIntoSimulator={handleLoadIntoSimulator}
+            onOpenSpatialDemo={(category) => {
+              if (category === 'views') {
+                setViewsParams({ mode: 'projections' });
+                setActiveTab('views');
+              } else if (category === 'paper_folding') {
+                setPaperFoldingParams({ mode: 'half_fold' });
+                setActiveTab('paper_folding');
+              } else if (category === 'origami') {
+                setActiveTab('origami');
+              } else if (category === 'assembly') {
+                setActiveTab('assembly');
+              } else if (category === 'cross_section') {
+                setActiveTab('cross_section');
+              }
+            }}
             initialQuestionId={quizActiveQuestionId}
           />
         )}

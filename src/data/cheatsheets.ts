@@ -1,6 +1,6 @@
 export interface CheatsheetCard {
   id: string;
-  category: 'unfold' | 'revolution' | 'cross_section' | 'origami' | 'assembly';
+  category: 'unfold' | 'revolution' | 'cross_section' | 'origami' | 'assembly' | 'views' | 'paper_folding';
   title: string;
   slogan: string; // 核心口诀
   description: string;
@@ -79,5 +79,33 @@ export const CHEATSHEETS: CheatsheetCard[] = [
       '【极值特征层/最长单排对齐】：选定组件中最长的一排或特殊的 L 型拐角作为基准，先固定一根坐标轴对准，再测试旋转。'
     ],
     formula: 'N_{\\text{缺失方块}} = N_{\\text{目标总体}} - \\sum N_{\\text{已知组件}}'
+  },
+  {
+    id: 'views-rules',
+    category: 'views',
+    title: '三视图与可见棱线 · 投影反推',
+    slogan: '三向对齐定矩阵，遮挡只改可见不改总数',
+    description: '由主视、俯视、左视还原柱高与可见棱；黑白方块题用“最前色块”约束数量上下界。',
+    rules: [
+      '【三视图对齐】：俯视定占地，主视/左视定各列最大高度；三者必须对应同一套柱高矩阵。',
+      '【遮挡与总数】：后方被挡的块不改变外轮廓，但仍计入小立方体总数——不能把两向高度相加当总数。',
+      '【可见/隐藏棱】：实线为当前视线可见棱，虚线为被遮挡棱；“选非”优先查多画或少画的隐藏线。',
+      '【黑白约束】：前视颜色只反映该列最靠前的色块；结合俯视/左视只能得到黑块数量区间。'
+    ],
+    formula: 'N_{\\text{实际}} \\ge N_{\\text{前视可见}};\\quad H_{\\text{列}} = \\max_i h_{i}'
+  },
+  {
+    id: 'paper-folding-rules',
+    category: 'paper_folding',
+    title: '平面折叠与折纸图形 · 占地与层序',
+    slogan: '占地看并集，重叠看交集，层数看覆盖',
+    description: '折叠后纸面积不变；考场常问折后投影占地、重叠面积与层序，不要把各层面积直接相加。',
+    rules: [
+      '【纸面积 vs 占地】：纸张面积 S 不变；理想一次对折占地 S/2，两次对折占地约 S/4。',
+      '【重叠与层数】：重叠面积看投影交集；同一投影位置被覆盖几次就是几层。',
+      '【折痕对应】：对应点连线被折痕垂直平分；可用标记点跟踪翻折前后位置。',
+      '【顺序与层序】：折叠顺序改变可能只改谁在上，不改最终外形占地。'
+    ],
+    formula: 'A_{\\text{占地}} = \\bigcup_i P_i,\\quad A_{\\text{重叠}} = \\bigcap_i P_i'
   }
 ];
